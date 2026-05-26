@@ -1,4 +1,5 @@
-# BridgeVoice FrontEnd
+# BridgeVoice FrontEnd 
+## Frontend Repository (storage of Code + Documentation) 
 
 BridgeVoice is an AI-Powered Englsih Conversation Learning Platform Designed To Help Users To Build Confidence Through Practice. 
 
@@ -18,3 +19,6 @@ BridgeVoice is an AI-Powered Englsih Conversation Learning Platform Designed To 
 
 npm install
 npm run dev
+
+
+
