@@ -17,8 +17,8 @@ BridgeVoice is an AI-Powered Englsih Conversation Learning Platform Designed To 
 
 ## Run Projects
 
-npm install
-npm run dev
+- npm install
+- npm run dev
 
 
 
