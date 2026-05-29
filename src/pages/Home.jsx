@@ -1,6 +1,8 @@
+import { Link } from "react-router-dom";
+
 function Home() {
     return (
-        <main className="min-h-screen bg-[#EAF4EC] flex flex-col items-center justify-center -mt-32">
+        <main className="min-h-screen bg-[#EAF4EC] flex flex-col items-center justify-center">
 
             <header className="flex justify-center px-10 py-6">
                 <h1 className="text-8xl font-bold text-blue-600">
@@ -18,9 +20,11 @@ function Home() {
                     Utilize our AI-powered English conversation learning platform designed to help users build confidence through real-life speaking practice — completely free.
                 </p>
 
-                <button className="mt-12 rounded-full bg-blue-600 px-10 py-4 text-xl font-semibold text-white shadow-lg transition hover:bg-blue-700 hover:shadow-xl">
-                    Get Started
-                </button>
+                <Link 
+                    to="/login"
+                    className="rounded-full bg-blue-600 px-10 py-4 text-xl font-semibold text-white shadow-lg transition hover:bg-blue-700 hover:shadow-xl">
+                        Get Started
+                </Link>
             
             </div>
 
