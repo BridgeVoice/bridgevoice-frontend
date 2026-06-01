@@ -6,7 +6,7 @@ function Home() {
   return (
     <div className="min-h-screen bg-[#EAF4EC] flex flex-col">
 
-      <nav className="flex justify-between items-center px-10 py-6 bg-white shadow-sm">
+      <nav className="flex justify-between items-center px-10 py-6 bg-[#EAF4EC]">
         <h1 className="text-2xl font-bold text-blue-600">BridgeVoice</h1>
         <div className="flex gap-4">
           <button
