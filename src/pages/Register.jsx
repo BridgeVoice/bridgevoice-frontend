@@ -14,11 +14,24 @@ function Register() {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
-  }
+  } 
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+
+    // Email domain restriction (enable later for production)
+    /*const domainAllowed = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', "fanshaweonline.ca"]
+    const emailDomain = formData.email.split('@')[1]?.toLowerCase()
+    if (!domainAllowed.includes(emailDomain)) {
+      setError('Please use an email from gmail.com, yahoo.com, outlook.com, hotmail.com, or fanshaweonline.ca')
+      return
+    }*/
+
+    if(formData.password.length < 8) {
+      setError('Password must be at least 8 characters long')
+      return
+    }
 
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match')
