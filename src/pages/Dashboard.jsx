@@ -28,6 +28,7 @@ function Dashboard() {
   }
 
   const scenarios = [
+    { title: 'General Conversation', icon: '💬', desc: 'Practice everyday conversation', color: 'bg-gray-50 border-gray-200' },
     { title: 'Job Interview', icon: '💼', desc: 'Practice common interview questions', color: 'bg-blue-50 border-blue-200' },
     { title: 'Grocery Store', icon: '🛒', desc: 'Learn everyday shopping vocabulary', color: 'bg-green-50 border-green-200' },
     { title: 'Doctor Visit', icon: '🏥', desc: 'Practice medical conversations', color: 'bg-red-50 border-red-200' },
@@ -106,8 +107,13 @@ function Dashboard() {
           {scenarios.map((scenario) => (
             <button
               key={scenario.title}
-              onClick={() => navigate('/chat')}
-              className={`${scenario.color} border-2 rounded-xl p-5 text-left hover:shadow-md transition`}
+              onClick={() => navigate('/chat', { state: { scenario: scenario.title } })}
+              className={`${scenario.color} border-2 rounded-xl p-5 text-left 
+              hover:shadow-lg 
+              hover:-translate-y-1
+              hover:scale-105 
+              transition-all
+              duration-300`}
             >
               <p className="text-3xl mb-2">{scenario.icon}</p>
               <p className="font-semibold text-gray-700">{scenario.title}</p>

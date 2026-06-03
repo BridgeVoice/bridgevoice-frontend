@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link, useLocation } from 'react-router-dom'
 
 function Chat() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
@@ -12,7 +13,7 @@ function Chat() {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [listening, setListening] = useState(false)
-  const [scenario, setScenario] = useState('General Conversation')
+  const [scenario, setScenario] = useState(location.state?.scenario || 'General Conversation')
   const messagesEndRef = useRef(null)
   const recognitionRef = useRef(null)
 
@@ -121,7 +122,13 @@ function Chat() {
         <div className="bg-white rounded-xl p-4 mb-4 shadow-sm">
           <p className="text-sm text-gray-500 mb-2 font-medium">Select Scenario:</p>
           <div className="flex gap-2 flex-wrap">
-            {['General Conversation', 'Job Interview', 'Grocery Store', 'Doctor Visit', 'Bank Visit', 'Workplace Chat'].map(s => (
+            {['General Conversation', 
+            'Job Interview', 
+            'Grocery Store', 
+            'Doctor Visit', 
+            'Bank Visit', 
+            'Workplace Chat',
+            'Making Friends'].map(s => (
               <button
                 key={s}
                 onClick={() => setScenario(s)}
