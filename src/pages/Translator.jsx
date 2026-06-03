@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import Logo from '../assets/logo'
 
 function Translator() {
   const navigate = useNavigate()
@@ -37,7 +38,6 @@ function Translator() {
     if (!inputText.trim()) return
     setLoading(true)
     setTranslatedText('')
-
     try {
       const response = await fetch(
         `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${fromLang}&tl=${toLang}&dt=t&q=${encodeURIComponent(inputText)}`
@@ -67,18 +67,18 @@ function Translator() {
   }
 
   return (
-    <div className="min-h-screen bg-[#EAF4EC]">
+    <div className="min-h-screen bg-gray-950 text-white">
 
-      <nav className="bg-white shadow-sm px-6 py-4 flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-blue-600">BridgeVoice</h1>
+      <nav className="bg-gray-900 border-b border-gray-800 px-6 py-4 flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <Logo size={18} />
+          <h1 className="text-lg font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">BridgeVoice</h1>
+        </div>
         <div className="flex items-center gap-4">
-          <Link to="/dashboard" className="text-gray-600 hover:text-blue-600 font-medium">Dashboard</Link>
-          <Link to="/dictionary" className="text-gray-600 hover:text-blue-600 font-medium">Dictionary</Link>
-          <Link to="/progress" className="text-gray-600 hover:text-blue-600 font-medium">Progress</Link>
-          <Link to="/profile" className="text-gray-600 hover:text-blue-600 font-medium">Profile</Link>
+          <Link to="/dashboard" className="text-gray-400 hover:text-white transition text-sm">Dashboard</Link>
           <button
             onClick={() => { localStorage.clear(); navigate('/') }}
-            className="bg-red-100 text-red-600 px-4 py-2 rounded-lg hover:bg-red-200 transition font-medium"
+            className="bg-red-900 bg-opacity-50 hover:bg-opacity-80 text-red-400 px-4 py-2 rounded-lg text-sm transition"
           >
             Logout
           </button>
@@ -88,16 +88,16 @@ function Translator() {
       <div className="max-w-4xl mx-auto px-6 py-8">
 
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-700">🌍 Translator</h2>
-          <p className="text-gray-500">Translate between English and your native language instantly</p>
+          <h2 className="text-2xl font-bold">🌍 Translator</h2>
+          <p className="text-gray-400 mt-1">Translate between English and your native language instantly</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm p-6 mb-8">
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-8">
           <div className="flex items-center gap-4 mb-4">
             <select
               value={fromLang}
               onChange={e => setFromLang(e.target.value)}
-              className="flex-1 border border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-purple-500 transition"
             >
               <option value="auto">Auto Detect</option>
               {languages.map(lang => (
@@ -107,7 +107,7 @@ function Translator() {
 
             <button
               onClick={swapLanguages}
-              className="bg-blue-50 text-blue-600 p-3 rounded-xl hover:bg-blue-100 transition text-xl"
+              className="bg-gray-800 border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white p-3 rounded-xl transition text-xl"
             >
               ⇄
             </button>
@@ -115,7 +115,7 @@ function Translator() {
             <select
               value={toLang}
               onChange={e => setToLang(e.target.value)}
-              className="flex-1 border border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-purple-500 transition"
             >
               {languages.map(lang => (
                 <option key={lang.code} value={lang.code}>{lang.name}</option>
@@ -130,26 +130,26 @@ function Translator() {
                 onChange={e => setInputText(e.target.value)}
                 placeholder="Type text to translate..."
                 rows={5}
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+                className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition resize-none"
               />
               <button
                 onClick={() => speakText(inputText, fromLang)}
-                className="absolute bottom-3 right-3 text-gray-400 hover:text-blue-600"
+                className="absolute bottom-3 right-3 text-gray-500 hover:text-purple-400 transition"
               >
                 🔊
               </button>
             </div>
 
-            <div className="relative bg-gray-50 rounded-xl p-4 min-h-32">
+            <div className="relative bg-gray-800 border border-gray-700 rounded-xl p-4 min-h-32">
               {loading ? (
-                <p className="text-gray-400 animate-pulse">Translating...</p>
+                <p className="text-gray-500 animate-pulse">Translating...</p>
               ) : (
-                <p className="text-gray-700">{translatedText || 'Translation will appear here...'}</p>
+                <p className="text-gray-200">{translatedText || 'Translation will appear here...'}</p>
               )}
               {translatedText && (
                 <button
                   onClick={() => speakText(translatedText, toLang)}
-                  className="absolute bottom-3 right-3 text-gray-400 hover:text-blue-600"
+                  className="absolute bottom-3 right-3 text-gray-500 hover:text-purple-400 transition"
                 >
                   🔊
                 </button>
@@ -161,14 +161,14 @@ function Translator() {
             <button
               onClick={translate}
               disabled={loading || !inputText.trim()}
-              className="flex-1 bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition disabled:opacity-50 font-semibold"
+              className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white py-3 rounded-xl transition disabled:opacity-50 font-semibold"
             >
               {loading ? 'Translating...' : 'Translate'}
             </button>
             {translatedText && (
               <button
                 onClick={() => navigator.clipboard.writeText(translatedText)}
-                className="bg-gray-100 text-gray-600 px-4 py-3 rounded-xl hover:bg-gray-200 transition"
+                className="bg-gray-800 border border-gray-700 text-gray-400 hover:text-white px-4 py-3 rounded-xl hover:border-gray-500 transition"
               >
                 📋 Copy
               </button>
@@ -176,32 +176,32 @@ function Translator() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm p-6">
-          <h3 className="font-bold text-gray-700 mb-4">💬 Common Phrases for Newcomers</h3>
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+          <h3 className="font-bold text-gray-200 mb-4">💬 Common Phrases for Newcomers</h3>
           <div className="space-y-3">
             {commonPhrases.map((phrase, i) => (
               <div
                 key={i}
-                className="flex justify-between items-center border border-gray-100 rounded-xl p-4 hover:bg-blue-50 transition cursor-pointer"
+                className="flex justify-between items-center border border-gray-800 rounded-xl p-4 hover:border-gray-600 hover:bg-gray-800 transition cursor-pointer"
                 onClick={() => setInputText(phrase.english)}
               >
                 <div>
-                  <p className="font-medium text-gray-700">{phrase.english}</p>
-                  <p className="text-xs text-blue-500 mt-1">{phrase.context}</p>
+                  <p className="font-medium text-gray-200">{phrase.english}</p>
+                  <p className="text-xs text-purple-400 mt-1">{phrase.context}</p>
                 </div>
                 <div className="flex gap-2">
                   <button
                     onClick={(e) => { e.stopPropagation(); speakText(phrase.english, 'en') }}
-                    className="text-gray-400 hover:text-blue-600"
+                    className="text-gray-500 hover:text-purple-400 transition"
                   >
                     🔊
                   </button>
-                  <span className="text-gray-300">→</span>
+                  <span className="text-gray-700">→</span>
                 </div>
               </div>
             ))}
           </div>
-          <p className="text-xs text-gray-400 mt-4 text-center">Click any phrase to translate it instantly!</p>
+          <p className="text-xs text-gray-600 mt-4 text-center">Click any phrase to translate it instantly!</p>
         </div>
 
       </div>

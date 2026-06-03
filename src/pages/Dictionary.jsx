@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import Logo from '../assets/logo'
 
 function Dictionary() {
   const navigate = useNavigate()
@@ -27,11 +28,9 @@ function Dictionary() {
     setLoading(true)
     setError('')
     setResult(null)
-
     try {
       const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${searchWord}`)
       const data = await response.json()
-
       if (response.ok && data.length > 0) {
         const entry = data[0]
         setResult({
@@ -76,17 +75,18 @@ function Dictionary() {
   }
 
   return (
-    <div className="min-h-screen bg-[#EAF4EC]">
+    <div className="min-h-screen bg-gray-950 text-white">
 
-      <nav className="bg-white shadow-sm px-6 py-4 flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-blue-600">BridgeVoice</h1>
+      <nav className="bg-gray-900 border-b border-gray-800 px-6 py-4 flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <Logo size={18} />
+          <h1 className="text-lg font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">BridgeVoice</h1>
+        </div>
         <div className="flex items-center gap-4">
-          <Link to="/dashboard" className="text-gray-600 hover:text-blue-600 font-medium">Dashboard</Link>
-          <Link to="/progress" className="text-gray-600 hover:text-blue-600 font-medium">Progress</Link>
-          <Link to="/profile" className="text-gray-600 hover:text-blue-600 font-medium">Profile</Link>
+          <Link to="/dashboard" className="text-gray-400 hover:text-white transition text-sm">Dashboard</Link>
           <button
             onClick={() => { localStorage.clear(); navigate('/') }}
-            className="bg-red-100 text-red-600 px-4 py-2 rounded-lg hover:bg-red-200 transition font-medium"
+            className="bg-red-900 bg-opacity-50 hover:bg-opacity-80 text-red-400 px-4 py-2 rounded-lg text-sm transition"
           >
             Logout
           </button>
@@ -96,23 +96,23 @@ function Dictionary() {
       <div className="max-w-4xl mx-auto px-6 py-8">
 
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-700">📖 Dictionary</h2>
-          <p className="text-gray-500">Search words, save vocabulary and learn pronunciation</p>
+          <h2 className="text-2xl font-bold">📖 Dictionary</h2>
+          <p className="text-gray-400 mt-1">Search words, save vocabulary and learn pronunciation</p>
         </div>
 
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-6 mb-8 text-white">
-          <p className="text-sm font-medium text-blue-200 mb-1">✨ Word of the Day</p>
+        <div className="bg-gradient-to-r from-purple-900 to-blue-900 border border-purple-700 rounded-2xl p-6 mb-8">
+          <p className="text-sm font-medium text-purple-300 mb-1">✨ Word of the Day</p>
           <div className="flex justify-between items-start">
             <div>
               <h3 className="text-3xl font-bold mb-1">{wordOfTheDay.word}</h3>
-              <p className="text-blue-200 text-sm mb-2">{wordOfTheDay.pronunciation}</p>
-              <p className="text-white mb-2">{wordOfTheDay.meaning}</p>
-              <p className="text-blue-100 text-sm italic">"{wordOfTheDay.example}"</p>
-              <p className="text-yellow-300 text-sm mt-2">💡 {wordOfTheDay.tip}</p>
+              <p className="text-purple-300 text-sm mb-2">{wordOfTheDay.pronunciation}</p>
+              <p className="text-gray-200 mb-2">{wordOfTheDay.meaning}</p>
+              <p className="text-gray-400 text-sm italic">"{wordOfTheDay.example}"</p>
+              <p className="text-yellow-400 text-sm mt-2">💡 {wordOfTheDay.tip}</p>
             </div>
             <button
               onClick={() => speakWord(wordOfTheDay.word)}
-              className="bg-white bg-opacity-20 hover:bg-opacity-30 p-3 rounded-full transition"
+              className="bg-white bg-opacity-10 hover:bg-opacity-20 p-3 rounded-full transition"
             >
               🔊
             </button>
@@ -124,10 +124,10 @@ function Dictionary() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-lg font-medium capitalize transition ${
+              className={`px-4 py-2 rounded-xl font-medium capitalize transition text-sm ${
                 activeTab === tab
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-600 hover:bg-blue-50'
+                  ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white'
+                  : 'bg-gray-900 border border-gray-800 text-gray-400 hover:text-white'
               }`}
             >
               {tab === 'search' ? '🔍 Search' : `📚 Saved (${savedWords.length})`}
@@ -144,34 +144,34 @@ function Dictionary() {
                 onChange={e => setSearchWord(e.target.value)}
                 onKeyPress={e => e.key === 'Enter' && searchDictionary()}
                 placeholder="Search any English word..."
-                className="flex-1 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="flex-1 bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition"
               />
               <button
                 onClick={() => speakWord(searchWord)}
-                className="bg-gray-100 text-gray-600 px-4 py-3 rounded-xl hover:bg-gray-200 transition"
+                className="bg-gray-900 border border-gray-700 text-gray-400 px-4 py-3 rounded-xl hover:border-gray-500 hover:text-white transition"
               >
                 🔊
               </button>
               <button
                 onClick={searchDictionary}
                 disabled={loading}
-                className="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition disabled:opacity-50 font-medium"
+                className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white px-6 py-3 rounded-xl transition disabled:opacity-50 font-medium"
               >
                 {loading ? 'Searching...' : 'Search'}
               </button>
             </div>
 
             {error && (
-              <div className="bg-red-50 text-red-600 px-4 py-3 rounded-xl mb-4">
+              <div className="bg-red-900 bg-opacity-30 border border-red-700 text-red-400 px-4 py-3 rounded-xl mb-4">
                 {error}
               </div>
             )}
 
             {result && (
-              <div className="bg-white rounded-2xl p-6 shadow-sm">
+              <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="text-3xl font-bold text-gray-700">{result.word}</h3>
+                    <h3 className="text-3xl font-bold text-white">{result.word}</h3>
                     {result.phonetic && (
                       <p className="text-gray-400 mt-1">{result.phonetic}</p>
                     )}
@@ -179,13 +179,13 @@ function Dictionary() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => speakWord(result.word)}
-                      className="bg-blue-50 text-blue-600 p-3 rounded-xl hover:bg-blue-100 transition"
+                      className="bg-gray-800 text-gray-300 p-3 rounded-xl hover:bg-gray-700 transition"
                     >
                       🔊
                     </button>
                     <button
                       onClick={saveWord}
-                      className="bg-green-50 text-green-600 px-4 py-3 rounded-xl hover:bg-green-100 transition font-medium"
+                      className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-3 rounded-xl transition font-medium text-sm"
                     >
                       + Save
                     </button>
@@ -194,11 +194,11 @@ function Dictionary() {
 
                 <div className="space-y-4">
                   {result.meanings.map((meaning, i) => (
-                    <div key={i} className="border-l-4 border-blue-400 pl-4">
-                      <p className="text-sm font-semibold text-blue-500 uppercase mb-1">{meaning.partOfSpeech}</p>
-                      <p className="text-gray-700 mb-1">{meaning.definition}</p>
+                    <div key={i} className="border-l-4 border-purple-500 pl-4">
+                      <p className="text-sm font-semibold text-purple-400 uppercase mb-1">{meaning.partOfSpeech}</p>
+                      <p className="text-gray-200 mb-1">{meaning.definition}</p>
                       {meaning.example && (
-                        <p className="text-gray-400 text-sm italic">"{meaning.example}"</p>
+                        <p className="text-gray-500 text-sm italic">"{meaning.example}"</p>
                       )}
                     </div>
                   ))}
@@ -209,13 +209,13 @@ function Dictionary() {
             {!result && !error && !loading && (
               <div className="text-center py-12">
                 <p className="text-6xl mb-4">📖</p>
-                <p className="text-gray-400">Search any word to see its meaning, pronunciation and examples</p>
+                <p className="text-gray-500">Search any word to see its meaning and pronunciation</p>
                 <div className="flex gap-2 justify-center mt-4 flex-wrap">
                   {['Perseverance', 'Etiquette', 'Confident', 'Fluent', 'Ambitious'].map(word => (
                     <button
                       key={word}
-                      onClick={() => { setSearchWord(word); }}
-                      className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-sm hover:bg-blue-100 transition"
+                      onClick={() => setSearchWord(word)}
+                      className="bg-gray-900 border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500 px-3 py-1 rounded-full text-sm transition"
                     >
                       {word}
                     </button>
@@ -231,30 +231,30 @@ function Dictionary() {
             {savedWords.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-6xl mb-4">📚</p>
-                <p className="text-gray-400">No saved words yet. Search and save words to build your vocabulary!</p>
+                <p className="text-gray-500">No saved words yet. Search and save words to build your vocabulary!</p>
               </div>
             ) : (
               <div className="space-y-3">
                 {savedWords.map((word, i) => (
-                  <div key={i} className="bg-white rounded-xl p-4 shadow-sm flex justify-between items-start">
+                  <div key={i} className="bg-gray-900 border border-gray-800 rounded-xl p-4 flex justify-between items-start hover:border-gray-600 transition">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-bold text-gray-700">{word.word}</h4>
+                        <h4 className="font-bold text-white">{word.word}</h4>
                         <button
                           onClick={() => speakWord(word.word)}
-                          className="text-blue-400 hover:text-blue-600"
+                          className="text-gray-500 hover:text-purple-400 transition"
                         >
                           🔊
                         </button>
                       </div>
-                      <p className="text-gray-600 text-sm">{word.meaning}</p>
+                      <p className="text-gray-400 text-sm">{word.meaning}</p>
                       {word.example && (
-                        <p className="text-gray-400 text-xs italic mt-1">"{word.example}"</p>
+                        <p className="text-gray-600 text-xs italic mt-1">"{word.example}"</p>
                       )}
                     </div>
                     <button
                       onClick={() => removeWord(word.word)}
-                      className="text-red-400 hover:text-red-600 ml-4"
+                      className="text-gray-600 hover:text-red-400 ml-4 transition"
                     >
                       ✕
                     </button>
