@@ -1,26 +1,27 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import Logo from '../assets/logo'
 
 function Progress() {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('overview')
 
   const weeklyData = [
-    { day: 'Mon', sessions: 2, score: 75 },
-    { day: 'Tue', sessions: 1, score: 80 },
-    { day: 'Wed', sessions: 3, score: 85 },
-    { day: 'Thu', sessions: 2, score: 78 },
-    { day: 'Fri', sessions: 4, score: 90 },
-    { day: 'Sat', sessions: 1, score: 88 },
-    { day: 'Sun', sessions: 2, score: 92 },
+    { day: 'Mon', score: 75 },
+    { day: 'Tue', score: 80 },
+    { day: 'Wed', score: 85 },
+    { day: 'Thu', score: 78 },
+    { day: 'Fri', score: 90 },
+    { day: 'Sat', score: 88 },
+    { day: 'Sun', score: 92 },
   ]
 
   const skills = [
-    { name: 'Grammar', score: 75, color: 'bg-blue-500' },
-    { name: 'Pronunciation', score: 60, color: 'bg-green-500' },
-    { name: 'Vocabulary', score: 85, color: 'bg-purple-500' },
-    { name: 'Fluency', score: 70, color: 'bg-orange-500' },
-    { name: 'Confidence', score: 80, color: 'bg-pink-500' },
+    { name: 'Grammar', score: 75, color: 'from-purple-600 to-purple-400' },
+    { name: 'Pronunciation', score: 60, color: 'from-blue-600 to-blue-400' },
+    { name: 'Vocabulary', score: 85, color: 'from-green-600 to-green-400' },
+    { name: 'Fluency', score: 70, color: 'from-orange-600 to-orange-400' },
+    { name: 'Confidence', score: 80, color: 'from-pink-600 to-pink-400' },
   ]
 
   const sessions = [
@@ -28,22 +29,24 @@ function Progress() {
     { scenario: 'Grocery Store', date: 'Yesterday', score: 92, duration: '8 mins', feedback: 'Excellent vocabulary! Very natural conversation.' },
     { scenario: 'Doctor Visit', date: '2 days ago', score: 78, duration: '15 mins', feedback: 'Good effort! Practice medical terms more.' },
     { scenario: 'Bank Visit', date: '3 days ago', score: 88, duration: '10 mins', feedback: 'Very polite and professional tone!' },
-    { scenario: 'Workplace Chat', date: '4 days ago', score: 71, duration: '9 mins', feedback: 'Work on formal vs informal language.' },
   ]
 
   const maxScore = Math.max(...weeklyData.map(d => d.score))
 
   return (
-    <div className="min-h-screen bg-[#EAF4EC]">
+    <div className="min-h-screen bg-gray-950 text-white">
 
-      <nav className="bg-white shadow-sm px-6 py-4 flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-blue-600">BridgeVoice</h1>
+      <nav className="bg-gray-900 border-b border-gray-800 px-6 py-4 flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <Logo size={18} />
+          <h1 className="text-lg font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">BridgeVoice</h1>
+        </div>
         <div className="flex items-center gap-4">
-          <Link to="/dashboard" className="text-gray-600 hover:text-blue-600 font-medium">Dashboard</Link>
-          <Link to="/profile" className="text-gray-600 hover:text-blue-600 font-medium">Profile</Link>
+          <Link to="/dashboard" className="text-gray-400 hover:text-white transition text-sm">Dashboard</Link>
+          <Link to="/profile" className="text-gray-400 hover:text-white transition text-sm">Profile</Link>
           <button
             onClick={() => { localStorage.clear(); navigate('/') }}
-            className="bg-red-100 text-red-600 px-4 py-2 rounded-lg hover:bg-red-200 transition font-medium"
+            className="bg-red-900 bg-opacity-50 hover:bg-opacity-80 text-red-400 px-4 py-2 rounded-lg text-sm transition"
           >
             Logout
           </button>
@@ -53,38 +56,35 @@ function Progress() {
       <div className="max-w-5xl mx-auto px-6 py-8">
 
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-700">📊 Your Progress</h2>
-          <p className="text-gray-500">Track your English learning journey</p>
+          <h2 className="text-2xl font-bold">📊 Your Progress</h2>
+          <p className="text-gray-400 mt-1">Track your English learning journey</p>
         </div>
 
+        {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white rounded-xl p-4 text-center shadow-sm">
-            <p className="text-3xl font-bold text-blue-600">15</p>
-            <p className="text-sm text-gray-500 mt-1">Total Sessions</p>
-          </div>
-          <div className="bg-white rounded-xl p-4 text-center shadow-sm">
-            <p className="text-3xl font-bold text-green-600">83%</p>
-            <p className="text-sm text-gray-500 mt-1">Avg Score</p>
-          </div>
-          <div className="bg-white rounded-xl p-4 text-center shadow-sm">
-            <p className="text-3xl font-bold text-orange-500">🔥 7</p>
-            <p className="text-sm text-gray-500 mt-1">Day Streak</p>
-          </div>
-          <div className="bg-white rounded-xl p-4 text-center shadow-sm">
-            <p className="text-3xl font-bold text-purple-600">2.5h</p>
-            <p className="text-sm text-gray-500 mt-1">Total Practice</p>
-          </div>
+          {[
+            { value: '15', label: 'Total Sessions', color: 'text-blue-400' },
+            { value: '83%', label: 'Avg Score', color: 'text-green-400' },
+            { value: '🔥 7', label: 'Day Streak', color: 'text-orange-400' },
+            { value: '2.5h', label: 'Total Practice', color: 'text-purple-400' },
+          ].map((stat, i) => (
+            <div key={i} className="bg-gray-900 border border-gray-800 rounded-2xl p-4 text-center hover:border-gray-600 transition">
+              <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
+              <p className="text-gray-500 text-sm mt-1">{stat.label}</p>
+            </div>
+          ))}
         </div>
 
+        {/* Tabs */}
         <div className="flex gap-2 mb-6">
           {['overview', 'skills', 'history'].map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-lg font-medium capitalize transition ${
+              className={`px-4 py-2 rounded-xl font-medium capitalize transition text-sm ${
                 activeTab === tab
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-600 hover:bg-blue-50'
+                  ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white'
+                  : 'bg-gray-900 border border-gray-800 text-gray-400 hover:text-white'
               }`}
             >
               {tab}
@@ -94,25 +94,25 @@ function Progress() {
 
         {activeTab === 'overview' && (
           <div className="space-y-6">
-            <div className="bg-white rounded-xl p-6 shadow-sm">
-              <h3 className="font-bold text-gray-700 mb-4">📈 This Week's Scores</h3>
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+              <h3 className="font-bold text-gray-200 mb-6">📈 This Week's Scores</h3>
               <div className="flex items-end gap-3 h-40">
                 {weeklyData.map((d, i) => (
                   <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                    <p className="text-xs text-gray-500 font-medium">{d.score}%</p>
+                    <p className="text-xs text-gray-400 font-medium">{d.score}%</p>
                     <div
-                      className="w-full bg-blue-500 rounded-t-lg transition-all"
+                      className="w-full bg-gradient-to-t from-purple-600 to-blue-500 rounded-t-lg transition-all"
                       style={{ height: `${(d.score / maxScore) * 120}px` }}
                     ></div>
-                    <p className="text-xs text-gray-400">{d.day}</p>
+                    <p className="text-xs text-gray-500">{d.day}</p>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-6 shadow-sm">
-              <h3 className="font-bold text-gray-700 mb-4">🎯 Confidence Over Time</h3>
-              <div className="space-y-2">
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+              <h3 className="font-bold text-gray-200 mb-4">🎯 Confidence Over Time</h3>
+              <div className="space-y-3">
                 {[
                   { week: 'Week 1', score: 55 },
                   { week: 'Week 2', score: 65 },
@@ -121,13 +121,13 @@ function Progress() {
                 ].map((w, i) => (
                   <div key={i} className="flex items-center gap-3">
                     <p className="text-sm text-gray-500 w-16">{w.week}</p>
-                    <div className="flex-1 bg-gray-100 rounded-full h-3">
+                    <div className="flex-1 bg-gray-800 rounded-full h-3">
                       <div
-                        className="bg-green-500 h-3 rounded-full transition-all"
+                        className="bg-gradient-to-r from-purple-600 to-blue-500 h-3 rounded-full"
                         style={{ width: `${w.score}%` }}
                       ></div>
                     </div>
-                    <p className="text-sm font-semibold text-gray-700 w-10">{w.score}%</p>
+                    <p className="text-sm font-semibold text-gray-300 w-10">{w.score}%</p>
                   </div>
                 ))}
               </div>
@@ -136,18 +136,18 @@ function Progress() {
         )}
 
         {activeTab === 'skills' && (
-          <div className="bg-white rounded-xl p-6 shadow-sm">
-            <h3 className="font-bold text-gray-700 mb-6">🧠 Skill Breakdown</h3>
+          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+            <h3 className="font-bold text-gray-200 mb-6">🧠 Skill Breakdown</h3>
             <div className="space-y-5">
               {skills.map((skill, i) => (
                 <div key={i}>
-                  <div className="flex justify-between mb-1">
-                    <p className="font-medium text-gray-700">{skill.name}</p>
-                    <p className="text-sm font-semibold text-gray-500">{skill.score}%</p>
+                  <div className="flex justify-between mb-2">
+                    <p className="font-medium text-gray-300">{skill.name}</p>
+                    <p className="text-sm font-semibold text-gray-400">{skill.score}%</p>
                   </div>
-                  <div className="w-full bg-gray-100 rounded-full h-4">
+                  <div className="w-full bg-gray-800 rounded-full h-3">
                     <div
-                      className={`${skill.color} h-4 rounded-full transition-all`}
+                      className={`bg-gradient-to-r ${skill.color} h-3 rounded-full transition-all`}
                       style={{ width: `${skill.score}%` }}
                     ></div>
                   </div>
@@ -155,32 +155,32 @@ function Progress() {
               ))}
             </div>
 
-            <div className="mt-8 bg-blue-50 rounded-xl p-4">
-              <p className="font-semibold text-blue-700 mb-2">💡 AI Recommendation</p>
-              <p className="text-sm text-gray-600">Your pronunciation score is lowest at 60%. Try the <strong>Doctor Visit</strong> scenario which focuses on clear speech and medical vocabulary!</p>
+            <div className="mt-8 bg-purple-900 bg-opacity-30 border border-purple-700 rounded-xl p-4">
+              <p className="font-semibold text-purple-300 mb-2">💡 AI Recommendation</p>
+              <p className="text-sm text-gray-400">Your pronunciation score is lowest at 60%. Try the <strong className="text-white">Doctor Visit</strong> scenario which focuses on clear speech!</p>
             </div>
           </div>
         )}
 
         {activeTab === 'history' && (
-          <div className="bg-white rounded-xl p-6 shadow-sm">
-            <h3 className="font-bold text-gray-700 mb-4">📅 Session History</h3>
+          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+            <h3 className="font-bold text-gray-200 mb-4">📅 Session History</h3>
             <div className="space-y-4">
               {sessions.map((session, i) => (
-                <div key={i} className="border border-gray-100 rounded-xl p-4 hover:shadow-sm transition">
+                <div key={i} className="border border-gray-800 rounded-xl p-4 hover:border-gray-600 transition">
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <p className="font-semibold text-gray-700">{session.scenario}</p>
-                      <p className="text-xs text-gray-400">{session.date} • {session.duration}</p>
+                      <p className="font-semibold text-gray-200">{session.scenario}</p>
+                      <p className="text-xs text-gray-500">{session.date} • {session.duration}</p>
                     </div>
                     <span className={`font-bold text-lg ${
-                      session.score >= 85 ? 'text-green-600' :
-                      session.score >= 70 ? 'text-orange-500' : 'text-red-500'
+                      session.score >= 85 ? 'text-green-400' :
+                      session.score >= 70 ? 'text-orange-400' : 'text-red-400'
                     }`}>
                       {session.score}%
                     </span>
                   </div>
-                  <p className="text-sm text-gray-500 bg-gray-50 rounded-lg px-3 py-2">
+                  <p className="text-sm text-gray-400 bg-gray-800 rounded-lg px-3 py-2">
                     💬 {session.feedback}
                   </p>
                 </div>
