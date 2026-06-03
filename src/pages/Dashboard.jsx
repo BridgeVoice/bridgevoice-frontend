@@ -1,13 +1,10 @@
 import { useState, useEffect } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import Logo from '../assets/logo'
+import { useNavigate } from 'react-router-dom'
+import Layout from '../components/Layout'
 
 function Dashboard() {
   const navigate = useNavigate()
   const [user, setUser] = useState(null)
-  const [streak, setStreak] = useState(7)
-  const [xp, setXp] = useState(340)
-  const [level, setLevel] = useState('Intermediate')
 
   useEffect(() => {
     const email = localStorage.getItem('email')
@@ -22,12 +19,6 @@ function Dashboard() {
       .catch(err => console.log(err))
   }, [])
 
-  const handleLogout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('email')
-    navigate('/')
-  }
-
   const scenarios = [
     { title: 'Job Interview', icon: '💼', desc: 'Practice interview questions', color: 'from-purple-600 to-purple-800' },
     { title: 'Grocery Store', icon: '🛒', desc: 'Everyday shopping vocabulary', color: 'from-blue-600 to-blue-800' },
@@ -37,52 +28,9 @@ function Dashboard() {
     { title: 'Making Friends', icon: '🤝', desc: 'Casual social conversations', color: 'from-pink-600 to-pink-800' },
   ]
 
-  const navLinks = [
-    { to: '/chat', label: 'Chat' },
-    { to: '/progress', label: 'Progress' },
-    { to: '/dictionary', label: 'Dictionary' },
-    { to: '/translator', label: 'Translator' },
-    { to: '/community', label: 'Community' },
-    { to: '/interview', label: 'Interview' },
-    { to: '/quiz', label: 'Quiz' },
-    { to: '/phrases', label: 'Phrases' },
-    { to: '/grammar', label: 'Grammar' },
-    { to: '/culture', label: 'Culture' },
-    { to: '/settings', label: 'Settings' },
-    { to: '/profile', label: 'Profile' },
-  ]
-
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
-
-      {/* Navbar */}
-      <nav className="bg-gray-900 border-b border-gray-800 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Logo size={18} />
-            <h1 className="text-lg font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">BridgeVoice</h1>
-          </div>
-          <div className="hidden md:flex items-center gap-1 flex-wrap">
-            {navLinks.map((link, i) => (
-              <Link
-                key={i}
-                to={link.to}
-                className="text-gray-400 hover:text-white hover:bg-gray-800 px-3 py-1.5 rounded-lg text-sm transition"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-          <button
-            onClick={handleLogout}
-            className="bg-red-900 bg-opacity-50 hover:bg-opacity-80 text-red-400 px-4 py-2 rounded-lg text-sm transition font-medium"
-          >
-            Logout
-          </button>
-        </div>
-      </nav>
-
-      <div className="max-w-6xl mx-auto px-6 py-8">
+    <Layout>
+      <div className="max-w-6xl mx-auto">
 
         {/* Welcome */}
         <div className="mb-8">
@@ -95,10 +43,10 @@ function Dashboard() {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
-            { label: 'Day Streak', value: `🔥 ${streak}`, color: 'text-orange-400' },
-            { label: 'Total XP', value: xp, color: 'text-purple-400' },
-            { label: 'Sessions Done', value: 12, color: 'text-blue-400' },
-            { label: 'Current Level', value: level, color: 'text-green-400' },
+            { label: 'Day Streak', value: '🔥 7', color: 'text-orange-400' },
+            { label: 'Total XP', value: '340', color: 'text-purple-400' },
+            { label: 'Sessions Done', value: '12', color: 'text-blue-400' },
+            { label: 'Current Level', value: 'Intermediate', color: 'text-green-400' },
           ].map((stat, i) => (
             <div key={i} className="bg-gray-900 border border-gray-800 rounded-2xl p-4 text-center hover:border-gray-600 transition">
               <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
@@ -117,6 +65,25 @@ function Dashboard() {
             <div className="bg-gradient-to-r from-purple-600 to-blue-600 h-3 rounded-full" style={{ width: '33%' }}></div>
           </div>
           <p className="text-sm text-gray-500 mt-2">Complete 2 more sessions to reach your daily goal!</p>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          {[
+            { icon: '🗣️', label: 'Start Chat', to: '/chat', color: 'from-purple-600 to-blue-600' },
+            { icon: '💼', label: 'Interview Prep', to: '/interview', color: 'from-blue-600 to-cyan-600' },
+            { icon: '🧠', label: 'Take Quiz', to: '/quiz', color: 'from-green-600 to-teal-600' },
+            { icon: '📖', label: 'Dictionary', to: '/dictionary', color: 'from-orange-600 to-red-600' },
+          ].map((action, i) => (
+            <button
+              key={i}
+              onClick={() => navigate(action.to)}
+              className={`bg-gradient-to-br ${action.color} rounded-2xl p-5 text-center hover:opacity-90 hover:shadow-lg transition group`}
+            >
+              <p className="text-3xl mb-2 group-hover:scale-110 transition">{action.icon}</p>
+              <p className="font-semibold text-white text-sm">{action.label}</p>
+            </button>
+          ))}
         </div>
 
         {/* Scenarios */}
@@ -139,8 +106,6 @@ function Dashboard() {
 
         {/* Bottom Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-          {/* Badges */}
           <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
             <h3 className="font-bold text-gray-200 mb-4">🏆 Badges Earned</h3>
             <div className="flex gap-3 flex-wrap">
@@ -157,7 +122,6 @@ function Dashboard() {
             </div>
           </div>
 
-          {/* Recent Sessions */}
           <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
             <h3 className="font-bold text-gray-200 mb-4">📅 Recent Sessions</h3>
             <div className="space-y-3">
@@ -176,10 +140,10 @@ function Dashboard() {
               ))}
             </div>
           </div>
-
         </div>
+
       </div>
-    </div>
+    </Layout>
   )
 }
 

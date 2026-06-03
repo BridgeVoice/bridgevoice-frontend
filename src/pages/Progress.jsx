@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import Logo from '../assets/logo'
+import { useNavigate } from 'react-router-dom'
+import Layout from '../components/Layout'
 
 function Progress() {
   const navigate = useNavigate()
@@ -34,33 +34,14 @@ function Progress() {
   const maxScore = Math.max(...weeklyData.map(d => d.score))
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
-
-      <nav className="bg-gray-900 border-b border-gray-800 px-6 py-4 flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <Logo size={18} />
-          <h1 className="text-lg font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">BridgeVoice</h1>
-        </div>
-        <div className="flex items-center gap-4">
-          <Link to="/dashboard" className="text-gray-400 hover:text-white transition text-sm">Dashboard</Link>
-          <Link to="/profile" className="text-gray-400 hover:text-white transition text-sm">Profile</Link>
-          <button
-            onClick={() => { localStorage.clear(); navigate('/') }}
-            className="bg-red-900 bg-opacity-50 hover:bg-opacity-80 text-red-400 px-4 py-2 rounded-lg text-sm transition"
-          >
-            Logout
-          </button>
-        </div>
-      </nav>
-
-      <div className="max-w-5xl mx-auto px-6 py-8">
+    <Layout>
+      <div className="max-w-5xl mx-auto">
 
         <div className="mb-6">
           <h2 className="text-2xl font-bold">📊 Your Progress</h2>
           <p className="text-gray-400 mt-1">Track your English learning journey</p>
         </div>
 
-        {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
             { value: '15', label: 'Total Sessions', color: 'text-blue-400' },
@@ -75,7 +56,6 @@ function Progress() {
           ))}
         </div>
 
-        {/* Tabs */}
         <div className="flex gap-2 mb-6">
           {['overview', 'skills', 'history'].map(tab => (
             <button
@@ -147,14 +127,13 @@ function Progress() {
                   </div>
                   <div className="w-full bg-gray-800 rounded-full h-3">
                     <div
-                      className={`bg-gradient-to-r ${skill.color} h-3 rounded-full transition-all`}
+                      className={`bg-gradient-to-r ${skill.color} h-3 rounded-full`}
                       style={{ width: `${skill.score}%` }}
                     ></div>
                   </div>
                 </div>
               ))}
             </div>
-
             <div className="mt-8 bg-purple-900 bg-opacity-30 border border-purple-700 rounded-xl p-4">
               <p className="font-semibold text-purple-300 mb-2">💡 AI Recommendation</p>
               <p className="text-sm text-gray-400">Your pronunciation score is lowest at 60%. Try the <strong className="text-white">Doctor Visit</strong> scenario which focuses on clear speech!</p>
@@ -190,7 +169,7 @@ function Progress() {
         )}
 
       </div>
-    </div>
+    </Layout>
   )
 }
 

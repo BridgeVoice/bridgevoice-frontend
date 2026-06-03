@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import Logo from '../assets/logo'
+import Layout from '../components/Layout'
 
 function Profile() {
   const navigate = useNavigate()
@@ -19,12 +19,6 @@ function Profile() {
       .catch(err => console.log(err))
   }, [])
 
-  const handleLogout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('email')
-    navigate('/')
-  }
-
   if (!user) return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center">
       <div className="flex gap-2">
@@ -36,28 +30,14 @@ function Profile() {
   )
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
+    <Layout>
+      <div className="max-w-3xl mx-auto">
 
-      <nav className="bg-gray-900 border-b border-gray-800 px-6 py-4 flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <Logo size={18} />
-          <h1 className="text-lg font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">BridgeVoice</h1>
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold">👤 Profile</h2>
+          <p className="text-gray-400 mt-1">Your personal information and achievements</p>
         </div>
-        <div className="flex items-center gap-4">
-          <Link to="/dashboard" className="text-gray-400 hover:text-white transition text-sm">Dashboard</Link>
-          <Link to="/settings" className="text-gray-400 hover:text-white transition text-sm">Settings</Link>
-          <button
-            onClick={handleLogout}
-            className="bg-red-900 bg-opacity-50 hover:bg-opacity-80 text-red-400 px-4 py-2 rounded-lg text-sm transition"
-          >
-            Logout
-          </button>
-        </div>
-      </nav>
 
-      <div className="max-w-3xl mx-auto px-6 py-8">
-
-        {/* Profile Header */}
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-8 mb-6">
           <div className="flex items-center gap-6">
             <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-3xl font-bold">
@@ -88,7 +68,6 @@ function Profile() {
           </div>
         </div>
 
-        {/* Stats */}
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-6">
           <h3 className="text-lg font-bold text-gray-200 mb-4">📊 Your Stats</h3>
           <div className="grid grid-cols-3 gap-4">
@@ -105,7 +84,6 @@ function Profile() {
           </div>
         </div>
 
-        {/* Badges */}
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-6">
           <h3 className="text-lg font-bold text-gray-200 mb-4">🏆 Badges</h3>
           <div className="flex gap-3 flex-wrap">
@@ -124,7 +102,6 @@ function Profile() {
           </div>
         </div>
 
-        {/* Quick Links */}
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
           <h3 className="text-lg font-bold text-gray-200 mb-4">⚙️ Quick Links</h3>
           <div className="space-y-3">
@@ -144,18 +121,11 @@ function Profile() {
                 <span className="ml-auto text-gray-600">→</span>
               </Link>
             ))}
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-red-900 hover:border-red-700 hover:bg-red-900 hover:bg-opacity-20 transition text-red-400"
-            >
-              <span>🚪</span>
-              <span className="font-medium">Logout</span>
-            </button>
           </div>
         </div>
 
       </div>
-    </div>
+    </Layout>
   )
 }
 

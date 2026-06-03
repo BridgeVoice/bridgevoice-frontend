@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import Logo from '../assets/logo'
+import { useNavigate } from 'react-router-dom'
+import Layout from '../components/Layout'
 
 function Chat() {
   const navigate = useNavigate()
@@ -96,23 +96,16 @@ function Chat() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white flex flex-col">
+    <Layout>
+      <div className="max-w-3xl mx-auto flex flex-col gap-4">
 
-      {/* Navbar */}
-      <nav className="bg-gray-900 border-b border-gray-800 px-6 py-4 flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <Logo size={18} />
-          <h1 className="text-lg font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">BridgeVoice</h1>
+        <div>
+          <h2 className="text-2xl font-bold">🗣️ AI Conversation</h2>
+          <p className="text-gray-400 mt-1">Practice English with your AI conversation partner</p>
         </div>
-        <Link to="/dashboard" className="text-gray-400 hover:text-white transition text-sm">
-          ← Dashboard
-        </Link>
-      </nav>
-
-      <div className="max-w-3xl mx-auto w-full px-4 py-4 flex-1 flex flex-col">
 
         {/* Scenario Selector */}
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4 mb-4">
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4">
           <p className="text-sm text-gray-400 mb-3 font-medium">Select Scenario:</p>
           <div className="flex gap-2 flex-wrap">
             {['General Conversation', 'Job Interview', 'Grocery Store', 'Doctor Visit', 'Bank Visit', 'Workplace Chat'].map(s => (
@@ -132,10 +125,8 @@ function Chat() {
         </div>
 
         {/* Chat Window */}
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl flex-1 flex flex-col" style={{ minHeight: '400px' }}>
-
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ maxHeight: '500px' }}>
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl flex flex-col" style={{ minHeight: '400px' }}>
+          <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ maxHeight: '450px' }}>
             {messages.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-xs md:max-w-md px-4 py-3 rounded-2xl text-sm leading-relaxed ${
@@ -165,7 +156,6 @@ function Chat() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Input */}
           <div className="border-t border-gray-800 p-4">
             <div className="flex gap-2 items-center">
               <button
@@ -204,7 +194,7 @@ function Chat() {
         </div>
 
         {/* Quick Phrases */}
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4 mt-4">
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4">
           <p className="text-sm font-semibold text-gray-400 mb-2">💡 Quick Phrases:</p>
           <div className="flex gap-2 flex-wrap">
             {['Hello, nice to meet you!', 'Could you repeat that?', "I don't understand", 'Can you speak slower?'].map(phrase => (
@@ -220,7 +210,7 @@ function Chat() {
         </div>
 
       </div>
-    </div>
+    </Layout>
   )
 }
 
