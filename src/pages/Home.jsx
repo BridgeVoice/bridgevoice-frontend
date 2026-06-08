@@ -1,8 +1,15 @@
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Logo from '../assets/logo'
 
 function Home() {
   const navigate = useNavigate()
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      navigate('/dashboard')
+    }
+  }, [navigate])
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">

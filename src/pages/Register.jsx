@@ -27,6 +27,7 @@ function Register() {
     }
 
     setLoading(true)
+
     try {
       const response = await fetch('http://127.0.0.1:8000/api/users/register', {
         method: 'POST',
@@ -37,16 +38,35 @@ function Register() {
           password: formData.password
         })
       })
+
       const data = await response.json()
+
       if (response.ok) {
-        localStorage.setItem('email', formData.email)
-        navigate('/onboarding')
+        const loginResponse = await fetch('http://127.0.0.1:8000/api/users/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password
+          })
+        })
+
+        const loginData = await loginResponse.json()
+
+        if (loginResponse.ok) {
+          localStorage.setItem('token', loginData.access_token)
+          localStorage.setItem('email', formData.email)
+          navigate('/onboarding')
+        } else {
+          setError('Account created, but auto-login failed. Please login manually.')
+        }
       } else {
         setError(data.detail || 'Registration failed')
       }
     } catch (err) {
       setError('Cannot connect to server. Make sure backend is running.')
     }
+
     setLoading(false)
   }
 
