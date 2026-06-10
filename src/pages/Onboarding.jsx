@@ -5,6 +5,9 @@ import Logo from '../assets/logo'
 function Onboarding() {
   const navigate = useNavigate()
   const [step, setStep] = useState(1)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+
   const [formData, setFormData] = useState({
     language_background: [],
     proficiency_level: '',
@@ -16,9 +19,45 @@ function Onboarding() {
     setFormData({ ...formData, [field]: value })
   }
 
-  const handleFinish = () => {
-    navigate('/dashboard')
+  const handleFinish = async () => {
+  setError('')
+  setLoading(true)
+
+  const email = localStorage.getItem('email')
+
+  if (!email) {
+    setError('User email not found. Please log in again.')
+    setLoading(false)
+    return
   }
+
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/users/onboarding', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        language_background: formData.language_background.join(', '),
+        proficiency_level: formData.proficiency_level,
+        goals: formData.goals,
+        daily_goal: formData.daily_goal
+      })
+    })
+
+    const data = await response.json()
+
+    if (response.ok) {
+      navigate('/dashboard')
+    } else {
+      setError(data.detail || 'Could not save onboarding details.')
+    }
+  } catch (err) {
+    setError('Cannot connect to server. Make sure backend is running.')
+  }
+
+  setLoading(false)
+}
+
 
   const steps = [
     { number: 1, title: 'Native Language' },
@@ -60,6 +99,12 @@ function Onboarding() {
         </div>
 
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-8">
+        {error && (
+  <div className="bg-red-900 bg-opacity-50 border border-red-700 text-red-300 px-4 py-3 rounded-xl mb-6 text-sm">
+    {error}
+  </div>
+)}
+
 
           {step === 1 && (
             <div>
@@ -218,10 +263,10 @@ function Onboarding() {
             ) : (
               <button
                 onClick={handleFinish}
-                disabled={!formData.daily_goal}
+                disabled={!formData.daily_goal || loading}
                 className="px-6 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-medium transition disabled:opacity-50"
               >
-                Let's Go! 🚀
+               {loading ? 'Saving...' : "Let's Go! 🚀"}
               </button>
             )}
           </div>
