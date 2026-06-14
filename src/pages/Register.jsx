@@ -4,14 +4,18 @@ import Logo from '../assets/logo'
 
 function Register() {
   const navigate = useNavigate()
+
   const [formData, setFormData] = useState({
     full_name: '',
     email: '',
     password: '',
     confirmPassword: ''
   })
+
   const [error, setError] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
   const [loading, setLoading] = useState(false)
+  const [registrationComplete, setRegistrationComplete] = useState(false)
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -20,6 +24,7 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    setSuccessMessage('')
 
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match')
@@ -42,6 +47,12 @@ function Register() {
       const data = await response.json()
 
       if (response.ok) {
+        if (data.email_sent) {
+          setSuccessMessage('Account created successfully! A welcome email has been sent.')
+        } else {
+          setSuccessMessage('Account created successfully, but the welcome email could not be sent.')
+        }
+
         const loginResponse = await fetch('http://127.0.0.1:8000/api/users/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -56,7 +67,7 @@ function Register() {
         if (loginResponse.ok) {
           localStorage.setItem('token', loginData.access_token)
           localStorage.setItem('email', formData.email)
-          navigate('/onboarding')
+          setRegistrationComplete(true)
         } else {
           setError('Account created, but auto-login failed. Please login manually.')
         }
@@ -72,7 +83,6 @@ function Register() {
 
   return (
     <div className="min-h-screen bg-gray-950 text-white flex">
-
       {/* Left Side — Branding */}
       <div className="hidden md:flex flex-col justify-center items-center w-1/2 bg-gray-900 border-r border-gray-800 px-12">
         <Logo size={40} />
@@ -91,7 +101,9 @@ function Register() {
             { number: '100%', label: 'Free' },
           ].map((stat, i) => (
             <div key={i} className="bg-gray-800 rounded-xl p-4 text-center">
-              <p className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">{stat.number}</p>
+              <p className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+                {stat.number}
+              </p>
               <p className="text-gray-400 text-xs mt-1">{stat.label}</p>
             </div>
           ))}
@@ -101,7 +113,6 @@ function Register() {
       {/* Right Side — Register Form */}
       <div className="flex flex-col justify-center items-center w-full md:w-1/2 px-8">
         <div className="w-full max-w-md">
-
           <div className="md:hidden flex justify-center mb-8">
             <Logo size={24} />
           </div>
@@ -115,78 +126,95 @@ function Register() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Full Name</label>
-              <input
-                type="text"
-                name="full_name"
-                value={formData.full_name}
-                onChange={handleChange}
-                required
-                placeholder="John Doe"
-                className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 transition"
-              />
+          {successMessage && (
+            <div className="bg-green-900 bg-opacity-50 border border-green-700 text-green-300 px-4 py-3 rounded-xl mb-6 text-sm">
+              {successMessage}
             </div>
+          )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                placeholder="john@example.com"
-                className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 transition"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Password</label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                placeholder="Min 8 characters"
-                className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 transition"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Confirm Password</label>
-              <input
-                type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                required
-                placeholder="Repeat your password"
-                className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 transition"
-              />
-            </div>
-
+          {registrationComplete && (
             <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white py-3 rounded-xl font-bold text-lg transition disabled:opacity-50 shadow-lg shadow-purple-900"
+              onClick={() => navigate('/onboarding')}
+              className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-500 hover:to-blue-500 text-white py-3 rounded-xl font-bold text-lg transition mb-5"
             >
-              {loading ? 'Creating Account...' : 'Create Account 🚀'}
+              Continue to Onboarding →
             </button>
-          </form>
+          )}
 
-          <p className="text-center text-gray-500 text-sm mt-6">
-            Already have an account?{' '}
-            <Link to="/login" className="text-purple-400 hover:text-purple-300 font-medium">
-              Login here
-            </Link>
-          </p>
+          {!registrationComplete && (
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-2">Full Name</label>
+                <input
+                  type="text"
+                  name="full_name"
+                  value={formData.full_name}
+                  onChange={handleChange}
+                  required
+                  placeholder="John Doe"
+                  className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 transition"
+                />
+              </div>
 
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-2">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  placeholder="john@example.com"
+                  className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 transition"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-2">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  placeholder="Min 8 characters"
+                  className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 transition"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-2">Confirm Password</label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  required
+                  placeholder="Repeat your password"
+                  className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 transition"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white py-3 rounded-xl font-bold text-lg transition disabled:opacity-50 shadow-lg shadow-purple-900"
+              >
+                {loading ? 'Creating Account...' : 'Create Account 🚀'}
+              </button>
+            </form>
+          )}
+
+          {!registrationComplete && (
+            <p className="text-center text-gray-500 text-sm mt-6">
+              Already have an account?{' '}
+              <Link to="/login" className="text-purple-400 hover:text-purple-300 font-medium">
+                Login here
+              </Link>
+            </p>
+          )}
         </div>
       </div>
-
     </div>
   )
 }
