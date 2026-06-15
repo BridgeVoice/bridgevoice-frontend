@@ -6,6 +6,9 @@ function Phrases() {
   const [expandedPhrase, setExpandedPhrase] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
 
+  const [aiPhrases, setAiPhrases] = useState([])
+  const [loading, setLoading] = useState(false)
+
   const categories = [
     { id: 'workplace', icon: '🏢', title: 'Workplace' },
     { id: 'social', icon: '🤝', title: 'Social' },
@@ -80,13 +83,42 @@ function Phrases() {
     tip: 'Use this in job interviews to show you are ready to start immediately!'
   }
 
+  const currentPhrases = aiPhrases.length > 0 ? aiPhrases : phrases[activeCategory]
+
   const allPhrases = Object.values(phrases).flat()
+
   const filteredPhrases = searchTerm
-    ? allPhrases.filter(p =>
+    ? currentPhrases.filter(p =>
         p.phrase.toLowerCase().includes(searchTerm.toLowerCase()) ||
         p.meaning.toLowerCase().includes(searchTerm.toLowerCase())
       )
-    : phrases[activeCategory]
+    : currentPhrases
+
+  const fetchAiPhrases = async (category) => {
+  setLoading(true)
+  setExpandedPhrase(null)
+  setAiPhrases([])
+
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/phrases', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ category })
+    })
+
+    const data = await response.json()
+
+    if (response.ok && data.phrases) {
+      setAiPhrases(data.phrases)
+    } else {
+      setAiPhrases(phrases[category])
+    }
+  } catch (err) {
+    setAiPhrases(phrases[category])
+  }
+
+  setLoading(false)
+ }
 
   const speakPhrase = (text) => {
     if ('speechSynthesis' in window) {
@@ -140,7 +172,10 @@ function Phrases() {
             {categories.map(cat => (
               <button
                 key={cat.id}
-                onClick={() => { setActiveCategory(cat.id); setExpandedPhrase(null) }}
+                onClick={() => { 
+                  setActiveCategory(cat.id); 
+                  fetchAiPhrases(cat.id)
+                }}
                 className={`flex items-center gap-2 px-4 py-2 rounded-xl transition font-medium text-sm ${
                   activeCategory === cat.id
                     ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white'
@@ -154,6 +189,11 @@ function Phrases() {
         )}
 
         <div className="space-y-3">
+          {loading && (
+            <div className="bg-gray-900 border border-purple-700 rounded-xl px-6 py-4 text-purple-300">
+               🤖 Generating AI phrases...
+            </div>
+          )}
           {filteredPhrases.map((item, i) => (
             <div key={i} className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-gray-600 transition">
               <button
