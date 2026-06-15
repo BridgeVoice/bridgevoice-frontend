@@ -1,9 +1,8 @@
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import Logo from '../assets/logo'
+import Layout from '../components/Layout'
 
 function Dictionary() {
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
   const [searchWord, setSearchWord] = useState('')
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -75,23 +74,24 @@ function Dictionary() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
+      <Layout>
+    {/* // <div className="min-h-screen bg-gray-950 text-white"> */}
 
-      <nav className="bg-gray-900 border-b border-gray-800 px-6 py-4 flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <Logo size={18} />
-          <h1 className="text-lg font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">BridgeVoice</h1>
-        </div>
-        <div className="flex items-center gap-4">
-          <Link to="/dashboard" className="text-gray-400 hover:text-white transition text-sm">Dashboard</Link>
-          <button
-            onClick={() => { localStorage.clear(); navigate('/') }}
-            className="bg-red-900 bg-opacity-50 hover:bg-opacity-80 text-red-400 px-4 py-2 rounded-lg text-sm transition"
-          >
-            Logout
-          </button>
-        </div>
-      </nav>
+    {/* //   <nav className="bg-gray-900 border-b border-gray-800 px-6 py-4 flex justify-between items-center">
+    //     <div className="flex items-center gap-2">
+    //       <Logo size={18} />
+    //       <h1 className="text-lg font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">BridgeVoice</h1>
+    //     </div>
+    //     <div className="flex items-center gap-4">
+    //       <Link to="/dashboard" className="text-gray-400 hover:text-white transition text-sm">Dashboard</Link>
+    //       <button
+    //         onClick={() => { localStorage.clear(); navigate('/') }}
+    //         className="bg-red-900 bg-opacity-50 hover:bg-opacity-80 text-red-400 px-4 py-2 rounded-lg text-sm transition"
+    //       >
+    //         Logout
+    //       </button>
+    //     </div>
+    //   </nav> */}
 
       <div className="max-w-4xl mx-auto px-6 py-8">
 
@@ -266,7 +266,8 @@ function Dictionary() {
         )}
 
       </div>
-    </div>
+    </Layout>
+    // {/* // </div> */}
   )
 }
 
