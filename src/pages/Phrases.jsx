@@ -87,12 +87,26 @@ function Phrases() {
 
   const allPhrases = Object.values(phrases).flat()
 
-  const filteredPhrases = searchTerm
-    ? currentPhrases.filter(p =>
-        p.phrase.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.meaning.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : currentPhrases
+const searchWords = searchTerm.toLowerCase().trim()
+
+const matchesSearch = (text) => {
+  if (!text || !searchWords) return false
+
+  return text
+    .toLowerCase()
+    .split(/\s+/)
+    .some(word => word.startsWith(searchWords))
+}
+
+const isSearching = searchWords.length >= 2
+const sourceData =  isSearching ? [...aiPhrases, ...allPhrases] : currentPhrases
+
+const filteredPhrases = sourceData.filter(p => 
+  !isSearching ||
+  matchesSearch(p.phrase) || 
+  matchesSearch(p.meaning) || 
+  matchesSearch(p.example) || 
+  matchesSearch(p.tip))
 
   const fetchAiPhrases = async (category) => {
   setLoading(true)
