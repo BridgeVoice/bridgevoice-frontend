@@ -118,11 +118,23 @@ function CultureGuide() {
               {expandedItem === i && (
                 <div className="px-6 pb-5 border-t border-gray-800">
                   <p className="text-gray-400 leading-relaxed my-4">{item.content}</p>
+
                   <div className="bg-yellow-900 bg-opacity-20 border border-yellow-800 rounded-xl px-4 py-3">
                     <p className="text-sm font-semibold text-yellow-400 mb-1">💡 Pro Tip</p>
                     <p className="text-sm text-gray-400">{item.tip}</p>
+
+                    {item.title === 'OHIP — Free Healthcare' && ( 
+                      <a 
+                        href="https://www.ontario.ca/page/apply-ohip-and-get-health-card" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="inline-block mt-3 text-blue-400 hover:text-blue-300 font-medium"
+                      >
+                        🔗 Apply for OHIP Health Card (ServiceOntario)
+                      </a>
+                    )}
+                    </div>
                   </div>
-                </div>
               )}
             </div>
           ))}
