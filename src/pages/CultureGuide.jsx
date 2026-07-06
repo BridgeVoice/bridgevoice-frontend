@@ -42,21 +42,73 @@ function CultureGuide() {
     ],
     food: [
       { title: 'Poutine', content: 'Canada\'s most famous dish! French fries topped with cheese curds and brown gravy. Originally from Quebec but now found everywhere. A must-try Canadian experience!', tip: 'Try it from a local diner for the authentic experience!' },
-      { title: 'Tim Hortons', content: 'Tim Hortons is more than a coffee shop — it is a Canadian institution! "Double double" means coffee with two creams and two sugars. Timbits are small donut holes.', tip: 'Ordering a "double double" makes you sound like a true Canadian!' },
+      {
+        title: 'Tim Hortons',
+        content: 'Tim Hortons is more than a coffee shop — it is a Canadian institution! "Double double" means coffee with two creams and two sugars. Timbits are small donut holes.',
+        tip: 'Ordering a "double double" makes you sound like a true Canadian!',
+        link: 'https://www.timhortons.ca',
+        linkText: 'Visit Tim Hortons'
+      },
       { title: 'Dining Out Tips', content: 'Tax is not included in menu prices — expect to pay 13% HST on top. Tipping 15-20% is expected. Splitting bills is very common and normal to ask for.', tip: 'Ask "Can we get separate bills?" when dining with friends!' },
       { title: 'Grocery Shopping', content: 'Bring your own reusable bags — stores charge for plastic bags. Most stores are open 7 days a week. Farmers markets are popular on weekends for fresh local produce.', tip: 'Keep reusable bags by your door so you never forget them!' },
     ],
     transport: [
-      { title: 'Public Transit', content: 'Most cities have buses and subways. Buy a monthly pass to save money. Always give up your seat to elderly, pregnant or disabled passengers.', tip: 'Get a transit app like Transit App to track buses in real time!' },
-      { title: 'Driving in Canada', content: 'Drive on the right side of the road. Speed limits are in km/h. Right turn on red is allowed in most provinces except Quebec. Winter tires are mandatory in some provinces.', tip: 'Get your G1 license as soon as possible if you plan to drive!' },
+      {
+        title: 'Public Transit',
+        content: 'Most cities have buses and subways. Buy a monthly pass to save money. Always give up your seat to elderly, pregnant or disabled passengers.',
+        tip: 'Get a transit app like Transit App to track buses in real time!',
+        link: 'https://www.ontario.ca/page/building-ontario-transit',
+        linkText: 'Ontario Public Transit Information'
+      },
+      {
+        title: 'Driving in Canada',
+        content: 'Drive on the right side of the road. Speed limits are in km/h. Right turn on red is allowed in most provinces except Quebec. Winter tires are mandatory in some provinces.',
+        tip: 'Get your G1 license as soon as possible if you plan to drive!',
+        link: 'https://www.ontario.ca/page/get-g-drivers-licence-new-drivers',
+        linkText: 'Ontario Driver Licence Information'
+      },
       { title: 'Winter Driving', content: 'Canadian winters are serious. Roads get very icy and snowy. Give extra space between cars. Drive slowly.', tip: 'Take a winter driving course — it could save your life!' },
-      { title: 'Uber and Lyft', content: 'Uber and Lyft are widely available in Canadian cities. They are safe and reliable. Always check the driver\'s rating and confirm the car model before getting in.', tip: 'Share your trip details with someone when travelling alone at night!' },
+      {
+        title: 'Uber and Lyft',
+        content: 'Uber and Lyft are widely available in Canadian cities. They are safe and reliable. Always check the driver\'s rating and confirm the car model before getting in.',
+        tip: 'Share your trip details with someone when travelling alone at night!',
+        links: [
+          {
+            url: 'https://www.uber.com/ca/en/',
+            text: 'Uber Canada'
+          },
+          {
+            url: 'https://www.lyft.com',
+            text: 'Lyft'
+          }
+        ]
+      },
     ],
     healthcare: [
       { title: 'OHIP — Free Healthcare', content: 'Ontario Health Insurance Plan (OHIP) gives you free doctor visits and hospital care. Apply for your health card as soon as you arrive. Takes about 3 months to activate.', tip: 'Apply for your health card on your first week in Ontario!' },
-      { title: 'Finding a Family Doctor', content: 'Having a family doctor (GP) is very important. Use Health Care Connect to find one. Walk-in clinics are available if you don\'t have a doctor yet.', tip: 'Register with Health Care Connect at ontario.ca' },
+      {
+        title: 'Finding a Family Doctor',
+        content: 'Having a family doctor (GP) is very important. Use Health Care Connect to find one. Walk-in clinics are available if you don\'t have a doctor yet.',
+        tip: 'Register with Health Care Connect at ontario.ca',
+        link: 'https://www.ontario.ca/page/find-family-doctor-or-nurse-practitioner',
+        linkText: 'Find a Family Doctor (Health Care Connect)'
+      },
       { title: 'Calling 911', content: 'Call 911 for police, fire or medical emergencies only. For non-emergencies call your local police non-emergency line. Calling 911 for non-emergencies can result in a fine.', tip: 'Save your local non-emergency police number in your phone!' },
-      { title: 'Pharmacy', content: 'Pharmacists in Canada are very helpful. You can ask them questions about medications for free. Many common medications require a prescription from a doctor.', tip: 'Shoppers Drug Mart and Rexall are common pharmacy chains!' },
+      {
+        title: 'Pharmacy',
+        content: 'Pharmacists in Canada are very helpful. You can ask them questions about medications for free. Many common medications require a prescription from a doctor.',
+        tip: 'Shoppers Drug Mart and Rexall are common pharmacy chains!',
+        links: [
+          {
+            url: 'https://www.shoppersdrugmart.ca',
+            text: 'Visit Shoppers Drug Mart'
+          },
+          {
+            url: 'https://www.rexall.ca',
+            text: 'Visit Rexall Pharmacy'
+          }
+        ]
+      },
     ],
     education: [
       { title: 'School System', content: 'School is free from Kindergarten to Grade 12. Children must attend school until age 16. School year runs September to June.', tip: 'Register your children for school as soon as you arrive!' },
@@ -65,7 +117,33 @@ function CultureGuide() {
       { title: 'Canadian Credential Recognition', content: 'Your foreign degree may need to be assessed. Use World Education Services (WES) to get your credentials evaluated.', tip: 'Get your WES assessment done early — it takes several weeks!' },
     ],
     banking: [
-      { title: 'Opening a Bank Account', content: 'You need a bank account to receive salary, pay rent and bills. Bring your passport and proof of address. Major banks: TD, RBC, Scotiabank, BMO, CIBC. Most offer newcomer packages.', tip: 'TD and RBC have excellent newcomer banking packages!' },
+      {
+        title: 'Opening a Bank Account',
+        content: 'You need a bank account to receive salary, pay rent and bills. Bring your passport and proof of address. Major banks: TD, RBC, Scotiabank, BMO, CIBC. Most offer newcomer packages.',
+        tip: 'TD and RBC have excellent newcomer banking packages!',
+        links: [
+          {
+            url: 'https://www.td.com/ca/en/personal-banking',
+            text: 'TD Bank'
+          },
+          {
+            url: 'https://www.rbcroyalbank.com',
+            text: 'RBC'
+          },
+          {
+            url: 'https://www.scotiabank.com/ca/en/personal.html',
+            text: 'Scotiabank'
+          },
+          {
+            url: 'https://www.bmo.com',
+            text: 'BMO'
+          },
+          {
+            url: 'https://www.cibc.com',
+            text: 'CIBC'
+          }
+        ]
+      },
       { title: 'Building Credit Score', content: 'Your credit score is very important in Canada for renting, loans and phones. Start building credit by getting a secured credit card. Always pay your full balance on time.', tip: 'Never miss a credit card payment — it seriously damages your score!' },
       { title: 'E-Transfer', content: 'Interac e-Transfer is the most common way to send money between Canadian bank accounts. It is instant, free and very safe. Used for splitting bills, paying rent etc.', tip: 'Set up e-Transfer autodeposit so money goes straight to your account!' },
       { title: 'Taxes in Canada', content: 'Everyone must file taxes by April 30th every year. Use free tax software like SimpleTax or visit a free tax clinic. You may get money back called a tax refund!', tip: 'File your taxes even if you earned very little — you may get money back!' },
@@ -92,11 +170,10 @@ function CultureGuide() {
             <button
               key={cat.id}
               onClick={() => { setActiveCategory(cat.id); setExpandedItem(null) }}
-              className={`flex flex-col items-center gap-1 p-3 rounded-xl transition ${
-                activeCategory === cat.id
-                  ? 'bg-gradient-to-br from-purple-600 to-blue-600 text-white'
-                  : 'bg-gray-900 border border-gray-800 text-gray-400 hover:text-white hover:border-gray-600'
-              }`}
+              className={`flex flex-col items-center gap-1 p-3 rounded-xl transition ${activeCategory === cat.id
+                ? 'bg-gradient-to-br from-purple-600 to-blue-600 text-white'
+                : 'bg-gray-900 border border-gray-800 text-gray-400 hover:text-white hover:border-gray-600'
+                }`}
             >
               <span className="text-2xl">{cat.icon}</span>
               <span className="text-xs font-medium">{cat.title}</span>
@@ -123,18 +200,40 @@ function CultureGuide() {
                     <p className="text-sm font-semibold text-yellow-400 mb-1">💡 Pro Tip</p>
                     <p className="text-sm text-gray-400">{item.tip}</p>
 
-                    {item.title === 'OHIP — Free Healthcare' && ( 
-                      <a 
-                        href="https://www.ontario.ca/page/apply-ohip-and-get-health-card" 
-                        target="_blank" 
+                    {item.link && (
+                      <a
+                        href={item.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block mt-3 text-blue-400 hover:text-blue-300 font-medium"
+                      >
+                        🔗 {item.linkText}
+                      </a>
+                    )}
+                    {item.links && item.links.map((link, index) => (
+                      <a
+                        key={index}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block mt-3 text-blue-400 hover:text-blue-300 font-medium"
+                      >
+                        🔗 {link.text}
+                      </a>
+                    ))}
+
+                    {item.title === 'OHIP — Free Healthcare' && (
+                      <a
+                        href="https://www.ontario.ca/page/apply-ohip-and-get-health-card"
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="inline-block mt-3 text-blue-400 hover:text-blue-300 font-medium"
                       >
                         🔗 Apply for OHIP Health Card (ServiceOntario)
                       </a>
                     )}
-                    </div>
                   </div>
+                </div>
               )}
             </div>
           ))}
