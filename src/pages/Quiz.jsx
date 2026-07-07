@@ -9,6 +9,7 @@ function Quiz() {
   const [showAnswer, setShowAnswer] = useState(false)
   const [quizQuestions, setQuizQuestions] = useState([])
   const [activeLevel, setActiveLevel] = useState(1)
+  const email = localStorage.getItem('email')
   const [completedLevels, setCompletedLevels] = useState(
     JSON.parse(localStorage.getItem('quizLevels') || '{}')
   )
@@ -149,7 +150,7 @@ function Quiz() {
     }
   }
 
-  const nextQuestion = () => {
+  const nextQuestion = async () => {
     setSelected(null)
     setShowAnswer(false)
     if (currentQ + 1 < quizQuestions.length) {
@@ -160,6 +161,21 @@ function Quiz() {
       const updated = { ...completedLevels, [activeLevel]: { score: finalScore, passed } }
       setCompletedLevels(updated)
       localStorage.setItem('quizLevels', JSON.stringify(updated))
+
+      try {
+        await fetch('http://127.0.0.1:8000/api/users/complete-activity', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: email,
+            xp_earned: 20,
+          }),
+        })
+      } catch (error) {
+        console.error('Error updating XP:', error)
+      }
       setStage('result')
     }
   }
@@ -268,15 +284,14 @@ function Quiz() {
                 <button
                   key={i}
                   onClick={() => handleAnswer(option)}
-                  className={`w-full text-left px-5 py-4 rounded-xl border-2 transition font-medium ${
-                    !showAnswer
+                  className={`w-full text-left px-5 py-4 rounded-xl border-2 transition font-medium ${!showAnswer
                       ? 'border-gray-700 bg-gray-900 hover:border-gray-500 text-gray-200'
                       : option === quizQuestions[currentQ].correct
-                      ? 'border-green-500 bg-green-900 bg-opacity-30 text-green-300'
-                      : option === selected
-                      ? 'border-red-500 bg-red-900 bg-opacity-30 text-red-300'
-                      : 'border-gray-800 bg-gray-900 text-gray-500'
-                  }`}
+                        ? 'border-green-500 bg-green-900 bg-opacity-30 text-green-300'
+                        : option === selected
+                          ? 'border-red-500 bg-red-900 bg-opacity-30 text-red-300'
+                          : 'border-gray-800 bg-gray-900 text-gray-500'
+                    }`}
                 >
                   {option}
                   {showAnswer && option === quizQuestions[currentQ].correct && ' ✅'}
@@ -302,10 +317,9 @@ function Quiz() {
               {finalScore >= 8 ? '🏆' : finalScore >= 5 ? '🌟' : '💪'}
             </p>
             <h2 className="text-2xl font-bold mb-2">Level {activeLevel} Complete!</h2>
-            <div className={`text-6xl font-bold my-4 ${
-              finalScore >= 8 ? 'text-green-400' :
-              finalScore >= 5 ? 'text-orange-400' : 'text-red-400'
-            }`}>
+            <div className={`text-6xl font-bold my-4 ${finalScore >= 8 ? 'text-green-400' :
+                finalScore >= 5 ? 'text-orange-400' : 'text-red-400'
+              }`}>
               {finalScore}/10
             </div>
 

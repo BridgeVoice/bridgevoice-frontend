@@ -44,9 +44,9 @@ function Dashboard() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
             { label: 'Day Streak', value: '🔥 7', color: 'text-orange-400' },
-            { label: 'Total XP', value: '340', color: 'text-purple-400' },
-            { label: 'Sessions Done', value: '12', color: 'text-blue-400' },
-            { label: 'Current Level', value: 'Intermediate', color: 'text-green-400' },
+            { label: 'Total XP', value: user?.total_xp ?? 0, color: 'text-purple-400' },
+            { label: 'Sessions Done', value: user?.sessions_completed ?? 0, color: 'text-blue-400' },
+            { label: 'Current Level', value: user?.proficiency_level || 'Beginner', color: 'text-green-400' },
           ].map((stat, i) => (
             <div key={i} className="bg-gray-900 border border-gray-800 rounded-2xl p-4 text-center hover:border-gray-600 transition">
               <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
