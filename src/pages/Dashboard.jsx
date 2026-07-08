@@ -9,13 +9,19 @@ function Dashboard() {
   useEffect(() => {
     const email = localStorage.getItem('email')
     const token = localStorage.getItem('token')
+
+    console.log('Dashboard email:', email)
+
     if (!token) {
       navigate('/login')
       return
     }
     fetch(`http://127.0.0.1:8000/api/users/profile?email=${email}`)
       .then(res => res.json())
-      .then(data => setUser(data))
+      .then(data => {
+        console.log('Dashboard user data:', data)
+        setUser(data)
+      })
       .catch(err => console.log(err))
   }, [])
 
@@ -27,6 +33,23 @@ function Dashboard() {
     { title: 'Workplace Chat', icon: '🏢', desc: 'Professional office talk', color: 'from-green-600 to-green-800' },
     { title: 'Making Friends', icon: '🤝', desc: 'Casual social conversations', color: 'from-pink-600 to-pink-800' },
   ]
+
+  const goalMap = {
+    '5 minutes': 1,
+    '10 minutes': 2,
+    '20 minutes': 3,
+    '30+ minutes': 5,
+  }
+
+  const goalSessions = goalMap[user?.daily_goal] || 1
+  const completedSessions = user?.sessions_completed || 0
+
+  const progressPercentage = Math.min(
+    Math.round((completedSessions / goalSessions) * 100),
+    100
+  )
+
+  const remainingSessions = Math.max(goalSessions - completedSessions, 0)
 
   return (
     <Layout>
@@ -59,12 +82,21 @@ function Dashboard() {
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-8">
           <div className="flex justify-between items-center mb-3">
             <p className="font-semibold text-gray-300">Daily Goal Progress</p>
-            <p className="text-sm text-purple-400 font-medium">1/3 sessions</p>
+            <p className="text-sm text-purple-400 font-medium">
+              {Math.min(completedSessions, goalSessions)}/{goalSessions} sessions
+            </p>
           </div>
           <div className="w-full bg-gray-800 rounded-full h-3">
-            <div className="bg-gradient-to-r from-purple-600 to-blue-600 h-3 rounded-full" style={{ width: '33%' }}></div>
+            <div
+              className="bg-gradient-to-r from-purple-600 to-blue-600 h-3 rounded-full"
+              style={{ width: `${progressPercentage}%` }}>
+            </div>
           </div>
-          <p className="text-sm text-gray-500 mt-2">Complete 2 more sessions to reach your daily goal!</p>
+          <p className="text-sm text-gray-500 mt-2">
+            {remainingSessions > 0
+              ? `Complete ${remainingSessions} more session${remainingSessions > 1 ? 's' : ''} to reach your daily goal!`
+              : '🎉 Daily goal completed!'}
+          </p>
         </div>
 
         {/* Quick Actions */}
