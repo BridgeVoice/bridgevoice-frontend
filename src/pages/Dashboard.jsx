@@ -2,9 +2,12 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Layout from '../components/Layout'
 
+
 function Dashboard() {
   const navigate = useNavigate()
   const [user, setUser] = useState(null)
+  const [recentSessions, setRecentSessions] = useState([])
+  const [todaySessions, setTodaySessions] = useState(0)
 
   useEffect(() => {
     const email = localStorage.getItem('email')
@@ -23,6 +26,23 @@ function Dashboard() {
         setUser(data)
       })
       .catch(err => console.log(err))
+
+    fetch(`http://127.0.0.1:8000/api/users/session-history/${email}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log('Session history:', data)
+        setRecentSessions(data)
+      })
+      .catch(err => console.log(err))
+
+    fetch(`http://127.0.0.1:8000/api/users/today-sessions/${email}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log('Today sessions:', data)
+        setTodaySessions(data.today_sessions)
+      })
+      .catch(err => console.log(err))
+
   }, [])
 
   const scenarios = [
@@ -42,7 +62,7 @@ function Dashboard() {
   }
 
   const goalSessions = goalMap[user?.daily_goal] || 1
-  const completedSessions = user?.sessions_completed || 0
+  const completedSessions = todaySessions
 
   const progressPercentage = Math.min(
     Math.round((completedSessions / goalSessions) * 100),
@@ -157,17 +177,19 @@ function Dashboard() {
           <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
             <h3 className="font-bold text-gray-200 mb-4">📅 Recent Sessions</h3>
             <div className="space-y-3">
-              {[
-                { scenario: 'Job Interview', date: 'Today', score: '85%' },
-                { scenario: 'Grocery Store', date: 'Yesterday', score: '92%' },
-                { scenario: 'Doctor Visit', date: '2 days ago', score: '78%' },
-              ].map((session, i) => (
+              {recentSessions.map((session, i) => (
                 <div key={i} className="flex justify-between items-center py-2 border-b border-gray-800">
                   <div>
-                    <p className="font-medium text-gray-300 text-sm">{session.scenario}</p>
-                    <p className="text-xs text-gray-500">{session.date}</p>
+                    <p className="font-medium text-gray-300 text-sm">{session.activity_name}</p>
+                    <p className="text-xs text-gray-500">
+                      {new Date(session.created_at).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}
+                    </p>
                   </div>
-                  <span className="text-green-400 font-semibold text-sm">{session.score}</span>
+                  <span className="text-green-400 font-semibold text-sm">{session.score}%</span>
                 </div>
               ))}
             </div>
