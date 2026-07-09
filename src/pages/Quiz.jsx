@@ -156,7 +156,8 @@ function Quiz() {
     if (currentQ + 1 < quizQuestions.length) {
       setCurrentQ(prev => prev + 1)
     } else {
-      const finalScore = score + (selected === quizQuestions[currentQ].correct ? 1 : 0)
+      
+      const finalScore = score
       const passed = finalScore >= 8
       const updated = { ...completedLevels, [activeLevel]: { score: finalScore, passed } }
       setCompletedLevels(updated)
@@ -170,6 +171,18 @@ function Quiz() {
           },
           body: JSON.stringify({
             email: email,
+            xp_earned: 20,
+          }),
+        })
+        await fetch('http://127.0.0.1:8000/api/users/session-history', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: email,
+            activity_name: `Quiz Level ${activeLevel}`,
+            score: finalScore * 10,
             xp_earned: 20,
           }),
         })
@@ -285,12 +298,12 @@ function Quiz() {
                   key={i}
                   onClick={() => handleAnswer(option)}
                   className={`w-full text-left px-5 py-4 rounded-xl border-2 transition font-medium ${!showAnswer
-                      ? 'border-gray-700 bg-gray-900 hover:border-gray-500 text-gray-200'
-                      : option === quizQuestions[currentQ].correct
-                        ? 'border-green-500 bg-green-900 bg-opacity-30 text-green-300'
-                        : option === selected
-                          ? 'border-red-500 bg-red-900 bg-opacity-30 text-red-300'
-                          : 'border-gray-800 bg-gray-900 text-gray-500'
+                    ? 'border-gray-700 bg-gray-900 hover:border-gray-500 text-gray-200'
+                    : option === quizQuestions[currentQ].correct
+                      ? 'border-green-500 bg-green-900 bg-opacity-30 text-green-300'
+                      : option === selected
+                        ? 'border-red-500 bg-red-900 bg-opacity-30 text-red-300'
+                        : 'border-gray-800 bg-gray-900 text-gray-500'
                     }`}
                 >
                   {option}
@@ -318,7 +331,7 @@ function Quiz() {
             </p>
             <h2 className="text-2xl font-bold mb-2">Level {activeLevel} Complete!</h2>
             <div className={`text-6xl font-bold my-4 ${finalScore >= 8 ? 'text-green-400' :
-                finalScore >= 5 ? 'text-orange-400' : 'text-red-400'
+              finalScore >= 5 ? 'text-orange-400' : 'text-red-400'
               }`}>
               {finalScore}/10
             </div>
