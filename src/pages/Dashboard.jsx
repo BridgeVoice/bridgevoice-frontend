@@ -87,7 +87,7 @@ function Dashboard() {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
-            { label: 'Day Streak', value: '🔥 7', color: 'text-orange-400' },
+            { label: 'Day Streak', value: `🔥 ${user?.day_streak ?? 0}`, color: 'text-orange-400' },
             { label: 'Total XP', value: user?.total_xp ?? 0, color: 'text-purple-400' },
             { label: 'Sessions Done', value: user?.sessions_completed ?? 0, color: 'text-blue-400' },
             { label: 'Current Level', value: user?.proficiency_level || 'Beginner', color: 'text-green-400' },
