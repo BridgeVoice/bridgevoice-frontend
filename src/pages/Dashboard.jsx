@@ -158,30 +158,85 @@ function Dashboard() {
         </div>
 
         {/* Bottom Grid */}
+        {/* Bottom Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          {/* Shows earned badges and the user's progress toward locked badges */}
           <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
-            <h3 className="font-bold text-gray-200 mb-4">🏆 Badges Earned</h3>
+            <h3 className="font-bold text-gray-200 mb-4">🏆 Badges & Progress</h3>
+
             <div className="flex gap-3 flex-wrap">
               {[
-                { badge: '🌟', name: 'First Session' },
-                { badge: '🔥', name: '7 Day Streak' },
-                { badge: '💬', name: '10 Chats' },
+                {
+                  badge: '🌟',
+                  name: 'First Session',
+
+                  // Earns this badge after completing at least one session
+                  earned: (user?.sessions_completed ?? 0) >= 1,
+
+                  // Shows progress before the badge is earned
+                  progress: `${Math.min(user?.sessions_completed ?? 0, 1)}/1 completed`
+                },
+                {
+                  badge: '🔥',
+                  name: '7 Day Streak',
+
+                  // Earns this badge after practising for 7 consecutive days
+                  earned: (user?.day_streak ?? 0) >= 7,
+
+                  // Shows the user's current real streak
+                  progress: `${Math.min(user?.day_streak ?? 0, 7)}/7 days`
+                },
+                {
+                  badge: '💬',
+                  name: 'Session Milestone',
+
+                  // Earns this badge after completing 10 total sessions
+                  earned: (user?.sessions_completed ?? 0) >= 10,
+
+                  // Shows progress toward the 10-session milestone
+                  progress: `${Math.min(user?.sessions_completed ?? 0, 10)}/10 completed`
+                },
               ].map((item, i) => (
-                <div key={i} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-center">
+                <div
+                  key={i}
+                  className={`border rounded-xl px-3 py-2 text-center ${item.earned
+                      ? 'bg-gray-800 border-gray-700'
+                      : 'bg-gray-900 border-gray-800 opacity-60'
+                    }`}
+                >
                   <p className="text-2xl">{item.badge}</p>
-                  <p className="text-xs text-gray-400 mt-1">{item.name}</p>
+
+                  <p className="text-xs text-gray-400 mt-1">
+                    {item.name}
+                  </p>
+
+                  <p
+                    className={`text-xs mt-1 font-semibold ${item.earned ? 'text-green-400' : 'text-gray-500'
+                      }`}
+                  >
+                    {item.earned ? 'Earned ✓' : item.progress}
+                  </p>
                 </div>
               ))}
             </div>
           </div>
 
+          {/* Shows the user's five most recent completed activities */}
           <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
             <h3 className="font-bold text-gray-200 mb-4">📅 Recent Sessions</h3>
+
             <div className="space-y-3">
               {recentSessions.map((session, i) => (
-                <div key={i} className="flex justify-between items-center py-2 border-b border-gray-800">
+                <div
+                  key={i}
+                  className="flex justify-between items-center py-2 border-b border-gray-800"
+                >
                   <div>
-                    <p className="font-medium text-gray-300 text-sm">{session.activity_name}</p>
+                    <p className="font-medium text-gray-300 text-sm">
+                      {session.activity_name}
+                    </p>
+
                     <p className="text-xs text-gray-500">
                       {new Date(session.created_at).toLocaleDateString('en-US', {
                         month: 'short',
@@ -190,15 +245,19 @@ function Dashboard() {
                       })}
                     </p>
                   </div>
-                  <span className="text-green-400 font-semibold text-sm">{session.score}%</span>
+
+                  <span className="text-green-400 font-semibold text-sm">
+                    {session.score}%
+                  </span>
                 </div>
               ))}
             </div>
           </div>
+
         </div>
 
       </div>
-    </Layout>
+    </Layout >
   )
 }
 
