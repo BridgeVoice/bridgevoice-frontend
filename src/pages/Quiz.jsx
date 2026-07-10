@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Layout from '../components/Layout'
 
 function Quiz() {
@@ -15,6 +15,10 @@ function Quiz() {
       localStorage.getItem(`quizLevels_${email}`) || '{}'
     )
   )
+  //Prevents double-clicking an answer from increasing the score multiple times
+  const answerLocked = useRef(false)
+  // Keeps the latest score available immediately, including the final question
+  const scoreRef = useRef(0)
 
   const levels = [
     {
@@ -136,30 +140,45 @@ function Quiz() {
     const withShuffledOptions = picked.map(q => ({ ...q, options: shuffle(q.options) }))
     setQuizQuestions(withShuffledOptions)
     setActiveLevel(levelData.level)
+    // Unlocks answer selection when starting or retrying a quiz
+    answerLocked.current = false
     setStage('quiz')
     setCurrentQ(0)
+    // Resets the stored score when starting or retrying a quiz
+    scoreRef.current = 0
     setScore(0)
     setSelected(null)
     setShowAnswer(false)
   }
 
   const handleAnswer = (option) => {
+    // Prevents multiple clicks on the same question
+    if (answerLocked.current) return
+    answerLocked.current = true
+
     if (showAnswer) return
     setSelected(option)
     setShowAnswer(true)
     if (option === quizQuestions[currentQ].correct) {
-      setScore(prev => prev + 1)
+
+      // Keeps React state and scoreRef synchronized
+      scoreRef.current += 1
+      setScore(scoreRef.current)
+
     }
   }
 
   const nextQuestion = async () => {
+    // Allows answer selection for the next question
+    answerLocked.current = false
     setSelected(null)
     setShowAnswer(false)
     if (currentQ + 1 < quizQuestions.length) {
       setCurrentQ(prev => prev + 1)
     } else {
 
-      const finalScore = score
+      // Uses the latest score, including the final question
+      const finalScore = Math.min(scoreRef.current, quizQuestions.length)
       const passed = finalScore >= 8
       const updated = { ...completedLevels, [activeLevel]: { score: finalScore, passed } }
       setCompletedLevels(updated)
