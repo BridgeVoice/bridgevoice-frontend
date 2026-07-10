@@ -11,7 +11,9 @@ function Quiz() {
   const [activeLevel, setActiveLevel] = useState(1)
   const email = localStorage.getItem('email')
   const [completedLevels, setCompletedLevels] = useState(
-    JSON.parse(localStorage.getItem('quizLevels') || '{}')
+    JSON.parse(
+      localStorage.getItem(`quizLevels_${email}`) || '{}'
+    )
   )
 
   const levels = [
@@ -156,12 +158,15 @@ function Quiz() {
     if (currentQ + 1 < quizQuestions.length) {
       setCurrentQ(prev => prev + 1)
     } else {
-      
+
       const finalScore = score
       const passed = finalScore >= 8
       const updated = { ...completedLevels, [activeLevel]: { score: finalScore, passed } }
       setCompletedLevels(updated)
-      localStorage.setItem('quizLevels', JSON.stringify(updated))
+      localStorage.setItem(
+        `quizLevels_${email}`,
+        JSON.stringify(updated)
+      )
 
       try {
         await fetch('http://127.0.0.1:8000/api/users/complete-activity', {

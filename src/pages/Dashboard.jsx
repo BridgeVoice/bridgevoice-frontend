@@ -70,6 +70,7 @@ function Dashboard() {
   )
 
   const remainingSessions = Math.max(goalSessions - completedSessions, 0)
+  console.log('todaySessions state:', todaySessions)
 
   return (
     <Layout>
