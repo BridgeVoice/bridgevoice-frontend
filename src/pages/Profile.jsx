@@ -72,9 +72,26 @@ function Profile() {
           <h3 className="text-lg font-bold text-gray-200 mb-4">📊 Your Stats</h3>
           <div className="grid grid-cols-3 gap-4">
             {[
-              { value: '12', label: 'Total Sessions', color: 'text-blue-400' },
-              { value: '🔥 7', label: 'Day Streak', color: 'text-orange-400' },
-              { value: '340', label: 'Total XP', color: 'text-purple-400' },
+              // Shows the real total number of completed sessions
+              {
+                value: user?.sessions_completed ?? 0,
+                label: 'Total Sessions',
+                color: 'text-blue-400'
+              },
+
+              // Shows the real consecutive-day streak from the backend
+              {
+                value: `🔥 ${user?.day_streak ?? 0}`,
+                label: 'Day Streak',
+                color: 'text-orange-400'
+              },
+
+              // Shows the real XP earned by the user
+              {
+                value: user?.total_xp ?? 0,
+                label: 'Total XP',
+                color: 'text-purple-400'
+              },
             ].map((stat, i) => (
               <div key={i} className="text-center">
                 <p className={`text-3xl font-bold ${stat.color}`}>{stat.value}</p>
@@ -88,10 +105,50 @@ function Profile() {
           <h3 className="text-lg font-bold text-gray-200 mb-4">🏆 Badges</h3>
           <div className="flex gap-3 flex-wrap">
             {[
-              { badge: '🌟', name: 'First Session', desc: 'Completed first conversation' },
-              { badge: '🔥', name: '7 Day Streak', desc: 'Practiced 7 days in a row' },
-              { badge: '💬', name: '10 Chats', desc: 'Completed 10 conversations' },
-              { badge: '🍁', name: 'Canada Ready', desc: 'Completed culture module' },
+              {
+                badge: '🌟',
+                name: 'First Session',
+
+                // Earned after completing at least one session
+                earned: (user?.sessions_completed ?? 0) >= 1,
+
+                // Shows progress until the badge is earned
+                desc: (user?.sessions_completed ?? 0) >= 1
+                  ? 'Earned ✓'
+                  : `${Math.min(user?.sessions_completed ?? 0, 1)}/1 completed`
+              },
+              {
+                badge: '🔥',
+                name: '7 Day Streak',
+
+                // Earned after practising for 7 consecutive days
+                earned: (user?.day_streak ?? 0) >= 7,
+
+                // Shows the real streak progress
+                desc: (user?.day_streak ?? 0) >= 7
+                  ? 'Earned ✓'
+                  : `${Math.min(user?.day_streak ?? 0, 7)}/7 days`
+              },
+              {
+                badge: '💬',
+                name: 'Session Milestone',
+
+                // Earned after completing 10 total sessions
+                earned: (user?.sessions_completed ?? 0) >= 10,
+
+                // Shows progress toward the 10-session milestone
+                desc: (user?.sessions_completed ?? 0) >= 10
+                  ? 'Earned ✓'
+                  : `${Math.min(user?.sessions_completed ?? 0, 10)}/10 completed`
+              },
+              {
+                badge: '🍁',
+                name: 'Canada Ready',
+
+                // Kept as an available badge until culture-module tracking is added
+                earned: false,
+                desc: 'Complete culture module'
+              },
             ].map((item, i) => (
               <div key={i} className="bg-gray-800 border border-gray-700 rounded-xl p-3 text-center w-28">
                 <p className="text-3xl">{item.badge}</p>

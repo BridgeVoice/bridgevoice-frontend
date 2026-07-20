@@ -112,3 +112,4 @@
   0%,100% { height: 4px;  }
   50%      { height: 16px; }
 }
+@custom-variant dark (&:where(.dark, .dark *));

@@ -2,9 +2,12 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Layout from '../components/Layout'
 
+
 function Dashboard() {
   const navigate = useNavigate()
   const [user, setUser] = useState(null)
+  const [recentSessions, setRecentSessions] = useState([])
+  const [todaySessions, setTodaySessions] = useState(0)
 
   useEffect(() => {
     const email = localStorage.getItem('email')
@@ -23,6 +26,23 @@ function Dashboard() {
         setUser(data)
       })
       .catch(err => console.log(err))
+
+    fetch(`http://127.0.0.1:8000/api/users/session-history/${email}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log('Session history:', data)
+        setRecentSessions(data)
+      })
+      .catch(err => console.log(err))
+
+    fetch(`http://127.0.0.1:8000/api/users/today-sessions/${email}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log('Today sessions:', data)
+        setTodaySessions(data.today_sessions)
+      })
+      .catch(err => console.log(err))
+
   }, [])
 
   const scenarios = [
@@ -42,7 +62,7 @@ function Dashboard() {
   }
 
   const goalSessions = goalMap[user?.daily_goal] || 1
-  const completedSessions = user?.sessions_completed || 0
+  const completedSessions = todaySessions
 
   const progressPercentage = Math.min(
     Math.round((completedSessions / goalSessions) * 100),
@@ -50,6 +70,7 @@ function Dashboard() {
   )
 
   const remainingSessions = Math.max(goalSessions - completedSessions, 0)
+  console.log('todaySessions state:', todaySessions)
 
   return (
     <Layout>
@@ -66,7 +87,7 @@ function Dashboard() {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
-            { label: 'Day Streak', value: '🔥 7', color: 'text-orange-400' },
+            { label: 'Day Streak', value: `🔥 ${user?.day_streak ?? 0}`, color: 'text-orange-400' },
             { label: 'Total XP', value: user?.total_xp ?? 0, color: 'text-purple-400' },
             { label: 'Sessions Done', value: user?.sessions_completed ?? 0, color: 'text-blue-400' },
             { label: 'Current Level', value: user?.proficiency_level || 'Beginner', color: 'text-green-400' },
@@ -137,45 +158,106 @@ function Dashboard() {
         </div>
 
         {/* Bottom Grid */}
+        {/* Bottom Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          {/* Shows earned badges and the user's progress toward locked badges */}
           <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
-            <h3 className="font-bold text-gray-200 mb-4">🏆 Badges Earned</h3>
+            <h3 className="font-bold text-gray-200 mb-4">🏆 Badges & Progress</h3>
+
             <div className="flex gap-3 flex-wrap">
               {[
-                { badge: '🌟', name: 'First Session' },
-                { badge: '🔥', name: '7 Day Streak' },
-                { badge: '💬', name: '10 Chats' },
+                {
+                  badge: '🌟',
+                  name: 'First Session',
+
+                  // Earns this badge after completing at least one session
+                  earned: (user?.sessions_completed ?? 0) >= 1,
+
+                  // Shows progress before the badge is earned
+                  progress: `${Math.min(user?.sessions_completed ?? 0, 1)}/1 completed`
+                },
+                {
+                  badge: '🔥',
+                  name: '7 Day Streak',
+
+                  // Earns this badge after practising for 7 consecutive days
+                  earned: (user?.day_streak ?? 0) >= 7,
+
+                  // Shows the user's current real streak
+                  progress: `${Math.min(user?.day_streak ?? 0, 7)}/7 days`
+                },
+                {
+                  badge: '💬',
+                  name: 'Session Milestone',
+
+                  // Earns this badge after completing 10 total sessions
+                  earned: (user?.sessions_completed ?? 0) >= 10,
+
+                  // Shows progress toward the 10-session milestone
+                  progress: `${Math.min(user?.sessions_completed ?? 0, 10)}/10 completed`
+                },
               ].map((item, i) => (
-                <div key={i} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-center">
+                <div
+                  key={i}
+                  className={`border rounded-xl px-3 py-2 text-center ${item.earned
+                      ? 'bg-gray-800 border-gray-700'
+                      : 'bg-gray-900 border-gray-800 opacity-60'
+                    }`}
+                >
                   <p className="text-2xl">{item.badge}</p>
-                  <p className="text-xs text-gray-400 mt-1">{item.name}</p>
+
+                  <p className="text-xs text-gray-400 mt-1">
+                    {item.name}
+                  </p>
+
+                  <p
+                    className={`text-xs mt-1 font-semibold ${item.earned ? 'text-green-400' : 'text-gray-500'
+                      }`}
+                  >
+                    {item.earned ? 'Earned ✓' : item.progress}
+                  </p>
                 </div>
               ))}
             </div>
           </div>
 
+          {/* Shows the user's five most recent completed activities */}
           <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
             <h3 className="font-bold text-gray-200 mb-4">📅 Recent Sessions</h3>
+
             <div className="space-y-3">
-              {[
-                { scenario: 'Job Interview', date: 'Today', score: '85%' },
-                { scenario: 'Grocery Store', date: 'Yesterday', score: '92%' },
-                { scenario: 'Doctor Visit', date: '2 days ago', score: '78%' },
-              ].map((session, i) => (
-                <div key={i} className="flex justify-between items-center py-2 border-b border-gray-800">
+              {recentSessions.map((session, i) => (
+                <div
+                  key={i}
+                  className="flex justify-between items-center py-2 border-b border-gray-800"
+                >
                   <div>
-                    <p className="font-medium text-gray-300 text-sm">{session.scenario}</p>
-                    <p className="text-xs text-gray-500">{session.date}</p>
+                    <p className="font-medium text-gray-300 text-sm">
+                      {session.activity_name}
+                    </p>
+
+                    <p className="text-xs text-gray-500">
+                      {new Date(session.created_at).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}
+                    </p>
                   </div>
-                  <span className="text-green-400 font-semibold text-sm">{session.score}</span>
+
+                  <span className="text-green-400 font-semibold text-sm">
+                    {session.score}%
+                  </span>
                 </div>
               ))}
             </div>
           </div>
+
         </div>
 
       </div>
-    </Layout>
+    </Layout >
   )
 }
 

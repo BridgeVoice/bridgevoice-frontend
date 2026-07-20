@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Layout from '../components/Layout'
 
 function Quiz() {
@@ -11,8 +11,14 @@ function Quiz() {
   const [activeLevel, setActiveLevel] = useState(1)
   const email = localStorage.getItem('email')
   const [completedLevels, setCompletedLevels] = useState(
-    JSON.parse(localStorage.getItem('quizLevels') || '{}')
+    JSON.parse(
+      localStorage.getItem(`quizLevels_${email}`) || '{}'
+    )
   )
+  //Prevents double-clicking an answer from increasing the score multiple times
+  const answerLocked = useRef(false)
+  // Keeps the latest score available immediately, including the final question
+  const scoreRef = useRef(0)
 
   const levels = [
     {
@@ -134,33 +140,52 @@ function Quiz() {
     const withShuffledOptions = picked.map(q => ({ ...q, options: shuffle(q.options) }))
     setQuizQuestions(withShuffledOptions)
     setActiveLevel(levelData.level)
+    // Unlocks answer selection when starting or retrying a quiz
+    answerLocked.current = false
     setStage('quiz')
     setCurrentQ(0)
+    // Resets the stored score when starting or retrying a quiz
+    scoreRef.current = 0
     setScore(0)
     setSelected(null)
     setShowAnswer(false)
   }
 
   const handleAnswer = (option) => {
+    // Prevents multiple clicks on the same question
+    if (answerLocked.current) return
+    answerLocked.current = true
+
     if (showAnswer) return
     setSelected(option)
     setShowAnswer(true)
     if (option === quizQuestions[currentQ].correct) {
-      setScore(prev => prev + 1)
+
+      // Keeps React state and scoreRef synchronized
+      scoreRef.current += 1
+      setScore(scoreRef.current)
+
     }
   }
 
   const nextQuestion = async () => {
+    // Allows answer selection for the next question
+    answerLocked.current = false
     setSelected(null)
     setShowAnswer(false)
     if (currentQ + 1 < quizQuestions.length) {
       setCurrentQ(prev => prev + 1)
     } else {
-      const finalScore = score + (selected === quizQuestions[currentQ].correct ? 1 : 0)
+
+      // Uses the latest score, including the final question
+      const finalScore = Math.min(scoreRef.current, quizQuestions.length)
       const passed = finalScore >= 8
       const updated = { ...completedLevels, [activeLevel]: { score: finalScore, passed } }
       setCompletedLevels(updated)
-      localStorage.setItem('quizLevels', JSON.stringify(updated))
+      localStorage.setItem(
+        `quizLevels_${email}`,
+        JSON.stringify(updated)
+      )
 
       try {
         await fetch('http://127.0.0.1:8000/api/users/complete-activity', {
@@ -170,6 +195,18 @@ function Quiz() {
           },
           body: JSON.stringify({
             email: email,
+            xp_earned: 20,
+          }),
+        })
+        await fetch('http://127.0.0.1:8000/api/users/session-history', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: email,
+            activity_name: `Quiz Level ${activeLevel}`,
+            score: finalScore * 10,
             xp_earned: 20,
           }),
         })
@@ -285,12 +322,12 @@ function Quiz() {
                   key={i}
                   onClick={() => handleAnswer(option)}
                   className={`w-full text-left px-5 py-4 rounded-xl border-2 transition font-medium ${!showAnswer
-                      ? 'border-gray-700 bg-gray-900 hover:border-gray-500 text-gray-200'
-                      : option === quizQuestions[currentQ].correct
-                        ? 'border-green-500 bg-green-900 bg-opacity-30 text-green-300'
-                        : option === selected
-                          ? 'border-red-500 bg-red-900 bg-opacity-30 text-red-300'
-                          : 'border-gray-800 bg-gray-900 text-gray-500'
+                    ? 'border-gray-700 bg-gray-900 hover:border-gray-500 text-gray-200'
+                    : option === quizQuestions[currentQ].correct
+                      ? 'border-green-500 bg-green-900 bg-opacity-30 text-green-300'
+                      : option === selected
+                        ? 'border-red-500 bg-red-900 bg-opacity-30 text-red-300'
+                        : 'border-gray-800 bg-gray-900 text-gray-500'
                     }`}
                 >
                   {option}
@@ -318,7 +355,7 @@ function Quiz() {
             </p>
             <h2 className="text-2xl font-bold mb-2">Level {activeLevel} Complete!</h2>
             <div className={`text-6xl font-bold my-4 ${finalScore >= 8 ? 'text-green-400' :
-                finalScore >= 5 ? 'text-orange-400' : 'text-red-400'
+              finalScore >= 5 ? 'text-orange-400' : 'text-red-400'
               }`}>
               {finalScore}/10
             </div>

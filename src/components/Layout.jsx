@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import Logo from '../assets/logo'
 import { getCharacterById } from './characters/characterData'
 import { getCharacterPreference } from '../utils/characterPreference'
+import ThemeToggle from './ThemeToggle'
 
 function Layout({ children }) {
   const navigate  = useNavigate()
@@ -55,7 +56,7 @@ function Layout({ children }) {
   const isActive = (path) => location.pathname === path
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white flex">
+    <div className="min-h-screen bg-gray-100 text-gray-900 dark:bg-gray-950 dark:text-white flex">
 
       {/* Mobile Overlay */}
       {mobileOpen && (
@@ -66,13 +67,13 @@ function Layout({ children }) {
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed left-0 top-0 h-full bg-gray-900 border-r border-gray-800 z-50 transition-all duration-300 flex flex-col
+      <aside className={`fixed left-0 top-0 h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 z-50 transition-all duration-300 flex flex-col
         ${collapsed ? 'w-16' : 'w-60'}
         ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
 
         {/* Logo */}
-        <div className={`flex items-center gap-3 p-4 border-b border-gray-800 ${collapsed ? 'justify-center' : ''}`}>
+        <div className={`flex items-center gap-3 p-4 border-b border-gray-200 dark:border-gray-800 ${collapsed ? 'justify-center' : ''}`}>
           <Logo size={16} />
           {!collapsed && (
             <span className="font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent text-lg">
@@ -86,7 +87,7 @@ function Layout({ children }) {
           {navItems.map((section, si) => (
             <div key={si} className="mb-4">
               {!collapsed && (
-                <p className="text-xs text-gray-600 font-semibold px-3 mb-2 tracking-wider">
+                <p className="text-xs text-gray-500 dark:text-gray-600 font-semibold px-3 mb-2 tracking-wider">
                   {section.section}
                 </p>
               )}
@@ -98,7 +99,7 @@ function Layout({ children }) {
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-xl mb-1 transition group relative ${
                     isActive(item.to)
                       ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-900'
-                      : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                      : 'text-gray-500 dark:text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:bg-gray-800'
                   }`}
                 >
                   <span className="text-xl flex-shrink-0">{item.icon}</span>
@@ -106,7 +107,7 @@ function Layout({ children }) {
                     <span className="text-sm font-medium">{item.label}</span>
                   )}
                   {collapsed && (
-                    <div className="absolute left-14 bg-gray-800 border border-gray-700 text-white text-xs px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-50">
+                    <div className="absolute left-14 bg-gray-200 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-white text-xs px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-50">
                       {item.label}
                     </div>
                   )}
@@ -117,7 +118,7 @@ function Layout({ children }) {
         </nav>
 
         {/* Logout */}
-        <div className="p-2 border-t border-gray-800">
+        <div className="p-2 border-t border-gray-200 dark:border-gray-800">
           <button
             onClick={handleLogout}
             className={`flex items-center gap-3 px-3 py-2.5 rounded-xl w-full text-red-400 hover:bg-red-900 hover:bg-opacity-20 transition ${collapsed ? 'justify-center' : ''}`}
@@ -130,7 +131,7 @@ function Layout({ children }) {
         {/* Collapse Button */}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="hidden md:flex items-center justify-center p-2 m-2 rounded-xl bg-gray-800 hover:bg-gray-700 transition text-gray-400 hover:text-white"
+          className="hidden md:flex items-center justify-center p-2 m-2 rounded-xl bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition text-gray-500 dark:text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
         >
           {collapsed ? '→' : '←'}
         </button>
@@ -140,22 +141,24 @@ function Layout({ children }) {
       <div className={`flex-1 transition-all duration-300 ${collapsed ? 'md:ml-16' : 'md:ml-60'}`}>
 
         {/* Top Bar */}
-        <header className="bg-gray-900 border-b border-gray-800 px-6 py-4 flex items-center justify-between sticky top-0 z-30">
+        <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-6 py-4 flex items-center justify-between sticky top-0 z-30">
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden text-gray-400 hover:text-white transition"
+            className="md:hidden text-gray-500 dark:text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition"
           >
             ☰
           </button>
 
           <div className="flex items-center gap-3 ml-auto">
+            {/* Theme toggle from teammate */}
+            <ThemeToggle />
+            {/* Character avatar — links to Settings to change */}
             <Link to="/settings" title={`Coach: ${character.name} — click to change`}>
               <div
                 className="w-9 h-9 rounded-full overflow-hidden border-2 transition hover:scale-105"
                 style={{ borderColor: character.accentColor }}
               >
                 {imgError ? (
-                  /* fallback: coloured initial */
                   <div
                     className="w-full h-full flex items-center justify-center text-sm font-bold text-white"
                     style={{ background: character.accentColor }}
