@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Layout from '../components/Layout'
+import CharacterAvatar from '../components/characters/CharacterAvatar'
+import { getBrowserVoice, BROWSER_VOICE_SETTINGS } from '../utils/browserVoice'
 
 function InterviewSimulator() {
   const navigate = useNavigate()
@@ -11,6 +13,10 @@ function InterviewSimulator() {
   const [listening, setListening] = useState(false)
   const [feedback, setFeedback] = useState(null)
   const [jobType, setJobType] = useState('')
+  const [isSpeaking, setIsSpeaking]     = useState(false)
+  const [speakingWord, setSpeakingWord] = useState(false)
+  const wordTimerRef = useRef(null)
+  const audioRef     = useRef(null)
 
   const jobTypes = [
     { title: 'Software Developer', icon: '💻' },
@@ -131,13 +137,62 @@ function InterviewSimulator() {
     speakQuestion(getQuestions()[0])
   }
 
-  const speakQuestion = (text) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel()
-      const utterance = new SpeechSynthesisUtterance(text)
-      utterance.rate = 0.9
-      window.speechSynthesis.speak(utterance)
+  const speakQuestion = async (text) => {
+    if (audioRef.current) { audioRef.current.pause(); audioRef.current = null }
+    window.speechSynthesis?.cancel()
+
+    // Word-tap simulation for audio element
+    const startTaps = () => {
+      const tap = () => {
+        setSpeakingWord(true)
+        wordTimerRef.current = setTimeout(() => {
+          setSpeakingWord(false)
+          wordTimerRef.current = setTimeout(tap, 180)
+        }, 160)
+      }
+      tap()
     }
+    const stopTaps = () => { clearTimeout(wordTimerRef.current); setSpeakingWord(false) }
+
+    try {
+      const res = await fetch('http://127.0.0.1:8000/api/tts', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        // Interview always uses the Professional character voice
+        body:    JSON.stringify({ text, personality: 'professional' }),
+      })
+      if (res.ok && res.status !== 204) {
+        const blob  = await res.blob()
+        const url   = URL.createObjectURL(blob)
+        const audio = new Audio(url)
+        audioRef.current = audio
+        audio.onplay  = () => { setIsSpeaking(true);  startTaps() }
+        audio.onended = () => { setIsSpeaking(false); stopTaps(); URL.revokeObjectURL(url) }
+        audio.onerror = () => { setIsSpeaking(false); stopTaps() }
+        audio.play()
+        return
+      }
+    } catch { /* fall through */ }
+
+    // Browser fallback — Professional is female
+    if (!('speechSynthesis' in window)) return
+    window.speechSynthesis.cancel()
+    const genderedVoice = await getBrowserVoice(true)   // female
+    const vs            = BROWSER_VOICE_SETTINGS['professional']
+    const utterance      = new SpeechSynthesisUtterance(text)
+    if (genderedVoice) utterance.voice = genderedVoice
+    utterance.pitch      = vs.pitch
+    utterance.rate       = vs.rate
+    utterance.onstart    = () => setIsSpeaking(true)
+    utterance.onboundary = (e) => {
+      if (e.name !== 'word') return
+      setSpeakingWord(true)
+      clearTimeout(wordTimerRef.current)
+      wordTimerRef.current = setTimeout(() => setSpeakingWord(false), 160)
+    }
+    utterance.onend   = () => { setIsSpeaking(false); setSpeakingWord(false) }
+    utterance.onerror = () => { setIsSpeaking(false); setSpeakingWord(false) }
+    window.speechSynthesis.speak(utterance)
   }
 
   const startListening = () => {
@@ -236,15 +291,25 @@ function InterviewSimulator() {
               </div>
             </div>
 
-            <div className="bg-gradient-to-r from-purple-900 to-blue-900 border border-purple-700 rounded-2xl p-6 mb-6">
-              <p className="text-sm text-purple-300 mb-2">🤖 Interviewer</p>
-              <p className="text-xl font-medium text-white">{getQuestions()[currentQuestion]}</p>
-              <button
-                onClick={() => speakQuestion(getQuestions()[currentQuestion])}
-                className="mt-3 bg-white bg-opacity-10 hover:bg-opacity-20 px-3 py-1 rounded-lg text-sm transition text-white"
-              >
-                🔊 Hear question again
-              </button>
+            <div className="bg-gradient-to-r from-purple-900 to-blue-900 border border-purple-700 rounded-2xl p-5 mb-6 flex gap-5 items-start">
+              {/* Professional coach avatar — always fixed for interviews */}
+              <CharacterAvatar
+                personality="professional"
+                isSpeaking={isSpeaking}
+                speakingWord={speakingWord}
+                size={80}
+                className="flex-shrink-0 mt-1"
+              />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-purple-300 mb-2">💼 Interviewer — Alex</p>
+                <p className="text-xl font-medium text-white leading-snug">{getQuestions()[currentQuestion]}</p>
+                <button
+                  onClick={() => speakQuestion(getQuestions()[currentQuestion])}
+                  className="mt-3 bg-white bg-opacity-10 hover:bg-opacity-20 px-3 py-1.5 rounded-lg text-sm transition text-white"
+                >
+                  🔊 Hear question again
+                </button>
+              </div>
             </div>
 
             <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-6">

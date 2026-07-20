@@ -1,6 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import Layout from '../components/Layout'
+import CharacterAvatar from '../components/characters/CharacterAvatar'
+import { getCharacterById } from '../components/characters/characterData'
+import { getCharacterPreference } from '../utils/characterPreference'
+import { getBrowserVoice, BROWSER_VOICE_SETTINGS } from '../utils/browserVoice'
 
 function Chat() {
   const navigate = useNavigate()
@@ -10,30 +14,97 @@ function Chat() {
       content: "Hello! I'm your BridgeVoice AI conversation partner. I'm here to help you practice English. What scenario would you like to practice today? You can type or use the microphone button to speak!"
     }
   ])
-  const [input, setInput] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [input, setInput]       = useState('')
+  const [loading, setLoading]   = useState(false)
   const [listening, setListening] = useState(false)
   const [scenario, setScenario] = useState('General Conversation')
-  const messagesEndRef = useRef(null)
-  const recognitionRef = useRef(null)
+
+  // Character state
+  const [characterId]        = useState(() => getCharacterPreference())
+  const character             = getCharacterById(characterId)
+  const [isSpeaking, setIsSpeaking]     = useState(false)
+  const [speakingWord, setSpeakingWord] = useState(false)
+  const wordTimerRef  = useRef(null)
+  const audioRef      = useRef(null)
+
+  const messagesEndRef  = useRef(null)
+  const recognitionRef  = useRef(null)
 
   useEffect(() => {
     const token = localStorage.getItem('token')
-    if (!token) {
-      navigate('/login')
-      return
-    }
-    scrollToBottom()
+    if (!token) { navigate('/login'); return }
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  // ── Simulate word-boundary mouth taps for audio playback ──
+  const startWordTaps = () => {
+    const tap = () => {
+      setSpeakingWord(true)
+      wordTimerRef.current = setTimeout(() => {
+        setSpeakingWord(false)
+        wordTimerRef.current = setTimeout(tap, 180)
+      }, 160)
+    }
+    tap()
+  }
+  const stopWordTaps = () => {
+    clearTimeout(wordTimerRef.current)
+    setSpeakingWord(false)
   }
 
+  // ── Speak via Groq TTS, fall back to browser speech ──
+  const speakText = async (text) => {
+    // Stop any current speech
+    if (audioRef.current) { audioRef.current.pause(); audioRef.current = null }
+    window.speechSynthesis?.cancel()
+
+    try {
+      const res = await fetch('http://127.0.0.1:8000/api/tts', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ text, personality: characterId }),
+      })
+
+      if (res.ok && res.status !== 204) {
+        // ── Groq Orpheus audio ──
+        const blob  = await res.blob()
+        const url   = URL.createObjectURL(blob)
+        const audio = new Audio(url)
+        audioRef.current = audio
+        audio.onplay  = () => { setIsSpeaking(true);  startWordTaps() }
+        audio.onended = () => { setIsSpeaking(false); stopWordTaps(); URL.revokeObjectURL(url) }
+        audio.onerror = () => { setIsSpeaking(false); stopWordTaps() }
+        audio.play()
+        return
+      }
+    } catch { /* fall through to browser TTS */ }
+
+    // ── Browser speech fallback — picks a gendered voice by name ──
+    if (!('speechSynthesis' in window)) return
+    const isFemale    = ['happy', 'professional'].includes(characterId)
+    const voiceSettings = BROWSER_VOICE_SETTINGS[characterId] || character.voice
+    const genderedVoice = await getBrowserVoice(isFemale)
+
+    const utterance   = new SpeechSynthesisUtterance(text)
+    if (genderedVoice) utterance.voice = genderedVoice
+    utterance.pitch   = voiceSettings.pitch
+    utterance.rate    = voiceSettings.rate
+    utterance.onstart = () => setIsSpeaking(true)
+    utterance.onboundary = (e) => {
+      if (e.name !== 'word') return
+      setSpeakingWord(true)
+      clearTimeout(wordTimerRef.current)
+      wordTimerRef.current = setTimeout(() => setSpeakingWord(false), 160)
+    }
+    utterance.onend   = () => { setIsSpeaking(false); setSpeakingWord(false) }
+    utterance.onerror = () => { setIsSpeaking(false); setSpeakingWord(false) }
+    window.speechSynthesis.speak(utterance)
+  }
+
+  // ── Send message to backend (includes personality for LLM tone) ──
   const sendMessage = async (text) => {
     if (!text.trim()) return
-    const userMessage = { role: 'user', content: text }
-    setMessages(prev => [...prev, userMessage])
+    setMessages(prev => [...prev, { role: 'user', content: text }])
     setInput('')
     setLoading(true)
 
@@ -41,17 +112,13 @@ function Chat() {
       const response = await fetch('http://127.0.0.1:8000/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text, scenario: scenario })
+        body: JSON.stringify({ message: text, scenario, personality: characterId })
       })
       const data = await response.json()
       const aiReply = data.reply || "I'm sorry, I couldn't understand that. Could you try again?"
       setMessages(prev => [...prev, { role: 'assistant', content: aiReply }])
-      if ('speechSynthesis' in window) {
-        const utterance = new SpeechSynthesisUtterance(aiReply)
-        utterance.rate = 0.9
-        window.speechSynthesis.speak(utterance)
-      }
-    } catch (err) {
+      speakText(aiReply)
+    } catch {
       setMessages(prev => [...prev, {
         role: 'assistant',
         content: "I'm having trouble connecting right now. Please check your connection and try again!"
@@ -60,39 +127,28 @@ function Chat() {
     setLoading(false)
   }
 
+  // ── Microphone / speech recognition ──
   const startListening = () => {
     if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
       alert('Please use Google Chrome for speech recognition.')
       return
     }
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-    recognitionRef.current = new SpeechRecognition()
-    recognitionRef.current.continuous = false
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition
+    recognitionRef.current = new SR()
+    recognitionRef.current.continuous     = false
     recognitionRef.current.interimResults = false
-    recognitionRef.current.lang = 'en-US'
-    recognitionRef.current.onstart = () => setListening(true)
-    recognitionRef.current.onend = () => setListening(false)
-    recognitionRef.current.onresult = (event) => {
-      const transcript = event.results[0][0].transcript
-      sendMessage(transcript)
-    }
-    recognitionRef.current.onerror = () => {
-      setListening(false)
-      alert('Could not hear you. Please try again.')
-    }
+    recognitionRef.current.lang           = 'en-US'
+    recognitionRef.current.onstart  = () => setListening(true)
+    recognitionRef.current.onend    = () => setListening(false)
+    recognitionRef.current.onresult = (e) => sendMessage(e.results[0][0].transcript)
+    recognitionRef.current.onerror  = () => { setListening(false); alert('Could not hear you. Please try again.') }
     recognitionRef.current.start()
   }
 
-  const stopListening = () => {
-    recognitionRef.current?.stop()
-    setListening(false)
-  }
+  const stopListening = () => { recognitionRef.current?.stop(); setListening(false) }
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      sendMessage(input)
-    }
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(input) }
   }
 
   return (
@@ -104,7 +160,41 @@ function Chat() {
           <p className="text-gray-400 mt-1">Practice English with your AI conversation partner</p>
         </div>
 
-        {/* Scenario Selector */}
+        {/* ── Coach panel ── */}
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4 flex items-center gap-5">
+          <CharacterAvatar
+            personality={character.id}
+            isSpeaking={isSpeaking}
+            speakingWord={speakingWord}
+            size={80}
+            className="flex-shrink-0"
+          />
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-gray-100">
+              {character.emoji} {character.name} is your coach
+            </p>
+            <p className="text-xs mt-0.5" style={{ color: character.accentColor }}>
+              {character.tagline}
+            </p>
+            <p className="text-xs text-gray-500 mt-1">
+              The AI will reply in {character.name}'s style. &nbsp;
+              <Link to="/settings" className="text-purple-400 hover:underline">Change character →</Link>
+            </p>
+          </div>
+          {isSpeaking && (
+            <div className="flex gap-0.5 items-end h-6 flex-shrink-0">
+              {[0, 70, 140, 210, 280].map(d => (
+                <div
+                  key={d}
+                  className="w-1 rounded-full animate-bounce"
+                  style={{ backgroundColor: character.accentColor, animationDelay: `${d}ms`, height: `${12 + (d / 280) * 12}px` }}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* ── Scenario selector ── */}
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4">
           <p className="text-sm text-gray-400 mb-3 font-medium">Select Scenario:</p>
           <div className="flex gap-2 flex-wrap">
@@ -124,7 +214,7 @@ function Chat() {
           </div>
         </div>
 
-        {/* Chat Window */}
+        {/* ── Chat window ── */}
         <div className="bg-gray-900 border border-gray-800 rounded-2xl flex flex-col" style={{ minHeight: '400px' }}>
           <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ maxHeight: '450px' }}>
             {messages.map((msg, i) => (
@@ -135,7 +225,9 @@ function Chat() {
                     : 'bg-gray-800 text-gray-200 rounded-bl-sm border border-gray-700'
                 }`}>
                   {msg.role === 'assistant' && (
-                    <p className="text-xs font-semibold text-purple-400 mb-1">🤖 BridgeVoice AI</p>
+                    <p className="text-xs font-semibold mb-1" style={{ color: character.accentColor }}>
+                      {character.emoji} {character.name}
+                    </p>
                   )}
                   {msg.content}
                 </div>
@@ -193,7 +285,7 @@ function Chat() {
           </div>
         </div>
 
-        {/* Quick Phrases */}
+        {/* ── Quick phrases ── */}
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4">
           <p className="text-sm font-semibold text-gray-400 mb-2">💡 Quick Phrases:</p>
           <div className="flex gap-2 flex-wrap">

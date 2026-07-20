@@ -1,10 +1,20 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Layout from '../components/Layout'
+import CharacterAvatar from '../components/characters/CharacterAvatar'
+import { CHARACTERS } from '../components/characters/characterData'
+import { getCharacterPreference, setCharacterPreference } from '../utils/characterPreference'
+import { getBrowserVoice, BROWSER_VOICE_SETTINGS } from '../utils/browserVoice'
 
 function Settings() {
   const navigate = useNavigate()
   const [saved, setSaved] = useState(false)
+  const [selectedCharacter, setSelectedCharacter] = useState(getCharacterPreference())
+  const [previewSpeaking, setPreviewSpeaking] = useState(null)
+  const [previewWord, setPreviewWord]       = useState(null)
+  const wordTimerRef = useRef(null)
+  const audioRef     = useRef(null)
+
   const [settings, setSettings] = useState({
     emailNotifications: true,
     practiceReminder: true,
@@ -16,12 +26,69 @@ function Settings() {
     dailyGoal: '3',
   })
 
-  const handleToggle = (key) => {
-    setSettings(prev => ({ ...prev, [key]: !prev[key] }))
+  const handleToggle  = (key)        => setSettings(prev => ({ ...prev, [key]: !prev[key] }))
+  const handleChange  = (key, value) => setSettings(prev => ({ ...prev, [key]: value }))
+
+  const handleSelectCharacter = (id) => {
+    setSelectedCharacter(id)
+    setCharacterPreference(id)
   }
 
-  const handleChange = (key, value) => {
-    setSettings(prev => ({ ...prev, [key]: value }))
+  const handlePreview = async (character) => {
+    if (audioRef.current) { audioRef.current.pause(); audioRef.current = null }
+    window.speechSynthesis?.cancel()
+    setPreviewSpeaking(null); setPreviewWord(null)
+
+    const startTaps = (charId) => {
+      const tap = () => {
+        setPreviewWord(charId)
+        wordTimerRef.current = setTimeout(() => {
+          setPreviewWord(null)
+          wordTimerRef.current = setTimeout(tap, 180)
+        }, 160)
+      }
+      tap()
+    }
+    const stopTaps = () => { clearTimeout(wordTimerRef.current); setPreviewWord(null) }
+
+    try {
+      const res = await fetch('http://127.0.0.1:8000/api/tts', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ text: character.sampleLine, personality: character.id }),
+      })
+      if (res.ok && res.status !== 204) {
+        const blob  = await res.blob()
+        const url   = URL.createObjectURL(blob)
+        const audio = new Audio(url)
+        audioRef.current = audio
+        audio.onplay  = () => { setPreviewSpeaking(character.id); startTaps(character.id) }
+        audio.onended = () => { setPreviewSpeaking(null); stopTaps(); URL.revokeObjectURL(url) }
+        audio.onerror = () => { setPreviewSpeaking(null); stopTaps() }
+        audio.play()
+        return
+      }
+    } catch { /* fall through */ }
+
+    // Browser fallback — pick gendered voice by name
+    if (!('speechSynthesis' in window)) return
+    const isFemale      = ['happy', 'professional'].includes(character.id)
+    const genderedVoice = await getBrowserVoice(isFemale)
+    const vs            = BROWSER_VOICE_SETTINGS[character.id] || character.voice
+    const utterance      = new SpeechSynthesisUtterance(character.sampleLine)
+    if (genderedVoice) utterance.voice = genderedVoice
+    utterance.pitch      = vs.pitch
+    utterance.rate       = vs.rate
+    utterance.onstart    = () => setPreviewSpeaking(character.id)
+    utterance.onboundary = (e) => {
+      if (e.name !== 'word') return
+      setPreviewWord(character.id)
+      clearTimeout(wordTimerRef.current)
+      wordTimerRef.current = setTimeout(() => setPreviewWord(null), 160)
+    }
+    utterance.onend  = () => { setPreviewSpeaking(null); setPreviewWord(null) }
+    utterance.onerror = () => { setPreviewSpeaking(null); setPreviewWord(null) }
+    window.speechSynthesis.speak(utterance)
   }
 
   const handleSave = () => {
@@ -61,7 +128,6 @@ function Settings() {
 
   return (
     <Layout>
-
       <div className="max-w-3xl mx-auto px-6 py-8">
 
         <div className="mb-6">
@@ -77,6 +143,7 @@ function Settings() {
 
         <div className="space-y-4">
 
+          {/* ── NOTIFICATIONS ── */}
           <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
             <h3 className="font-bold text-gray-200 mb-2">🔔 Notifications</h3>
             <SettingRow label="Email Notifications" desc="Receive progress updates by email">
@@ -97,6 +164,7 @@ function Settings() {
             )}
           </div>
 
+          {/* ── AUDIO ── */}
           <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
             <h3 className="font-bold text-gray-200 mb-2">🔊 Audio</h3>
             <SettingRow label="Sound Effects" desc="Play sounds for achievements">
@@ -107,6 +175,68 @@ function Settings() {
             </SettingRow>
           </div>
 
+          {/* ── AI COACH CHARACTER ── */}
+          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+            <h3 className="font-bold text-gray-200 mb-1">🎭 AI Coach Character</h3>
+            <p className="text-sm text-gray-500 mb-5">
+              Choose your coach's personality. This changes both the character's look <span className="text-purple-400">and</span> how the AI talks to you in Chat and Interview practice.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {CHARACTERS.map(char => {
+                const isSelected = selectedCharacter === char.id
+                const isSpeaking = previewSpeaking === char.id
+                const isWord     = previewWord === char.id
+
+                return (
+                  <div
+                    key={char.id}
+                    onClick={() => handleSelectCharacter(char.id)}
+                    className={`cursor-pointer rounded-2xl p-4 flex gap-4 items-center transition border ${
+                      isSelected
+                        ? 'border-purple-500 bg-gradient-to-br from-purple-900/30 to-blue-900/30'
+                        : 'border-gray-800 bg-gray-950 hover:border-gray-600'
+                    }`}
+                  >
+                    {/* live animated avatar */}
+                    <CharacterAvatar
+                      personality={char.id}
+                      isSpeaking={isSpeaking}
+                      speakingWord={isWord}
+                      size={68}
+                      className="flex-shrink-0 drop-shadow"
+                    />
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <p className="font-semibold text-gray-100">{char.emoji} {char.name}</p>
+                        {isSelected && (
+                          <span className="text-xs bg-gradient-to-r from-purple-600 to-blue-600 text-white px-2 py-0.5 rounded-full">
+                            Active
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs font-medium mb-1" style={{ color: char.accentColor }}>{char.tagline}</p>
+                      <p className="text-xs text-gray-500 leading-snug mb-2">{char.description}</p>
+                      <button
+                        onClick={e => { e.stopPropagation(); handlePreview(char) }}
+                        disabled={isSpeaking}
+                        className="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white px-3 py-1 rounded-full transition border border-gray-700 disabled:opacity-60"
+                      >
+                        {isSpeaking ? '🔊 Speaking…' : '🔊 Hear voice'}
+                      </button>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            <p className="text-xs text-gray-600 mt-4 text-center">
+              Your choice is saved instantly — no need to click Save Settings below.
+            </p>
+          </div>
+
+          {/* ── LEARNING ── */}
           <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
             <h3 className="font-bold text-gray-200 mb-2">🎯 Learning</h3>
             <SettingRow label="Daily Session Goal" desc="How many sessions per day">
@@ -139,6 +269,7 @@ function Settings() {
             </SettingRow>
           </div>
 
+          {/* ── PRIVACY ── */}
           <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
             <h3 className="font-bold text-gray-200 mb-2">🔒 Privacy</h3>
             <SettingRow label="Profile Visibility" desc="Who can see your profile">
@@ -154,6 +285,7 @@ function Settings() {
             </SettingRow>
           </div>
 
+          {/* ── ACCOUNT ── */}
           <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
             <h3 className="font-bold text-gray-200 mb-4">🔑 Account</h3>
             <div className="space-y-3">
@@ -169,6 +301,7 @@ function Settings() {
             </div>
           </div>
 
+          {/* ── DANGER ZONE ── */}
           <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
             <h3 className="font-bold text-red-400 mb-4">⚠️ Danger Zone</h3>
             <button

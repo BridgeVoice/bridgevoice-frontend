@@ -1,12 +1,24 @@
 import { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import Logo from '../assets/logo'
+import { getCharacterById } from './characters/characterData'
+import { getCharacterPreference } from '../utils/characterPreference'
 
 function Layout({ children }) {
-  const navigate = useNavigate()
-  const location = useLocation()
-  const [collapsed, setCollapsed] = useState(false)
+  const navigate  = useNavigate()
+  const location  = useLocation()
+  const [collapsed, setCollapsed]   = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [imgError, setImgError]     = useState(false)
+
+  const character = getCharacterById(getCharacterPreference())
+
+  // Get the user's first initial — prefer full_name, fall back to email prefix
+  const fullName  = localStorage.getItem('full_name') || ''
+  const email     = localStorage.getItem('email') || ''
+  const userInitial = fullName
+    ? fullName.trim()[0].toUpperCase()
+    : email.split('@')[0][0]?.toUpperCase() || '?'
 
   const handleLogout = () => {
     localStorage.removeItem('token')
@@ -137,9 +149,30 @@ function Layout({ children }) {
           </button>
 
           <div className="flex items-center gap-3 ml-auto">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-sm font-bold">
-              G
-            </div>
+            <Link to="/settings" title={`Coach: ${character.name} — click to change`}>
+              <div
+                className="w-9 h-9 rounded-full overflow-hidden border-2 transition hover:scale-105"
+                style={{ borderColor: character.accentColor }}
+              >
+                {imgError ? (
+                  /* fallback: coloured initial */
+                  <div
+                    className="w-full h-full flex items-center justify-center text-sm font-bold text-white"
+                    style={{ background: character.accentColor }}
+                  >
+                    {userInitial}
+                  </div>
+                ) : (
+                  <img
+                    src={character.photo}
+                    alt={character.coachName}
+                    className="w-full h-full object-cover object-top"
+                    onError={() => setImgError(true)}
+                    draggable={false}
+                  />
+                )}
+              </div>
+            </Link>
           </div>
         </header>
 

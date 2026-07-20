@@ -67,6 +67,7 @@ function Register() {
         if (loginResponse.ok) {
           localStorage.setItem('token', loginData.access_token)
           localStorage.setItem('email', formData.email)
+          localStorage.setItem('full_name', formData.full_name)
           setRegistrationComplete(true)
         } else {
           setError('Account created, but auto-login failed. Please login manually.')
