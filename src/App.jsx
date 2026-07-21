@@ -16,6 +16,7 @@ import CultureGuide from './pages/CultureGuide'
 import Quiz from './pages/Quiz'
 import Phrases from './pages/Phrases'
 import GrammarChecker from './pages/GrammarChecker'
+import Vocabulary from './pages/Vocabulary'
 
 function App() {
   return (
@@ -37,7 +38,9 @@ function App() {
         <Route path="/culture" element={<CultureGuide />} />
         <Route path="/quiz" element={<Quiz />} />
         <Route path="/phrases" element={<Phrases />} />
+        <Route path="/vocabulary" element={<Vocabulary />} /> 
         <Route path="/grammar" element={<GrammarChecker />} />
+        
 
       </Routes>
     </Router>

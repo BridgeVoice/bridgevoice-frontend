@@ -34,10 +34,11 @@ function Layout({ children }) {
       { to: '/progress', icon: '📊', label: 'Progress' },
     ]},
     { section: 'LEARN', items: [
+      { to: '/vocabulary', icon: '📚', label: 'Vocabulary' },
       { to: '/dictionary', icon: '📖', label: 'Dictionary' },
-      { to: '/translator', icon: '🌍', label: 'Translator' },
-      { to: '/grammar', icon: '✍️', label: 'Grammar' },
       { to: '/phrases', icon: '💬', label: 'Phrases' },
+      { to: '/grammar', icon: '✍️', label: 'Grammar' },
+      { to: '/translator', icon: '🌍', label: 'Translator' },
       { to: '/quiz', icon: '🧠', label: 'Quiz' },
     ]},
     { section: 'PRACTICE', items: [
