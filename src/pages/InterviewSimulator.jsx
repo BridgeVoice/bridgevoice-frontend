@@ -1,12 +1,13 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Layout from '../components/Layout'
 import CharacterAvatar from '../components/characters/CharacterAvatar'
 import { getBrowserVoice, BROWSER_VOICE_SETTINGS } from '../utils/browserVoice'
+import { useVoicePlayback } from '../utils/useVoicePlayback'
 
 function InterviewSimulator() {
   const navigate = useNavigate()
-  const [stage, setStage] = useState('intro')
+  const [stage, setStage] = useState('intro')          // intro | loading | interview | scoring | feedback
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState([])
   const [currentAnswer, setCurrentAnswer] = useState('')
@@ -15,8 +16,13 @@ function InterviewSimulator() {
   const [jobType, setJobType] = useState('')
   const [isSpeaking, setIsSpeaking]     = useState(false)
   const [speakingWord, setSpeakingWord] = useState(false)
-  const wordTimerRef = useRef(null)
-  const audioRef     = useRef(null)
+  // AI-generated questions for the selected job (loaded from the backend)
+  const [aiQuestions, setAiQuestions] = useState([])
+  // Shared voice control — owns audioRef/wordTimerRef and stops speech on unmount
+  const { audioRef, wordTimerRef, stopSpeaking } = useVoicePlayback(() => {
+    setIsSpeaking(false)
+    setSpeakingWord(false)
+  })
 
   const jobTypes = [
     { title: 'Software Developer', icon: '💻' },
@@ -82,7 +88,8 @@ function InterviewSimulator() {
     { title: 'Quality Control', icon: '✅' },
   ]
 
-  const questions = {
+  // Kept as an OFFLINE FALLBACK only — used if the backend or Groq is unavailable
+  const fallbackQuestions = {
     'Software Developer': [
       'Tell me about yourself and your experience.',
       'What programming languages are you familiar with?',
@@ -127,19 +134,46 @@ function InterviewSimulator() {
     ]
   }
 
-  const getQuestions = () => questions[jobType] || questions['default']
+  // Questions for the current interview: AI-generated if available, fallback otherwise
+  const getQuestions = () =>
+    aiQuestions.length > 0
+      ? aiQuestions
+      : (fallbackQuestions[jobType] || fallbackQuestions['default'])
 
-  const startInterview = (job) => {
+  // Fetches AI-generated questions for the chosen job, then starts the interview
+  const startInterview = async (job) => {
+    stopSpeaking()
     setJobType(job)
-    setStage('interview')
+    setStage('loading')
     setCurrentQuestion(0)
     setAnswers([])
-    speakQuestion(getQuestions()[0])
+    setCurrentAnswer('')
+    setFeedback(null)
+
+    let loadedQuestions = fallbackQuestions[job] || fallbackQuestions['default']
+
+    try {
+      const res = await fetch('http://127.0.0.1:8000/api/interview/questions', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ job_type: job }),
+      })
+      const data = await res.json()
+      if (res.ok && Array.isArray(data.questions) && data.questions.length > 0) {
+        loadedQuestions = data.questions
+      }
+    } catch {
+      // Backend unreachable — keep the fallback questions
+    }
+
+    setAiQuestions(loadedQuestions)
+    setStage('interview')
+    speakQuestion(loadedQuestions[0])
   }
 
   const speakQuestion = async (text) => {
-    if (audioRef.current) { audioRef.current.pause(); audioRef.current = null }
-    window.speechSynthesis?.cancel()
+    // Stop any current speech (both Groq audio and browser speech)
+    stopSpeaking()
 
     // Word-tap simulation for audio element
     const startTaps = () => {
@@ -214,6 +248,7 @@ function InterviewSimulator() {
   }
 
   const nextQuestion = () => {
+    stopSpeaking()   // stop the interviewer mid-question when the user moves on
     const newAnswers = [...answers, {
       question: getQuestions()[currentQuestion],
       answer: currentAnswer
@@ -229,8 +264,31 @@ function InterviewSimulator() {
     }
   }
 
-  const generateFeedback = (allAnswers) => {
-    setStage('feedback')
+  // Sends all answers to the backend and gets real AI feedback
+  const generateFeedback = async (allAnswers) => {
+    stopSpeaking()
+    setStage('scoring')
+
+    try {
+      const res = await fetch('http://127.0.0.1:8000/api/interview/feedback', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({
+          job_type: jobType,
+          answers:  allAnswers.map(a => ({ question: a.question, answer: a.answer })),
+        }),
+      })
+      const data = await res.json()
+      if (res.ok && Array.isArray(data.scores) && data.scores.length > 0) {
+        setFeedback({ scores: data.scores, avgScore: data.avgScore })
+        setStage('feedback')
+        return
+      }
+    } catch {
+      // Backend unreachable — fall through to the simple offline scoring below
+    }
+
+    // OFFLINE FALLBACK — old length-based scoring so the demo never breaks
     const scores = allAnswers.map(a => ({
       question: a.question,
       answer: a.answer,
@@ -242,6 +300,7 @@ function InterviewSimulator() {
     }))
     const avgScore = Math.floor(scores.reduce((a, b) => a + b.score, 0) / scores.length)
     setFeedback({ scores, avgScore })
+    setStage('feedback')
   }
 
   return (
@@ -268,6 +327,20 @@ function InterviewSimulator() {
                 </button>
               ))}
             </div>
+          </div>
+        )}
+
+        {stage === 'loading' && (
+          <div className="text-center py-24">
+            <CharacterAvatar
+              personality="professional"
+              isSpeaking={true}
+              speakingWord={speakingWord}
+              size={100}
+              className="mx-auto mb-6"
+            />
+            <p className="text-xl font-semibold text-white mb-2">Preparing your interview...</p>
+            <p className="text-gray-400">Alex is writing questions for a {jobType} position 📝</p>
           </div>
         )}
 
@@ -356,6 +429,20 @@ function InterviewSimulator() {
           </div>
         )}
 
+        {stage === 'scoring' && (
+          <div className="text-center py-24">
+            <CharacterAvatar
+              personality="professional"
+              isSpeaking={true}
+              speakingWord={speakingWord}
+              size={100}
+              className="mx-auto mb-6"
+            />
+            <p className="text-xl font-semibold text-white mb-2">Reviewing your answers...</p>
+            <p className="text-gray-400">Alex is preparing your feedback 📋</p>
+          </div>
+        )}
+
         {stage === 'feedback' && feedback && (
           <div>
             <div className="mb-6">
@@ -387,9 +474,9 @@ function InterviewSimulator() {
                   <p className="text-gray-500 text-sm mb-3 bg-gray-800 rounded-lg p-3">
                     Your answer: "{item.answer || 'No answer given'}"
                   </p>
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between items-center gap-4">
                     <p className="text-sm text-purple-400">{item.tip}</p>
-                    <span className={`font-bold text-lg ${
+                    <span className={`font-bold text-lg flex-shrink-0 ${
                       item.score >= 80 ? 'text-green-400' :
                       item.score >= 60 ? 'text-orange-400' : 'text-red-400'
                     }`}>{item.score}%</span>
@@ -400,13 +487,13 @@ function InterviewSimulator() {
 
             <div className="flex gap-4">
               <button
-                onClick={() => setStage('intro')}
+                onClick={() => { stopSpeaking(); setAiQuestions([]); setStage('intro') }}
                 className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white py-3 rounded-xl transition font-semibold"
               >
                 Practice Again 🔄
               </button>
               <button
-                onClick={() => navigate('/dashboard')}
+                onClick={() => { stopSpeaking(); navigate('/dashboard') }}
                 className="flex-1 bg-gray-900 border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white py-3 rounded-xl transition font-semibold"
               >
                 Back to Dashboard

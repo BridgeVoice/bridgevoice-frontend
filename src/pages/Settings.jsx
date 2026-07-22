@@ -1,10 +1,11 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Layout from '../components/Layout'
 import CharacterAvatar from '../components/characters/CharacterAvatar'
 import { CHARACTERS } from '../components/characters/characterData'
 import { getCharacterPreference, setCharacterPreference } from '../utils/characterPreference'
 import { getBrowserVoice, BROWSER_VOICE_SETTINGS } from '../utils/browserVoice'
+import { useVoicePlayback } from '../utils/useVoicePlayback'
 
 function Settings() {
   const navigate = useNavigate()
@@ -12,8 +13,11 @@ function Settings() {
   const [selectedCharacter, setSelectedCharacter] = useState(getCharacterPreference())
   const [previewSpeaking, setPreviewSpeaking] = useState(null)
   const [previewWord, setPreviewWord]       = useState(null)
-  const wordTimerRef = useRef(null)
-  const audioRef     = useRef(null)
+  // Shared voice control — owns audioRef/wordTimerRef and stops speech on unmount
+  const { audioRef, wordTimerRef, stopSpeaking } = useVoicePlayback(() => {
+    setPreviewSpeaking(null)
+    setPreviewWord(null)
+  })
 
   const [settings, setSettings] = useState({
     emailNotifications: true,
@@ -35,9 +39,8 @@ function Settings() {
   }
 
   const handlePreview = async (character) => {
-    if (audioRef.current) { audioRef.current.pause(); audioRef.current = null }
-    window.speechSynthesis?.cancel()
-    setPreviewSpeaking(null); setPreviewWord(null)
+    // Stop any preview already playing (both Groq audio and browser speech)
+    stopSpeaking()
 
     const startTaps = (charId) => {
       const tap = () => {
@@ -97,6 +100,7 @@ function Settings() {
   }
 
   const handleDeleteAccount = () => {
+    stopSpeaking()
     if (window.confirm('Are you sure you want to delete your account? This cannot be undone!')) {
       localStorage.clear()
       navigate('/')

@@ -5,6 +5,7 @@ import CharacterAvatar from '../components/characters/CharacterAvatar'
 import { getCharacterById } from '../components/characters/characterData'
 import { getCharacterPreference } from '../utils/characterPreference'
 import { getBrowserVoice, BROWSER_VOICE_SETTINGS } from '../utils/browserVoice'
+import { useVoicePlayback } from '../utils/useVoicePlayback'
 
 function Chat() {
   const navigate = useNavigate()
@@ -24,8 +25,11 @@ function Chat() {
   const character             = getCharacterById(characterId)
   const [isSpeaking, setIsSpeaking]     = useState(false)
   const [speakingWord, setSpeakingWord] = useState(false)
-  const wordTimerRef  = useRef(null)
-  const audioRef      = useRef(null)
+  // Shared voice control — owns audioRef/wordTimerRef and stops speech on unmount
+  const { audioRef, wordTimerRef, stopSpeaking } = useVoicePlayback(() => {
+    setIsSpeaking(false)
+    setSpeakingWord(false)
+  })
 
   const messagesEndRef  = useRef(null)
   const recognitionRef  = useRef(null)
@@ -54,9 +58,8 @@ function Chat() {
 
   // ── Speak via Groq TTS, fall back to browser speech ──
   const speakText = async (text) => {
-    // Stop any current speech
-    if (audioRef.current) { audioRef.current.pause(); audioRef.current = null }
-    window.speechSynthesis?.cancel()
+    // Stop any current speech (both Groq audio and browser speech)
+    stopSpeaking()
 
     try {
       const res = await fetch('http://127.0.0.1:8000/api/tts', {
@@ -104,6 +107,7 @@ function Chat() {
   // ── Send message to backend (includes personality for LLM tone) ──
   const sendMessage = async (text) => {
     if (!text.trim()) return
+    stopSpeaking()   // stop the coach mid-sentence when the user sends a new message
     setMessages(prev => [...prev, { role: 'user', content: text }])
     setInput('')
     setLoading(true)
@@ -178,7 +182,7 @@ function Chat() {
             </p>
             <p className="text-xs text-gray-500 mt-1">
               The AI will reply in {character.name}'s style. &nbsp;
-              <Link to="/settings" className="text-purple-400 hover:underline">Change character →</Link>
+              <Link to="/settings" onClick={stopSpeaking} className="text-purple-400 hover:underline">Change character →</Link>
             </p>
           </div>
           {isSpeaking && (
@@ -201,7 +205,7 @@ function Chat() {
             {['General Conversation', 'Job Interview', 'Grocery Store', 'Doctor Visit', 'Bank Visit', 'Workplace Chat'].map(s => (
               <button
                 key={s}
-                onClick={() => setScenario(s)}
+                onClick={() => { stopSpeaking(); setScenario(s) }}
                 className={`px-3 py-1.5 rounded-full text-sm font-medium transition ${
                   scenario === s
                     ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white'
