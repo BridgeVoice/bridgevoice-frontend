@@ -8,6 +8,8 @@ function Quiz() {
   const [selected, setSelected] = useState(null)
   const [showAnswer, setShowAnswer] = useState(false)
   const [quizQuestions, setQuizQuestions] = useState([])
+  // Tracks whether AI quiz questions are being generated
+  const [quizLoading, setQuizLoading] = useState(false)
   const [activeLevel, setActiveLevel] = useState(1)
   const email = localStorage.getItem('email')
   const [completedLevels, setCompletedLevels] = useState(
@@ -135,20 +137,61 @@ function Quiz() {
 
   const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5)
 
-  const startQuiz = (levelData) => {
-    const picked = shuffle(levelData.questions).slice(0, 10)
-    const withShuffledOptions = picked.map(q => ({ ...q, options: shuffle(q.options) }))
-    setQuizQuestions(withShuffledOptions)
-    setActiveLevel(levelData.level)
-    // Unlocks answer selection when starting or retrying a quiz
-    answerLocked.current = false
-    setStage('quiz')
-    setCurrentQ(0)
-    // Resets the stored score when starting or retrying a quiz
-    scoreRef.current = 0
-    setScore(0)
-    setSelected(null)
-    setShowAnswer(false)
+  const startQuiz = async (levelData) => {
+    try {
+      // Show loading while the LLM generates quiz questions
+      setQuizLoading(true)
+
+      const response = await fetch(
+        'http://127.0.0.1:8000/api/quiz',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            level: levelData.level,
+          }),
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Quiz generation failed')
+      }
+
+      const data = await response.json()
+
+      // Shuffle the answer options before displaying the quiz
+      const withShuffledOptions = data.questions.map((question) => ({
+        ...question,
+        options: shuffle(question.options),
+      }))
+
+      // Store the AI-generated questions
+      setQuizQuestions(withShuffledOptions)
+
+      // Store the selected quiz level
+      setActiveLevel(levelData.level)
+
+      // Reset the quiz before starting or retrying
+      answerLocked.current = false
+      scoreRef.current = 0
+      setCurrentQ(0)
+      setScore(0)
+      setSelected(null)
+      setShowAnswer(false)
+
+      // Open the quiz only after the questions are ready
+      setStage('quiz')
+
+    } catch (error) {
+      console.error('Error generating quiz:', error)
+      alert('Failed to generate the quiz. Please try again.')
+
+    } finally {
+      // Always stop the loading state
+      setQuizLoading(false)
+    }
   }
 
   const handleAnswer = (option) => {
@@ -238,7 +281,22 @@ function Quiz() {
 
       <div className="max-w-2xl mx-auto px-6 py-8">
 
-        {stage === 'levels' && (
+        {/* Shows while AI quiz questions are being generated */}
+        {quizLoading && (
+          <div className="py-16 text-center">
+            <p className="mb-4 text-5xl">🧠</p>
+
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+              Generating Your Quiz...
+            </h3>
+
+            <p className="mt-2 text-gray-500 dark:text-gray-400">
+              Please wait while AI creates 10 questions for this level.
+            </p>
+          </div>
+        )}
+
+        {stage === 'levels' && !quizLoading && (
           <div>
             <div className="text-center mb-8">
               <p className="text-5xl mb-3">🧠</p>
@@ -271,7 +329,8 @@ function Quiz() {
                       {unlocked ? (
                         <button
                           onClick={() => startQuiz(level)}
-                          className={`bg-gradient-to-r ${level.color} text-white px-4 py-2 rounded-xl hover:opacity-90 transition font-medium text-sm`}
+                          disabled={quizLoading}
+                          className={`bg-gradient-to-r ${level.color} text-white px-4 py-2 rounded-xl hover:opacity-90 transition font-medium text-sm disabled:cursor-not-allowed disabled:opacity-50`}
                         >
                           {completed?.passed ? 'Retry' : 'Start'}
                         </button>
