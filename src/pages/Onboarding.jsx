@@ -67,7 +67,7 @@ function Onboarding() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-white flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen bg-gray-950 text-white flex flex-col items-center justify-center px-4">
 
       <div className="flex items-center gap-2 mb-8">
         <Logo size={24} />
@@ -83,24 +83,24 @@ function Onboarding() {
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition ${
                   step >= s.number
                     ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white'
-                    : 'bg-gray-200 dark:bg-gray-800 text-gray-500 border border-gray-300 dark:border-gray-700'
+                    : 'bg-gray-800 text-gray-500 border border-gray-700'
                 }`}>
                   {step > s.number ? '✓' : s.number}
                 </div>
-                <p className={`text-xs mt-1 ${step >= s.number ? 'text-purple-600 dark:text-purple-400' : 'text-gray-400 dark:text-gray-600'}`}>
+                <p className={`text-xs mt-1 ${step >= s.number ? 'text-purple-400' : 'text-gray-600'}`}>
                   {s.title}
                 </p>
               </div>
               {i < steps.length - 1 && (
-                <div className={`h-0.5 w-16 mx-2 mb-4 ${step > s.number ? 'bg-gradient-to-r from-purple-600 to-blue-600' : 'bg-gray-200 dark:bg-gray-800'}`}></div>
+                <div className={`h-0.5 w-16 mx-2 mb-4 ${step > s.number ? 'bg-gradient-to-r from-purple-600 to-blue-600' : 'bg-gray-800'}`}></div>
               )}
             </div>
           ))}
         </div>
 
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-8">
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-8">
         {error && (
-  <div className="bg-red-100 dark:bg-red-900 dark:bg-opacity-50 border border-red-300 dark:border-red-700 text-red-700 dark:text-red-300 px-4 py-3 rounded-xl mb-6 text-sm">
+  <div className="bg-red-900 bg-opacity-50 border border-red-700 text-red-300 px-4 py-3 rounded-xl mb-6 text-sm">
     {error}
   </div>
 )}
@@ -109,8 +109,8 @@ function Onboarding() {
           {step === 1 && (
             <div>
               <h2 className="text-2xl font-bold mb-2">What is your native language?</h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-2">We'll personalize your learning experience</p>
-              <p className="text-purple-600 dark:text-purple-400 text-sm mb-6">You can select multiple languages!</p>
+              <p className="text-gray-400 mb-2">We'll personalize your learning experience</p>
+              <p className="text-purple-400 text-sm mb-6">You can select multiple languages!</p>
               <div className="grid grid-cols-2 gap-3">
                 {['Hindi', 'Mandarin', 'Arabic', 'Spanish', 'Punjabi', 'French', 'Tagalog', 'Urdu', 'Portuguese', 'Korean', 'Japanese', 'Other'].map(lang => (
                   <button
@@ -125,8 +125,8 @@ function Onboarding() {
                     }}
                     className={`py-3 rounded-xl border font-medium transition flex items-center justify-between px-4 ${
                       formData.language_background.includes(lang)
-                        ? 'border-purple-500 bg-purple-100 dark:bg-purple-900 dark:bg-opacity-30 text-purple-700 dark:text-purple-300'
-                        : 'border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-500 hover:text-gray-900 dark:hover:text-white'
+                        ? 'border-purple-500 bg-purple-900 bg-opacity-30 text-purple-300'
+                        : 'border-gray-700 text-gray-400 hover:border-gray-500 hover:text-white'
                     }`}
                   >
                     {lang}
@@ -135,7 +135,7 @@ function Onboarding() {
                 ))}
               </div>
               {formData.language_background.length > 0 && (
-                <p className="text-green-600 dark:text-green-400 text-sm mt-4">
+                <p className="text-green-400 text-sm mt-4">
                   ✅ Selected: {formData.language_background.join(', ')}
                 </p>
               )}
@@ -145,7 +145,7 @@ function Onboarding() {
           {step === 2 && (
             <div>
               <h2 className="text-2xl font-bold mb-2">What is your English level?</h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">Be honest — we'll adapt to your needs</p>
+              <p className="text-gray-400 mb-6">Be honest — we'll adapt to your needs</p>
               <div className="space-y-3">
                 {[
                   { level: 'Beginner', desc: 'I know very little English', icon: '🌱' },
@@ -158,17 +158,17 @@ function Onboarding() {
                     onClick={() => handleChange('proficiency_level', level)}
                     className={`w-full py-4 px-5 rounded-xl border text-left transition flex items-center gap-4 ${
                       formData.proficiency_level === level
-                        ? 'border-purple-500 bg-purple-100 dark:bg-purple-900 dark:bg-opacity-30'
-                        : 'border-gray-300 dark:border-gray-700 hover:border-gray-500'
+                        ? 'border-purple-500 bg-purple-900 bg-opacity-30'
+                        : 'border-gray-700 hover:border-gray-500'
                     }`}
                   >
                     <span className="text-2xl">{icon}</span>
                     <div>
-                      <p className="font-medium text-gray-900 dark:text-white">{level}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">{desc}</p>
+                      <p className="font-medium text-white">{level}</p>
+                      <p className="text-sm text-gray-400">{desc}</p>
                     </div>
                     {formData.proficiency_level === level && (
-                      <span className="ml-auto text-purple-600 dark:text-purple-400">✓</span>
+                      <span className="ml-auto text-purple-400">✓</span>
                     )}
                   </button>
                 ))}
@@ -179,7 +179,7 @@ function Onboarding() {
           {step === 3 && (
             <div>
               <h2 className="text-2xl font-bold mb-2">What is your main goal?</h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">We'll focus your practice on what matters most</p>
+              <p className="text-gray-400 mb-6">We'll focus your practice on what matters most</p>
               <div className="space-y-3">
                 {[
                   { goal: 'Job Interview Practice', icon: '💼' },
@@ -194,14 +194,14 @@ function Onboarding() {
                     onClick={() => handleChange('goals', goal)}
                     className={`w-full py-3 px-5 rounded-xl border text-left transition flex items-center gap-3 ${
                       formData.goals === goal
-                        ? 'border-purple-500 bg-purple-100 dark:bg-purple-900 dark:bg-opacity-30'
-                        : 'border-gray-300 dark:border-gray-700 hover:border-gray-500'
+                        ? 'border-purple-500 bg-purple-900 bg-opacity-30'
+                        : 'border-gray-700 hover:border-gray-500'
                     }`}
                   >
                     <span className="text-xl">{icon}</span>
-                    <p className="font-medium text-gray-900 dark:text-white">{goal}</p>
+                    <p className="font-medium text-white">{goal}</p>
                     {formData.goals === goal && (
-                      <span className="ml-auto text-purple-600 dark:text-purple-400">✓</span>
+                      <span className="ml-auto text-purple-400">✓</span>
                     )}
                   </button>
                 ))}
@@ -212,7 +212,7 @@ function Onboarding() {
           {step === 4 && (
             <div>
               <h2 className="text-2xl font-bold mb-2">How much time can you practice daily?</h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">Consistency is the key to improvement!</p>
+              <p className="text-gray-400 mb-6">Consistency is the key to improvement!</p>
               <div className="grid grid-cols-2 gap-3 mb-6">
                 {['5 minutes', '10 minutes', '20 minutes', '30+ minutes'].map(time => (
                   <button
@@ -220,8 +220,8 @@ function Onboarding() {
                     onClick={() => handleChange('daily_goal', time)}
                     className={`py-4 rounded-xl border font-medium transition ${
                       formData.daily_goal === time
-                        ? 'border-purple-500 bg-purple-100 dark:bg-purple-900 dark:bg-opacity-30 text-purple-700 dark:text-purple-300'
-                        : 'border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-500 hover:text-gray-900 dark:hover:text-white'
+                        ? 'border-purple-500 bg-purple-900 bg-opacity-30 text-purple-300'
+                        : 'border-gray-700 text-gray-400 hover:border-gray-500 hover:text-white'
                     }`}
                   >
                     {time}
@@ -232,7 +232,7 @@ function Onboarding() {
               {formData.daily_goal && (
                 <div className="bg-gradient-to-r from-purple-900 to-blue-900 border border-purple-700 rounded-xl p-4 text-center">
                   <p className="text-purple-300 font-semibold">🎉 You are all set!</p>
-                  <p className="text-gray-300 text-sm mt-1">Your personalized learning path is ready</p>
+                  <p className="text-gray-400 text-sm mt-1">Your personalized learning path is ready</p>
                 </div>
               )}
             </div>
@@ -242,7 +242,7 @@ function Onboarding() {
             {step > 1 ? (
               <button
                 onClick={() => setStep(step - 1)}
-                className="px-6 py-2 rounded-xl border border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-500 transition"
+                className="px-6 py-2 rounded-xl border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500 transition"
               >
                 ← Back
               </button>

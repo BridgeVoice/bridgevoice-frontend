@@ -20,7 +20,7 @@ function Profile() {
   }, [])
 
   if (!user) return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
+    <div className="min-h-screen bg-gray-950 flex items-center justify-center">
       <div className="flex gap-2">
         <div className="w-3 h-3 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
         <div className="w-3 h-3 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
@@ -35,62 +35,62 @@ function Profile() {
 
         <div className="mb-6">
           <h2 className="text-2xl font-bold">👤 Profile</h2>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">Your personal information and achievements</p>
+          <p className="text-gray-400 mt-1">Your personal information and achievements</p>
         </div>
 
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-8 mb-6">
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-8 mb-6">
           <div className="flex items-center gap-6">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-3xl font-bold text-white">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-3xl font-bold">
               {user.full_name?.charAt(0).toUpperCase()}
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{user.full_name}</h2>
-              <p className="text-gray-600 dark:text-gray-400">{user.email}</p>
-              <span className="inline-block mt-2 bg-purple-100 dark:bg-purple-900 dark:bg-opacity-50 border border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-300 px-3 py-1 rounded-full text-sm font-medium">
+              <h2 className="text-2xl font-bold text-white">{user.full_name}</h2>
+              <p className="text-gray-400">{user.email}</p>
+              <span className="inline-block mt-2 bg-purple-900 bg-opacity-50 border border-purple-700 text-purple-300 px-3 py-1 rounded-full text-sm font-medium">
                 {user.proficiency_level || 'Beginner'}
               </span>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-            <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-4">
+            <div className="bg-gray-800 rounded-xl p-4">
               <p className="text-xs text-gray-500 mb-1">Native Language</p>
-              <p className="font-semibold text-gray-900 dark:text-white">{user.language_background || 'Not set'}</p>
+              <p className="font-semibold text-white">{user.language_background || 'Not set'}</p>
             </div>
-            <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-4">
+            <div className="bg-gray-800 rounded-xl p-4">
               <p className="text-xs text-gray-500 mb-1">English Level</p>
-              <p className="font-semibold text-gray-900 dark:text-white">{user.proficiency_level || 'Not set'}</p>
+              <p className="font-semibold text-white">{user.proficiency_level || 'Not set'}</p>
             </div>
-            <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-4">
+            <div className="bg-gray-800 rounded-xl p-4">
               <p className="text-xs text-gray-500 mb-1">Learning Goal</p>
-              <p className="font-semibold text-gray-900 dark:text-white">{user.goals || 'Not set'}</p>
+              <p className="font-semibold text-white">{user.goals || 'Not set'}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 mb-6">
-          <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4">📊 Your Stats</h3>
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-6">
+          <h3 className="text-lg font-bold text-gray-200 mb-4">📊 Your Stats</h3>
           <div className="grid grid-cols-3 gap-4">
             {[
               // Shows the real total number of completed sessions
               {
                 value: user?.sessions_completed ?? 0,
                 label: 'Total Sessions',
-                color: 'text-blue-600 dark:text-blue-400'
+                color: 'text-blue-400'
               },
 
               // Shows the real consecutive-day streak from the backend
               {
                 value: `🔥 ${user?.day_streak ?? 0}`,
                 label: 'Day Streak',
-                color: 'text-orange-600 dark:text-orange-400'
+                color: 'text-orange-400'
               },
 
               // Shows the real XP earned by the user
               {
                 value: user?.total_xp ?? 0,
                 label: 'Total XP',
-                color: 'text-purple-600 dark:text-purple-400'
+                color: 'text-purple-400'
               },
             ].map((stat, i) => (
               <div key={i} className="text-center">
@@ -101,8 +101,8 @@ function Profile() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 mb-6">
-          <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4">🏆 Badges</h3>
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-6">
+          <h3 className="text-lg font-bold text-gray-200 mb-4">🏆 Badges</h3>
           <div className="flex gap-3 flex-wrap">
             {[
               {
@@ -150,17 +150,17 @@ function Profile() {
                 desc: 'Complete culture module'
               },
             ].map((item, i) => (
-              <div key={i} className="bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl p-3 text-center w-28">
+              <div key={i} className="bg-gray-800 border border-gray-700 rounded-xl p-3 text-center w-28">
                 <p className="text-3xl">{item.badge}</p>
-                <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mt-1">{item.name}</p>
+                <p className="text-xs font-semibold text-gray-300 mt-1">{item.name}</p>
                 <p className="text-xs text-gray-500 mt-1">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
-          <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4">⚙️ Quick Links</h3>
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+          <h3 className="text-lg font-bold text-gray-200 mb-4">⚙️ Quick Links</h3>
           <div className="space-y-3">
             {[
               { icon: '⚙️', label: 'Settings', to: '/settings' },
@@ -171,11 +171,11 @@ function Profile() {
               <Link
                 key={i}
                 to={item.to}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 hover:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-700 hover:border-gray-500 hover:bg-gray-800 transition text-gray-300 hover:text-white"
               >
                 <span>{item.icon}</span>
                 <span className="font-medium">{item.label}</span>
-                <span className="ml-auto text-gray-400 dark:text-gray-600">→</span>
+                <span className="ml-auto text-gray-600">→</span>
               </Link>
             ))}
           </div>

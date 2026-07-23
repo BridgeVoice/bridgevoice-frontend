@@ -39,17 +39,17 @@ function Progress() {
 
         <div className="mb-6">
           <h2 className="text-2xl font-bold">📊 Your Progress</h2>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">Track your English learning journey</p>
+          <p className="text-gray-400 mt-1">Track your English learning journey</p>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
-            { value: '15', label: 'Total Sessions', color: 'text-blue-600 dark:text-blue-400' },
-            { value: '83%', label: 'Avg Score', color: 'text-green-600 dark:text-green-400' },
-            { value: '🔥 7', label: 'Day Streak', color: 'text-orange-600 dark:text-orange-400' },
-            { value: '2.5h', label: 'Total Practice', color: 'text-purple-600 dark:text-purple-400' },
+            { value: '15', label: 'Total Sessions', color: 'text-blue-400' },
+            { value: '83%', label: 'Avg Score', color: 'text-green-400' },
+            { value: '🔥 7', label: 'Day Streak', color: 'text-orange-400' },
+            { value: '2.5h', label: 'Total Practice', color: 'text-purple-400' },
           ].map((stat, i) => (
-            <div key={i} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 text-center hover:border-gray-400 dark:hover:border-gray-600 transition">
+            <div key={i} className="bg-gray-900 border border-gray-800 rounded-2xl p-4 text-center hover:border-gray-600 transition">
               <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
               <p className="text-gray-500 text-sm mt-1">{stat.label}</p>
             </div>
@@ -64,7 +64,7 @@ function Progress() {
               className={`px-4 py-2 rounded-xl font-medium capitalize transition text-sm ${
                 activeTab === tab
                   ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white'
-                  : 'bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                  : 'bg-gray-900 border border-gray-800 text-gray-400 hover:text-white'
               }`}
             >
               {tab}
@@ -74,12 +74,12 @@ function Progress() {
 
         {activeTab === 'overview' && (
           <div className="space-y-6">
-            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-6">📈 This Week's Scores</h3>
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+              <h3 className="font-bold text-gray-200 mb-6">📈 This Week's Scores</h3>
               <div className="flex items-end gap-3 h-40">
                 {weeklyData.map((d, i) => (
                   <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                    <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">{d.score}%</p>
+                    <p className="text-xs text-gray-400 font-medium">{d.score}%</p>
                     <div
                       className="w-full bg-gradient-to-t from-purple-600 to-blue-500 rounded-t-lg transition-all"
                       style={{ height: `${(d.score / maxScore) * 120}px` }}
@@ -90,8 +90,8 @@ function Progress() {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-4">🎯 Confidence Over Time</h3>
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+              <h3 className="font-bold text-gray-200 mb-4">🎯 Confidence Over Time</h3>
               <div className="space-y-3">
                 {[
                   { week: 'Week 1', score: 55 },
@@ -101,13 +101,13 @@ function Progress() {
                 ].map((w, i) => (
                   <div key={i} className="flex items-center gap-3">
                     <p className="text-sm text-gray-500 w-16">{w.week}</p>
-                    <div className="flex-1 bg-gray-200 dark:bg-gray-800 rounded-full h-3">
+                    <div className="flex-1 bg-gray-800 rounded-full h-3">
                       <div
                         className="bg-gradient-to-r from-purple-600 to-blue-500 h-3 rounded-full"
                         style={{ width: `${w.score}%` }}
                       ></div>
                     </div>
-                    <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 w-10">{w.score}%</p>
+                    <p className="text-sm font-semibold text-gray-300 w-10">{w.score}%</p>
                   </div>
                 ))}
               </div>
@@ -116,16 +116,16 @@ function Progress() {
         )}
 
         {activeTab === 'skills' && (
-          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
-            <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-6">🧠 Skill Breakdown</h3>
+          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+            <h3 className="font-bold text-gray-200 mb-6">🧠 Skill Breakdown</h3>
             <div className="space-y-5">
               {skills.map((skill, i) => (
                 <div key={i}>
                   <div className="flex justify-between mb-2">
-                    <p className="font-medium text-gray-700 dark:text-gray-300">{skill.name}</p>
-                    <p className="text-sm font-semibold text-gray-600 dark:text-gray-400">{skill.score}%</p>
+                    <p className="font-medium text-gray-300">{skill.name}</p>
+                    <p className="text-sm font-semibold text-gray-400">{skill.score}%</p>
                   </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-3">
+                  <div className="w-full bg-gray-800 rounded-full h-3">
                     <div
                       className={`bg-gradient-to-r ${skill.color} h-3 rounded-full`}
                       style={{ width: `${skill.score}%` }}
@@ -134,32 +134,32 @@ function Progress() {
                 </div>
               ))}
             </div>
-            <div className="mt-8 bg-purple-100 dark:bg-purple-900 dark:bg-opacity-30 border border-purple-300 dark:border-purple-700 rounded-xl p-4">
-              <p className="font-semibold text-purple-700 dark:text-purple-300 mb-2">💡 AI Recommendation</p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Your pronunciation score is lowest at 60%. Try the <strong className="text-gray-900 dark:text-white">Doctor Visit</strong> scenario which focuses on clear speech!</p>
+            <div className="mt-8 bg-purple-900 bg-opacity-30 border border-purple-700 rounded-xl p-4">
+              <p className="font-semibold text-purple-300 mb-2">💡 AI Recommendation</p>
+              <p className="text-sm text-gray-400">Your pronunciation score is lowest at 60%. Try the <strong className="text-white">Doctor Visit</strong> scenario which focuses on clear speech!</p>
             </div>
           </div>
         )}
 
         {activeTab === 'history' && (
-          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
-            <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-4">📅 Session History</h3>
+          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+            <h3 className="font-bold text-gray-200 mb-4">📅 Session History</h3>
             <div className="space-y-4">
               {sessions.map((session, i) => (
-                <div key={i} className="border border-gray-200 dark:border-gray-800 rounded-xl p-4 hover:border-gray-400 dark:hover:border-gray-600 transition">
+                <div key={i} className="border border-gray-800 rounded-xl p-4 hover:border-gray-600 transition">
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <p className="font-semibold text-gray-800 dark:text-gray-200">{session.scenario}</p>
+                      <p className="font-semibold text-gray-200">{session.scenario}</p>
                       <p className="text-xs text-gray-500">{session.date} • {session.duration}</p>
                     </div>
                     <span className={`font-bold text-lg ${
-                      session.score >= 85 ? 'text-green-600 dark:text-green-400' :
-                      session.score >= 70 ? 'text-orange-600 dark:text-orange-400' : 'text-red-600 dark:text-red-400'
+                      session.score >= 85 ? 'text-green-400' :
+                      session.score >= 70 ? 'text-orange-400' : 'text-red-400'
                     }`}>
                       {session.score}%
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-2">
+                  <p className="text-sm text-gray-400 bg-gray-800 rounded-lg px-3 py-2">
                     💬 {session.feedback}
                   </p>
                 </div>

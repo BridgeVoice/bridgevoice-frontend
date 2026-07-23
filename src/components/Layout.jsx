@@ -101,7 +101,7 @@ function Layout({ children }) {
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-xl mb-1 transition group relative ${
                     isActive(item.to)
                       ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-900'
-                      : 'text-gray-500 dark:text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-800'
+                      : 'text-gray-500 dark:text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:bg-gray-800'
                   }`}
                 >
                   <span className="text-xl flex-shrink-0">{item.icon}</span>

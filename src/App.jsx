@@ -41,11 +41,7 @@ function App() {
         <Route path="/phrases" element={<Phrases />} />
         <Route path="/vocabulary" element={<Vocabulary />} /> 
         <Route path="/grammar" element={<GrammarChecker />} />
-<<<<<<< HEAD
         <Route path="/daily" element={<DailyChallenge />} />
-=======
-        <Route path="/daily-challenge" element={<DailyChallenge />} />
->>>>>>> 90370759f1698dad213ab98bf363fcbf0ae96649
         
 
       </Routes>

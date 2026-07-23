@@ -150,16 +150,16 @@ const filteredPhrases = sourceData.filter(p =>
 
         <div className="mb-6">
           <h2 className="text-2xl font-bold">💬 English Phrases</h2>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">Learn Canadian idioms, slang and professional phrases</p>
+          <p className="text-gray-400 mt-1">Learn Canadian idioms, slang and professional phrases</p>
         </div>
 
-        <div className="bg-gradient-to-r from-purple-900 to-blue-900 border border-purple-700 rounded-2xl p-6 mb-8 text-white">
+        <div className="bg-gradient-to-r from-purple-900 to-blue-900 border border-purple-700 rounded-2xl p-6 mb-8">
           <p className="text-sm font-medium text-purple-300 mb-1">💡 Phrase of the Day</p>
           <div className="flex justify-between items-start">
             <div>
               <h3 className="text-2xl font-bold mb-1">"{phraseOfTheDay.phrase}"</h3>
               <p className="text-gray-300 mb-2">{phraseOfTheDay.meaning}</p>
-              <p className="text-gray-300 italic text-sm">"{phraseOfTheDay.example}"</p>
+              <p className="text-gray-400 italic text-sm">"{phraseOfTheDay.example}"</p>
               <p className="text-yellow-400 text-sm mt-2">💡 {phraseOfTheDay.tip}</p>
             </div>
             <button
@@ -171,13 +171,13 @@ const filteredPhrases = sourceData.filter(p =>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 mb-6">
+        <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-6">
           <input
             type="text"
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
             placeholder="Search any phrase or idiom..."
-            className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition"
+            className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition"
           />
         </div>
 
@@ -193,7 +193,7 @@ const filteredPhrases = sourceData.filter(p =>
                 className={`flex items-center gap-2 px-4 py-2 rounded-xl transition font-medium text-sm ${
                   activeCategory === cat.id
                     ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white'
-                    : 'bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                    : 'bg-gray-900 border border-gray-800 text-gray-400 hover:text-white'
                 }`}
               >
                 {cat.icon} {cat.title}
@@ -204,12 +204,12 @@ const filteredPhrases = sourceData.filter(p =>
 
         <div className="space-y-3">
           {loading && (
-            <div className="bg-white dark:bg-gray-900 border border-purple-400 dark:border-purple-700 rounded-xl px-6 py-4 text-purple-600 dark:text-purple-300">
+            <div className="bg-gray-900 border border-purple-700 rounded-xl px-6 py-4 text-purple-300">
                🤖 Generating AI phrases...
             </div>
           )}
           {filteredPhrases.map((item, i) => (
-            <div key={i} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden hover:border-gray-400 dark:hover:border-gray-600 transition">
+            <div key={i} className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-gray-600 transition">
               <button
                 onClick={() => setExpandedPhrase(expandedPhrase === i ? null : i)}
                 className="w-full text-left px-6 py-4 flex justify-between items-center"
@@ -217,31 +217,31 @@ const filteredPhrases = sourceData.filter(p =>
                 <div className="flex items-center gap-3">
                   <button
                     onClick={(e) => { e.stopPropagation(); speakPhrase(item.phrase) }}
-                    className="text-gray-500 hover:text-purple-600 dark:hover:text-purple-400 transition"
+                    className="text-gray-500 hover:text-purple-400 transition"
                   >
                     🔊
                   </button>
-                  <p className="font-semibold text-gray-800 dark:text-gray-200">"{item.phrase}"</p>
+                  <p className="font-semibold text-gray-200">"{item.phrase}"</p>
                 </div>
-                <span className="text-gray-400 dark:text-gray-600 text-xl">{expandedPhrase === i ? '−' : '+'}</span>
+                <span className="text-gray-600 text-xl">{expandedPhrase === i ? '−' : '+'}</span>
               </button>
 
               {expandedPhrase === i && (
-                <div className="px-6 pb-5 border-t border-gray-200 dark:border-gray-800">
-                  <p className="text-gray-600 dark:text-gray-400 my-3">{item.meaning}</p>
-                  <div className="bg-gray-100 dark:bg-gray-800 rounded-xl px-4 py-3 mb-3">
-                    <p className="text-sm font-semibold text-purple-600 dark:text-purple-400 mb-1">Example:</p>
-                    <p className="text-gray-700 dark:text-gray-300 italic">"{item.example}"</p>
+                <div className="px-6 pb-5 border-t border-gray-800">
+                  <p className="text-gray-400 my-3">{item.meaning}</p>
+                  <div className="bg-gray-800 rounded-xl px-4 py-3 mb-3">
+                    <p className="text-sm font-semibold text-purple-400 mb-1">Example:</p>
+                    <p className="text-gray-300 italic">"{item.example}"</p>
                     <button
                       onClick={() => speakPhrase(item.example)}
-                      className="text-gray-500 hover:text-purple-600 dark:hover:text-purple-400 text-sm mt-2 transition"
+                      className="text-gray-500 hover:text-purple-400 text-sm mt-2 transition"
                     >
                       🔊 Hear example
                     </button>
                   </div>
-                  <div className="bg-yellow-100 dark:bg-yellow-900 dark:bg-opacity-20 border border-yellow-300 dark:border-yellow-800 rounded-xl px-4 py-3">
-                    <p className="text-sm font-semibold text-yellow-700 dark:text-yellow-400 mb-1">💡 When to use it:</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{item.tip}</p>
+                  <div className="bg-yellow-900 bg-opacity-20 border border-yellow-800 rounded-xl px-4 py-3">
+                    <p className="text-sm font-semibold text-yellow-400 mb-1">💡 When to use it:</p>
+                    <p className="text-sm text-gray-400">{item.tip}</p>
                   </div>
                 </div>
               )}

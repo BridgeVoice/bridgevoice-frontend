@@ -55,7 +55,7 @@ function Community() {
 
         <div className="mb-6">
           <h2 className="text-2xl font-bold">👥 Community</h2>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">Connect with other English learners across Canada</p>
+          <p className="text-gray-400 mt-1">Connect with other English learners across Canada</p>
         </div>
 
         <div className="flex gap-2 mb-6">
@@ -70,7 +70,7 @@ function Community() {
               className={`px-4 py-2 rounded-xl font-medium transition text-sm ${
                 activeTab === tab.id
                   ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white'
-                  : 'bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                  : 'bg-gray-900 border border-gray-800 text-gray-400 hover:text-white'
               }`}
             >
               {tab.label}
@@ -80,13 +80,13 @@ function Community() {
 
         {activeTab === 'feed' && (
           <div className="space-y-4">
-            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4">
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4">
               <textarea
                 value={newPost}
                 onChange={e => setNewPost(e.target.value)}
                 placeholder="Share your progress or tips with the community..."
                 rows={3}
-                className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition resize-none text-sm"
+                className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition resize-none text-sm"
               />
               <div className="flex justify-end mt-2">
                 <button
@@ -100,30 +100,30 @@ function Community() {
             </div>
 
             {posts.map((post, i) => (
-              <div key={post.id} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 hover:border-gray-400 dark:hover:border-gray-700 transition">
+              <div key={post.id} className="bg-gray-900 border border-gray-800 rounded-2xl p-5 hover:border-gray-700 transition">
                 <div className="flex items-center gap-3 mb-3">
                   <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${avatarColors[i % avatarColors.length]} flex items-center justify-center text-white font-bold`}>
                     {post.avatar}
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-800 dark:text-gray-200">{post.name}</p>
+                    <p className="font-semibold text-gray-200">{post.name}</p>
                     <p className="text-xs text-gray-500">{post.time}</p>
                   </div>
                 </div>
-                <p className="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">{post.content}</p>
+                <p className="text-gray-300 mb-4 leading-relaxed">{post.content}</p>
                 <div className="flex gap-4">
                   <button
                     onClick={() => handleLike(post.id)}
                     className={`flex items-center gap-1 text-sm font-medium transition ${
-                      post.liked ? 'text-purple-600 dark:text-purple-400' : 'text-gray-500 hover:text-purple-600 dark:hover:text-purple-400'
+                      post.liked ? 'text-purple-400' : 'text-gray-500 hover:text-purple-400'
                     }`}
                   >
                     👍 {post.likes}
                   </button>
-                  <button className="flex items-center gap-1 text-sm text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition">
+                  <button className="flex items-center gap-1 text-sm text-gray-500 hover:text-blue-400 transition">
                     💬 {post.comments}
                   </button>
-                  <button className="flex items-center gap-1 text-sm text-gray-500 hover:text-green-600 dark:hover:text-green-400 transition">
+                  <button className="flex items-center gap-1 text-sm text-gray-500 hover:text-green-400 transition">
                     🔗 Share
                   </button>
                 </div>
@@ -133,23 +133,23 @@ function Community() {
         )}
 
         {activeTab === 'leaderboard' && (
-          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden">
-            <div className="bg-gradient-to-r from-purple-900 to-blue-900 p-4 text-center border-b border-gray-200 dark:border-gray-800 text-white">
+          <div className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
+            <div className="bg-gradient-to-r from-purple-900 to-blue-900 p-4 text-center border-b border-gray-800">
               <p className="font-bold text-lg">🏆 Weekly Leaderboard</p>
-              <p className="text-gray-300 text-sm">Top learners this week</p>
+              <p className="text-gray-400 text-sm">Top learners this week</p>
             </div>
-            <div className="divide-y divide-gray-200 dark:divide-gray-800">
+            <div className="divide-y divide-gray-800">
               {leaderboard.map((user, i) => (
-                <div key={i} className={`flex items-center gap-4 p-4 ${user.name === 'You' ? 'bg-purple-100 dark:bg-purple-900 dark:bg-opacity-20' : 'hover:bg-gray-100 dark:hover:bg-gray-800'} transition`}>
-                  <p className="text-xl font-bold text-gray-500 dark:text-gray-400 w-8">{user.badge || user.rank}</p>
+                <div key={i} className={`flex items-center gap-4 p-4 ${user.name === 'You' ? 'bg-purple-900 bg-opacity-20' : 'hover:bg-gray-800'} transition`}>
+                  <p className="text-xl font-bold text-gray-400 w-8">{user.badge || user.rank}</p>
                   <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${avatarColors[i % avatarColors.length]} flex items-center justify-center text-white font-bold`}>
                     {user.avatar}
                   </div>
                   <div className="flex-1">
-                    <p className="font-semibold text-gray-800 dark:text-gray-200">{user.name} {user.name === 'You' ? '(You)' : ''}</p>
+                    <p className="font-semibold text-gray-200">{user.name} {user.name === 'You' ? '(You)' : ''}</p>
                     <p className="text-xs text-gray-500">🔥 {user.streak} day streak</p>
                   </div>
-                  <p className="font-bold text-purple-600 dark:text-purple-400">{user.xp} XP</p>
+                  <p className="font-bold text-purple-400">{user.xp} XP</p>
                 </div>
               ))}
             </div>
@@ -158,23 +158,23 @@ function Community() {
 
         {activeTab === 'buddies' && (
           <div className="space-y-4">
-            <div className="bg-purple-100 dark:bg-purple-900 dark:bg-opacity-20 border border-purple-300 dark:border-purple-800 rounded-xl p-4">
-              <p className="font-semibold text-purple-700 dark:text-purple-300">🤝 Find a Study Buddy</p>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Practice English with other learners at your level!</p>
+            <div className="bg-purple-900 bg-opacity-20 border border-purple-800 rounded-xl p-4">
+              <p className="font-semibold text-purple-300">🤝 Find a Study Buddy</p>
+              <p className="text-sm text-gray-400 mt-1">Practice English with other learners at your level!</p>
             </div>
             {studyBuddies.map((buddy, i) => (
-              <div key={i} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 flex justify-between items-center hover:border-gray-400 dark:hover:border-gray-600 transition">
+              <div key={i} className="bg-gray-900 border border-gray-800 rounded-2xl p-5 flex justify-between items-center hover:border-gray-600 transition">
                 <div className="flex items-center gap-4">
                   <div className="relative">
                     <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${avatarColors[i % avatarColors.length]} flex items-center justify-center text-white font-bold text-lg`}>
                       {buddy.name.charAt(0)}
                     </div>
-                    <div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white dark:border-gray-900 ${buddy.online ? 'bg-green-500' : 'bg-gray-400 dark:bg-gray-600'}`}></div>
+                    <div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-gray-900 ${buddy.online ? 'bg-green-500' : 'bg-gray-600'}`}></div>
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-800 dark:text-gray-200">{buddy.name}</p>
+                    <p className="font-semibold text-gray-200">{buddy.name}</p>
                     <p className="text-xs text-gray-500">{buddy.language} speaker • {buddy.level}</p>
-                    <p className="text-xs text-purple-600 dark:text-purple-400">Goal: {buddy.goal}</p>
+                    <p className="text-xs text-purple-400">Goal: {buddy.goal}</p>
                   </div>
                 </div>
                 <button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white px-4 py-2 rounded-xl transition text-sm font-medium">

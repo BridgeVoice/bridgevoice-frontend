@@ -81,18 +81,18 @@ function Dashboard() {
           <h2 className="text-3xl font-bold">
             Welcome back, <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">{user?.full_name?.split(' ')[0] || 'Learner'}</span>! 👋
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">Keep up the great work on your English journey!</p>
+          <p className="text-gray-400 mt-1">Keep up the great work on your English journey!</p>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
-            { label: 'Day Streak', value: `🔥 ${user?.day_streak ?? 0}`, color: 'text-orange-600 dark:text-orange-400' },
-            { label: 'Total XP', value: user?.total_xp ?? 0, color: 'text-purple-600 dark:text-purple-400' },
-            { label: 'Sessions Done', value: user?.sessions_completed ?? 0, color: 'text-blue-600 dark:text-blue-400' },
-            { label: 'Current Level', value: user?.proficiency_level || 'Beginner', color: 'text-green-600 dark:text-green-400' },
+            { label: 'Day Streak', value: `🔥 ${user?.day_streak ?? 0}`, color: 'text-orange-400' },
+            { label: 'Total XP', value: user?.total_xp ?? 0, color: 'text-purple-400' },
+            { label: 'Sessions Done', value: user?.sessions_completed ?? 0, color: 'text-blue-400' },
+            { label: 'Current Level', value: user?.proficiency_level || 'Beginner', color: 'text-green-400' },
           ].map((stat, i) => (
-            <div key={i} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 text-center hover:border-gray-400 dark:hover:border-gray-600 transition">
+            <div key={i} className="bg-gray-900 border border-gray-800 rounded-2xl p-4 text-center hover:border-gray-600 transition">
               <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
               <p className="text-gray-500 text-sm mt-1">{stat.label}</p>
             </div>
@@ -100,14 +100,14 @@ function Dashboard() {
         </div>
 
         {/* Daily Goal */}
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 mb-8">
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-8">
           <div className="flex justify-between items-center mb-3">
-            <p className="font-semibold text-gray-700 dark:text-gray-300">Daily Goal Progress</p>
-            <p className="text-sm text-purple-600 dark:text-purple-400 font-medium">
+            <p className="font-semibold text-gray-300">Daily Goal Progress</p>
+            <p className="text-sm text-purple-400 font-medium">
               {Math.min(completedSessions, goalSessions)}/{goalSessions} sessions
             </p>
           </div>
-          <div className="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-3">
+          <div className="w-full bg-gray-800 rounded-full h-3">
             <div
               className="bg-gradient-to-r from-purple-600 to-blue-600 h-3 rounded-full"
               style={{ width: `${progressPercentage}%` }}>
@@ -140,19 +140,19 @@ function Dashboard() {
         </div>
 
         {/* Scenarios */}
-        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4">Choose a Scenario to Practice</h3>
+        <h3 className="text-xl font-bold text-gray-200 mb-4">Choose a Scenario to Practice</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           {scenarios.map((scenario, i) => (
             <button
               key={i}
               onClick={() => navigate('/chat')}
-              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 text-left hover:border-gray-400 dark:hover:border-gray-600 hover:shadow-lg transition group"
+              className="bg-gray-900 border border-gray-800 rounded-2xl p-5 text-left hover:border-gray-600 hover:shadow-lg transition group"
             >
               <div className={`w-12 h-12 bg-gradient-to-br ${scenario.color} rounded-xl flex items-center justify-center text-2xl mb-3 group-hover:scale-110 transition`}>
                 {scenario.icon}
               </div>
-              <p className="font-semibold text-gray-900 dark:text-white">{scenario.title}</p>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{scenario.desc}</p>
+              <p className="font-semibold text-white">{scenario.title}</p>
+              <p className="text-sm text-gray-400 mt-1">{scenario.desc}</p>
             </button>
           ))}
         </div>
@@ -162,8 +162,8 @@ function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
           {/* Shows earned badges and the user's progress toward locked badges */}
-          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
-            <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-4">🏆 Badges & Progress</h3>
+          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+            <h3 className="font-bold text-gray-200 mb-4">🏆 Badges & Progress</h3>
 
             <div className="flex gap-3 flex-wrap">
               {[
@@ -201,18 +201,18 @@ function Dashboard() {
                 <div
                   key={i}
                   className={`border rounded-xl px-3 py-2 text-center ${item.earned
-                      ? 'bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700'
-                      : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 opacity-60'
+                      ? 'bg-gray-800 border-gray-700'
+                      : 'bg-gray-900 border-gray-800 opacity-60'
                     }`}
                 >
                   <p className="text-2xl">{item.badge}</p>
 
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                  <p className="text-xs text-gray-400 mt-1">
                     {item.name}
                   </p>
 
                   <p
-                    className={`text-xs mt-1 font-semibold ${item.earned ? 'text-green-600 dark:text-green-400' : 'text-gray-500'
+                    className={`text-xs mt-1 font-semibold ${item.earned ? 'text-green-400' : 'text-gray-500'
                       }`}
                   >
                     {item.earned ? 'Earned ✓' : item.progress}
@@ -223,17 +223,17 @@ function Dashboard() {
           </div>
 
           {/* Shows the user's five most recent completed activities */}
-          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
-            <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-4">📅 Recent Sessions</h3>
+          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+            <h3 className="font-bold text-gray-200 mb-4">📅 Recent Sessions</h3>
 
             <div className="space-y-3">
               {recentSessions.map((session, i) => (
                 <div
                   key={i}
-                  className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-800"
+                  className="flex justify-between items-center py-2 border-b border-gray-800"
                 >
                   <div>
-                    <p className="font-medium text-gray-700 dark:text-gray-300 text-sm">
+                    <p className="font-medium text-gray-300 text-sm">
                       {session.activity_name}
                     </p>
 
@@ -246,7 +246,7 @@ function Dashboard() {
                     </p>
                   </div>
 
-                  <span className="text-green-600 dark:text-green-400 font-semibold text-sm">
+                  <span className="text-green-400 font-semibold text-sm">
                     {session.score}%
                   </span>
                 </div>

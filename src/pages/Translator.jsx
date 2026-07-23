@@ -70,15 +70,15 @@ function Translator() {
 
         <div className="mb-6">
           <h2 className="text-2xl font-bold">🌍 Translator</h2>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">Translate between English and your native language instantly</p>
+          <p className="text-gray-400 mt-1">Translate between English and your native language instantly</p>
         </div>
 
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 mb-8">
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-8">
           <div className="flex items-center gap-4 mb-4">
             <select
               value={fromLang}
               onChange={e => setFromLang(e.target.value)}
-              className="flex-1 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:border-purple-500 transition"
+              className="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-purple-500 transition"
             >
               <option value="auto">Auto Detect</option>
               {languages.map(lang => (
@@ -88,7 +88,7 @@ function Translator() {
 
             <button
               onClick={swapLanguages}
-              className="bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:border-gray-500 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white p-3 rounded-xl transition text-xl"
+              className="bg-gray-800 border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white p-3 rounded-xl transition text-xl"
             >
               ⇄
             </button>
@@ -96,7 +96,7 @@ function Translator() {
             <select
               value={toLang}
               onChange={e => setToLang(e.target.value)}
-              className="flex-1 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:border-purple-500 transition"
+              className="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-purple-500 transition"
             >
               {languages.map(lang => (
                 <option key={lang.code} value={lang.code}>{lang.name}</option>
@@ -111,26 +111,26 @@ function Translator() {
                 onChange={e => setInputText(e.target.value)}
                 placeholder="Type text to translate..."
                 rows={5}
-                className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition resize-none"
+                className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition resize-none"
               />
               <button
                 onClick={() => speakText(inputText, fromLang)}
-                className="absolute bottom-3 right-3 text-gray-500 hover:text-purple-600 dark:hover:text-purple-400 transition"
+                className="absolute bottom-3 right-3 text-gray-500 hover:text-purple-400 transition"
               >
                 🔊
               </button>
             </div>
 
-            <div className="relative bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl p-4 min-h-32">
+            <div className="relative bg-gray-800 border border-gray-700 rounded-xl p-4 min-h-32">
               {loading ? (
                 <p className="text-gray-500 animate-pulse">Translating...</p>
               ) : (
-                <p className="text-gray-800 dark:text-gray-200">{translatedText || 'Translation will appear here...'}</p>
+                <p className="text-gray-200">{translatedText || 'Translation will appear here...'}</p>
               )}
               {translatedText && (
                 <button
                   onClick={() => speakText(translatedText, toLang)}
-                  className="absolute bottom-3 right-3 text-gray-500 hover:text-purple-600 dark:hover:text-purple-400 transition"
+                  className="absolute bottom-3 right-3 text-gray-500 hover:text-purple-400 transition"
                 >
                   🔊
                 </button>
@@ -149,7 +149,7 @@ function Translator() {
             {translatedText && (
               <button
                 onClick={() => navigator.clipboard.writeText(translatedText)}
-                className="bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-4 py-3 rounded-xl hover:border-gray-500 transition"
+                className="bg-gray-800 border border-gray-700 text-gray-400 hover:text-white px-4 py-3 rounded-xl hover:border-gray-500 transition"
               >
                 📋 Copy
               </button>
@@ -157,32 +157,32 @@ function Translator() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
-          <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-4">💬 Common Phrases for Newcomers</h3>
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+          <h3 className="font-bold text-gray-200 mb-4">💬 Common Phrases for Newcomers</h3>
           <div className="space-y-3">
             {commonPhrases.map((phrase, i) => (
               <div
                 key={i}
-                className="flex justify-between items-center border border-gray-200 dark:border-gray-800 rounded-xl p-4 hover:border-gray-400 dark:hover:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition cursor-pointer"
+                className="flex justify-between items-center border border-gray-800 rounded-xl p-4 hover:border-gray-600 hover:bg-gray-800 transition cursor-pointer"
                 onClick={() => setInputText(phrase.english)}
               >
                 <div>
-                  <p className="font-medium text-gray-800 dark:text-gray-200">{phrase.english}</p>
-                  <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">{phrase.context}</p>
+                  <p className="font-medium text-gray-200">{phrase.english}</p>
+                  <p className="text-xs text-purple-400 mt-1">{phrase.context}</p>
                 </div>
                 <div className="flex gap-2">
                   <button
                     onClick={(e) => { e.stopPropagation(); speakText(phrase.english, 'en') }}
-                    className="text-gray-500 hover:text-purple-600 dark:hover:text-purple-400 transition"
+                    className="text-gray-500 hover:text-purple-400 transition"
                   >
                     🔊
                   </button>
-                  <span className="text-gray-400 dark:text-gray-700">→</span>
+                  <span className="text-gray-700">→</span>
                 </div>
               </div>
             ))}
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-600 mt-4 text-center">Click any phrase to translate it instantly!</p>
+          <p className="text-xs text-gray-600 mt-4 text-center">Click any phrase to translate it instantly!</p>
         </div>
 
       </div>
