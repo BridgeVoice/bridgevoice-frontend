@@ -5,6 +5,7 @@ import CharacterAvatar from '../components/characters/CharacterAvatar'
 import { getCharacterById } from '../components/characters/characterData'
 import { getCharacterPreference } from '../utils/characterPreference'
 import { getBrowserVoice, BROWSER_VOICE_SETTINGS } from '../utils/browserVoice'
+import { useVoicePlayback } from '../utils/useVoicePlayback'
 
 function Chat() {
   const navigate = useNavigate()
@@ -24,8 +25,11 @@ function Chat() {
   const character             = getCharacterById(characterId)
   const [isSpeaking, setIsSpeaking]     = useState(false)
   const [speakingWord, setSpeakingWord] = useState(false)
-  const wordTimerRef  = useRef(null)
-  const audioRef      = useRef(null)
+  // Shared voice control — owns audioRef/wordTimerRef and stops speech on unmount
+  const { audioRef, wordTimerRef, stopSpeaking } = useVoicePlayback(() => {
+    setIsSpeaking(false)
+    setSpeakingWord(false)
+  })
 
   const messagesEndRef  = useRef(null)
   const recognitionRef  = useRef(null)
@@ -54,9 +58,8 @@ function Chat() {
 
   // ── Speak via Groq TTS, fall back to browser speech ──
   const speakText = async (text) => {
-    // Stop any current speech
-    if (audioRef.current) { audioRef.current.pause(); audioRef.current = null }
-    window.speechSynthesis?.cancel()
+    // Stop any current speech (both Groq audio and browser speech)
+    stopSpeaking()
 
     try {
       const res = await fetch('http://127.0.0.1:8000/api/tts', {
@@ -104,6 +107,7 @@ function Chat() {
   // ── Send message to backend (includes personality for LLM tone) ──
   const sendMessage = async (text) => {
     if (!text.trim()) return
+    stopSpeaking()   // stop the coach mid-sentence when the user sends a new message
     setMessages(prev => [...prev, { role: 'user', content: text }])
     setInput('')
     setLoading(true)
@@ -157,11 +161,11 @@ function Chat() {
 
         <div>
           <h2 className="text-2xl font-bold">🗣️ AI Conversation</h2>
-          <p className="text-gray-400 mt-1">Practice English with your AI conversation partner</p>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Practice English with your AI conversation partner</p>
         </div>
 
         {/* ── Coach panel ── */}
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4 flex items-center gap-5">
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 flex items-center gap-5">
           <CharacterAvatar
             personality={character.id}
             isSpeaking={isSpeaking}
@@ -170,7 +174,7 @@ function Chat() {
             className="flex-shrink-0"
           />
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-gray-100">
+            <p className="font-semibold text-gray-900 dark:text-gray-100">
               {character.emoji} {character.name} is your coach
             </p>
             <p className="text-xs mt-0.5" style={{ color: character.accentColor }}>
@@ -178,7 +182,7 @@ function Chat() {
             </p>
             <p className="text-xs text-gray-500 mt-1">
               The AI will reply in {character.name}'s style. &nbsp;
-              <Link to="/settings" className="text-purple-400 hover:underline">Change character →</Link>
+              <Link to="/settings" onClick={stopSpeaking} className="text-purple-600 dark:text-purple-400 hover:underline">Change character →</Link>
             </p>
           </div>
           {isSpeaking && (
@@ -195,17 +199,17 @@ function Chat() {
         </div>
 
         {/* ── Scenario selector ── */}
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4">
-          <p className="text-sm text-gray-400 mb-3 font-medium">Select Scenario:</p>
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 font-medium">Select Scenario:</p>
           <div className="flex gap-2 flex-wrap">
             {['General Conversation', 'Job Interview', 'Grocery Store', 'Doctor Visit', 'Bank Visit', 'Workplace Chat'].map(s => (
               <button
                 key={s}
-                onClick={() => setScenario(s)}
+                onClick={() => { stopSpeaking(); setScenario(s) }}
                 className={`px-3 py-1.5 rounded-full text-sm font-medium transition ${
                   scenario === s
                     ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white'
-                    : 'bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700'
                 }`}
               >
                 {s}
@@ -215,14 +219,14 @@ function Chat() {
         </div>
 
         {/* ── Chat window ── */}
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl flex flex-col" style={{ minHeight: '400px' }}>
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl flex flex-col" style={{ minHeight: '400px' }}>
           <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ maxHeight: '450px' }}>
             {messages.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-xs md:max-w-md px-4 py-3 rounded-2xl text-sm leading-relaxed ${
                   msg.role === 'user'
                     ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-br-sm'
-                    : 'bg-gray-800 text-gray-200 rounded-bl-sm border border-gray-700'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-bl-sm border border-gray-200 dark:border-gray-700'
                 }`}>
                   {msg.role === 'assistant' && (
                     <p className="text-xs font-semibold mb-1" style={{ color: character.accentColor }}>
@@ -236,7 +240,7 @@ function Chat() {
 
             {loading && (
               <div className="flex justify-start">
-                <div className="bg-gray-800 border border-gray-700 px-4 py-3 rounded-2xl rounded-bl-sm">
+                <div className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-3 rounded-2xl rounded-bl-sm">
                   <div className="flex gap-1">
                     <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
                     <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
@@ -248,14 +252,14 @@ function Chat() {
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="border-t border-gray-800 p-4">
+          <div className="border-t border-gray-200 dark:border-gray-800 p-4">
             <div className="flex gap-2 items-center">
               <button
                 onClick={listening ? stopListening : startListening}
                 className={`p-3 rounded-full transition ${
                   listening
                     ? 'bg-red-600 text-white animate-pulse'
-                    : 'bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700'
                 }`}
               >
                 🎤
@@ -267,7 +271,7 @@ function Chat() {
                 onKeyPress={handleKeyPress}
                 placeholder={listening ? '🎤 Listening...' : 'Type your message or click 🎤 to speak...'}
                 disabled={listening || loading}
-                className="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition text-sm"
+                className="flex-1 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition text-sm"
               />
               <button
                 onClick={() => sendMessage(input)}
@@ -278,7 +282,7 @@ function Chat() {
               </button>
             </div>
             {listening && (
-              <p className="text-center text-red-400 text-xs mt-2 animate-pulse">
+              <p className="text-center text-red-500 dark:text-red-400 text-xs mt-2 animate-pulse">
                 🔴 Listening... speak now!
               </p>
             )}
@@ -286,14 +290,14 @@ function Chat() {
         </div>
 
         {/* ── Quick phrases ── */}
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4">
-          <p className="text-sm font-semibold text-gray-400 mb-2">💡 Quick Phrases:</p>
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4">
+          <p className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">💡 Quick Phrases:</p>
           <div className="flex gap-2 flex-wrap">
             {['Hello, nice to meet you!', 'Could you repeat that?', "I don't understand", 'Can you speak slower?'].map(phrase => (
               <button
                 key={phrase}
                 onClick={() => sendMessage(phrase)}
-                className="bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white px-3 py-1 rounded-full text-xs transition border border-gray-700"
+                className="bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-1 rounded-full text-xs transition border border-gray-300 dark:border-gray-700"
               >
                 {phrase}
               </button>
