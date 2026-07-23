@@ -25,7 +25,7 @@ function Quiz() {
   const levels = [
     {
       level: 1, title: 'Beginner', icon: '🌱', color: 'from-green-600 to-green-400',
-      borderColor: 'border-green-800', bgColor: 'bg-green-900',
+      borderColor: 'border-green-400 dark:border-green-800', bgColor: 'bg-green-100 dark:bg-green-900',
       desc: 'Basic everyday English words',
       questions: [
         { word: 'Happy', correct: 'Feeling joy and pleasure', options: ['Feeling joy and pleasure', 'Feeling very tired', 'Feeling angry', 'Feeling confused'] },
@@ -47,7 +47,7 @@ function Quiz() {
     },
     {
       level: 2, title: 'Elementary', icon: '📗', color: 'from-blue-600 to-blue-400',
-      borderColor: 'border-blue-800', bgColor: 'bg-blue-900',
+      borderColor: 'border-blue-400 dark:border-blue-800', bgColor: 'bg-blue-100 dark:bg-blue-900',
       desc: 'Common workplace and social words',
       questions: [
         { word: 'Punctual', correct: 'Arriving on time', options: ['Arriving on time', 'Arriving very late', 'Leaving work early', 'Working extra hours'] },
@@ -69,7 +69,7 @@ function Quiz() {
     },
     {
       level: 3, title: 'Intermediate', icon: '📘', color: 'from-purple-600 to-purple-400',
-      borderColor: 'border-purple-800', bgColor: 'bg-purple-900',
+      borderColor: 'border-purple-400 dark:border-purple-800', bgColor: 'bg-purple-100 dark:bg-purple-900',
       desc: 'Professional and business vocabulary',
       questions: [
         { word: 'Collaborate', correct: 'To work together with others', options: ['To work together with others', 'To work alone', 'To argue with others', 'To take a vacation'] },
@@ -91,7 +91,7 @@ function Quiz() {
     },
     {
       level: 4, title: 'Advanced', icon: '📙', color: 'from-orange-600 to-orange-400',
-      borderColor: 'border-orange-800', bgColor: 'bg-orange-900',
+      borderColor: 'border-orange-400 dark:border-orange-800', bgColor: 'bg-orange-100 dark:bg-orange-900',
       desc: 'Complex academic and business terms',
       questions: [
         { word: 'Paradigm', correct: 'A typical example or pattern of something', options: ['A typical example or pattern of something', 'A type of diagram', 'A workplace problem', 'A new technology'] },
@@ -113,7 +113,7 @@ function Quiz() {
     },
     {
       level: 5, title: 'Expert', icon: '🏆', color: 'from-red-600 to-red-400',
-      borderColor: 'border-red-800', bgColor: 'bg-red-900',
+      borderColor: 'border-red-400 dark:border-red-800', bgColor: 'bg-red-100 dark:bg-red-900',
       desc: 'Expert level English mastery',
       questions: [
         { word: 'Juxtapose', correct: 'To place two things side by side for contrast', options: ['To place two things side by side for contrast', 'To mix things together', 'To separate two ideas', 'To ignore differences'] },
@@ -301,8 +301,8 @@ function Quiz() {
             <div className="text-center mb-8">
               <p className="text-5xl mb-3">🧠</p>
               <h2 className="text-2xl font-bold">Vocabulary Quiz</h2>
-              <p className="text-gray-400 mt-1">Progress through 5 levels of English mastery!</p>
-              <p className="text-sm text-purple-400 mt-1">Score 8/10 or higher to unlock the next level</p>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Progress through 5 levels of English mastery!</p>
+              <p className="text-sm text-purple-600 dark:text-purple-400 mt-1">Score 8/10 or higher to unlock the next level</p>
             </div>
 
             <div className="space-y-4">
@@ -310,17 +310,17 @@ function Quiz() {
                 const unlocked = isLevelUnlocked(level.level)
                 const completed = completedLevels[level.level]
                 return (
-                  <div key={level.level} className={`bg-gray-900 rounded-2xl p-5 border ${unlocked ? level.borderColor : 'border-gray-800'} ${!unlocked && 'opacity-60'}`}>
+                  <div key={level.level} className={`bg-white dark:bg-gray-900 rounded-2xl p-5 border ${unlocked ? level.borderColor : 'border-gray-200 dark:border-gray-800'} ${!unlocked && 'opacity-60'}`}>
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-4">
-                        <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${unlocked ? level.color : 'from-gray-700 to-gray-600'} flex items-center justify-center text-xl`}>
+                        <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${unlocked ? level.color : 'from-gray-400 to-gray-300 dark:from-gray-700 dark:to-gray-600'} flex items-center justify-center text-xl`}>
                           {unlocked ? level.icon : '🔒'}
                         </div>
                         <div>
-                          <p className="font-bold text-gray-200">Level {level.level} — {level.title}</p>
+                          <p className="font-bold text-gray-800 dark:text-gray-200">Level {level.level} — {level.title}</p>
                           <p className="text-sm text-gray-500">{level.desc}</p>
                           {completed && (
-                            <p className={`text-xs font-semibold mt-1 ${completed.passed ? 'text-green-400' : 'text-orange-400'}`}>
+                            <p className={`text-xs font-semibold mt-1 ${completed.passed ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-400'}`}>
                               {completed.passed ? `✅ Passed with ${completed.score}/10` : `❌ Score: ${completed.score}/10 — Try again!`}
                             </p>
                           )}
@@ -335,7 +335,7 @@ function Quiz() {
                           {completed?.passed ? 'Retry' : 'Start'}
                         </button>
                       ) : (
-                        <p className="text-sm text-gray-600">Pass Level {level.level - 1} first</p>
+                        <p className="text-sm text-gray-400 dark:text-gray-600">Pass Level {level.level - 1} first</p>
                       )}
                     </div>
                   </div>
@@ -347,14 +347,14 @@ function Quiz() {
 
         {stage === 'quiz' && quizQuestions.length > 0 && (
           <div>
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4 mb-6">
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 mb-6">
               <div className="flex justify-between items-center mb-2">
-                <p className="font-semibold text-gray-400 text-sm">
+                <p className="font-semibold text-gray-600 dark:text-gray-400 text-sm">
                   Level {activeLevel} — {currentLevelData?.title} | Q{currentQ + 1}/10
                 </p>
-                <p className="text-purple-400 font-bold">Score: {score}</p>
+                <p className="text-purple-600 dark:text-purple-400 font-bold">Score: {score}</p>
               </div>
-              <div className="w-full bg-gray-800 rounded-full h-2">
+              <div className="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-2">
                 <div
                   className="bg-gradient-to-r from-purple-600 to-blue-500 h-2 rounded-full transition-all"
                   style={{ width: `${(currentQ / 10) * 100}%` }}
@@ -381,12 +381,12 @@ function Quiz() {
                   key={i}
                   onClick={() => handleAnswer(option)}
                   className={`w-full text-left px-5 py-4 rounded-xl border-2 transition font-medium ${!showAnswer
-                    ? 'border-gray-700 bg-gray-900 hover:border-gray-500 text-gray-200'
+                    ? 'border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-gray-500 text-gray-800 dark:text-gray-200'
                     : option === quizQuestions[currentQ].correct
-                      ? 'border-green-500 bg-green-900 bg-opacity-30 text-green-300'
+                      ? 'border-green-500 bg-green-100 dark:bg-green-900 dark:bg-opacity-30 text-green-700 dark:text-green-300'
                       : option === selected
-                        ? 'border-red-500 bg-red-900 bg-opacity-30 text-red-300'
-                        : 'border-gray-800 bg-gray-900 text-gray-500'
+                        ? 'border-red-500 bg-red-100 dark:bg-red-900 dark:bg-opacity-30 text-red-700 dark:text-red-300'
+                        : 'border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-400 dark:text-gray-500'
                     }`}
                 >
                   {option}
@@ -413,38 +413,38 @@ function Quiz() {
               {finalScore >= 8 ? '🏆' : finalScore >= 5 ? '🌟' : '💪'}
             </p>
             <h2 className="text-2xl font-bold mb-2">Level {activeLevel} Complete!</h2>
-            <div className={`text-6xl font-bold my-4 ${finalScore >= 8 ? 'text-green-400' :
-              finalScore >= 5 ? 'text-orange-400' : 'text-red-400'
+            <div className={`text-6xl font-bold my-4 ${finalScore >= 8 ? 'text-green-600 dark:text-green-400' :
+              finalScore >= 5 ? 'text-orange-600 dark:text-orange-400' : 'text-red-600 dark:text-red-400'
               }`}>
               {finalScore}/10
             </div>
 
             {finalScore >= 8 ? (
-              <div className="bg-green-900 bg-opacity-30 border border-green-700 rounded-xl p-4 mb-6">
-                <p className="text-green-400 font-bold text-lg">🎉 Level {activeLevel} Passed!</p>
+              <div className="bg-green-100 dark:bg-green-900 dark:bg-opacity-30 border border-green-300 dark:border-green-700 rounded-xl p-4 mb-6">
+                <p className="text-green-700 dark:text-green-400 font-bold text-lg">🎉 Level {activeLevel} Passed!</p>
                 {activeLevel < 5 && (
-                  <p className="text-green-300 text-sm mt-1">Level {activeLevel + 1} — {levels[activeLevel]?.title} is now unlocked!</p>
+                  <p className="text-green-600 dark:text-green-300 text-sm mt-1">Level {activeLevel + 1} — {levels[activeLevel]?.title} is now unlocked!</p>
                 )}
               </div>
             ) : (
-              <div className="bg-orange-900 bg-opacity-30 border border-orange-700 rounded-xl p-4 mb-6">
-                <p className="text-orange-400 font-bold">Need 8/10 to unlock next level</p>
-                <p className="text-orange-300 text-sm mt-1">Keep practicing! You can do it! 💪</p>
+              <div className="bg-orange-100 dark:bg-orange-900 dark:bg-opacity-30 border border-orange-300 dark:border-orange-700 rounded-xl p-4 mb-6">
+                <p className="text-orange-700 dark:text-orange-400 font-bold">Need 8/10 to unlock next level</p>
+                <p className="text-orange-600 dark:text-orange-300 text-sm mt-1">Keep practicing! You can do it! 💪</p>
               </div>
             )}
 
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-6">
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 mb-6">
               <div className="grid grid-cols-3 gap-4">
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-green-400">{finalScore}</p>
+                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">{finalScore}</p>
                   <p className="text-sm text-gray-500">Correct</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-red-400">{10 - finalScore}</p>
+                  <p className="text-2xl font-bold text-red-600 dark:text-red-400">{10 - finalScore}</p>
                   <p className="text-sm text-gray-500">Wrong</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-purple-400">{finalScore * 10}%</p>
+                  <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{finalScore * 10}%</p>
                   <p className="text-sm text-gray-500">Score</p>
                 </div>
               </div>
@@ -459,7 +459,7 @@ function Quiz() {
               </button>
               <button
                 onClick={() => startQuiz(levels.find(l => l.level === activeLevel))}
-                className="flex-1 bg-gray-900 border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white py-3 rounded-xl transition font-bold"
+                className="flex-1 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 hover:border-gray-500 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white py-3 rounded-xl transition font-bold"
               >
                 Try Again 🔄
               </button>
