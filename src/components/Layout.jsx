@@ -32,7 +32,7 @@ function Layout({ children }) {
       { to: '/dashboard', icon: '🏠', label: 'Dashboard' },
       { to: '/chat', icon: '🗣️', label: 'AI Chat' },
       { to: '/progress', icon: '📊', label: 'Progress' },
-      { to: '/daily', icon: '🎯', label: 'Daily Challenge' },
+      { to: '/daily-challenge', icon: '🎯', label: 'Daily Challenge' },
     ]},
     { section: 'LEARN', items: [
       { to: '/vocabulary', icon: '📚', label: 'Vocabulary' },
