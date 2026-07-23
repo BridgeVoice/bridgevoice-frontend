@@ -38,15 +38,15 @@ function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white flex">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-white flex">
 
       {/* Left Side — Branding */}
-      <div className="hidden md:flex flex-col justify-center items-center w-1/2 bg-gray-900 border-r border-gray-800 px-12">
+      <div className="hidden md:flex flex-col justify-center items-center w-1/2 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 px-12">
         <Logo size={40} />
         <h1 className="text-4xl font-bold mt-6 mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
           BridgeVoice
         </h1>
-        <p className="text-gray-400 text-center text-lg leading-relaxed max-w-sm">
+        <p className="text-gray-600 dark:text-gray-400 text-center text-lg leading-relaxed max-w-sm">
           Your AI-powered English conversation partner. Practice, improve and build confidence every day.
         </p>
 
@@ -57,9 +57,9 @@ function Login() {
             { icon: '🏆', text: 'Earn badges and XP' },
             { icon: '💼', text: '60+ interview scenarios' },
           ].map((item, i) => (
-            <div key={i} className="flex items-center gap-3 bg-gray-800 rounded-xl px-4 py-3">
+            <div key={i} className="flex items-center gap-3 bg-gray-100 dark:bg-gray-800 rounded-xl px-4 py-3">
               <span className="text-xl">{item.icon}</span>
-              <p className="text-gray-300 text-sm">{item.text}</p>
+              <p className="text-gray-700 dark:text-gray-300 text-sm">{item.text}</p>
             </div>
           ))}
         </div>
@@ -74,17 +74,17 @@ function Login() {
           </div>
 
           <h2 className="text-3xl font-bold mb-2">Welcome back!</h2>
-          <p className="text-gray-400 mb-8">Login to continue your English journey</p>
+          <p className="text-gray-600 dark:text-gray-400 mb-8">Login to continue your English journey</p>
 
           {error && (
-            <div className="bg-red-900 bg-opacity-50 border border-red-700 text-red-300 px-4 py-3 rounded-xl mb-6 text-sm">
+            <div className="bg-red-100 dark:bg-red-900 dark:bg-opacity-50 border border-red-300 dark:border-red-700 text-red-700 dark:text-red-300 px-4 py-3 rounded-xl mb-6 text-sm">
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Email</label>
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Email</label>
               <input
                 type="email"
                 name="email"
@@ -92,12 +92,12 @@ function Login() {
                 onChange={handleChange}
                 required
                 placeholder="john@example.com"
-                className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 transition"
+                className="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:border-purple-500 transition"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Password</label>
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Password</label>
               <input
                 type="password"
                 name="password"
@@ -105,14 +105,14 @@ function Login() {
                 onChange={handleChange}
                 required
                 placeholder="Your password"
-                className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 transition"
+                className="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:border-purple-500 transition"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white py-3 rounded-xl font-bold text-lg transition disabled:opacity-50 shadow-lg shadow-purple-900"
+              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white py-3 rounded-xl font-bold text-lg transition disabled:opacity-50 shadow-lg shadow-purple-300 dark:shadow-purple-900"
             >
               {loading ? 'Logging in...' : 'Login →'}
             </button>
@@ -120,7 +120,7 @@ function Login() {
 
           <p className="text-center text-gray-500 text-sm mt-6">
             Don't have an account?{' '}
-            <Link to="/register" className="text-purple-400 hover:text-purple-300 font-medium">
+            <Link to="/register" className="text-purple-600 dark:text-purple-400 hover:text-purple-500 dark:hover:text-purple-300 font-medium">
               Create one free
             </Link>
           </p>
