@@ -4,6 +4,16 @@ import Layout from '../components/Layout'
 function CultureGuide() {
   const [activeCategory, setActiveCategory] = useState('workplace')
   const [expandedItem, setExpandedItem] = useState(null)
+  const [aiContent, setAiContent] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [province, setProvince] = useState('')
+
+  const provinces = [
+    'Alberta', 'British Columbia', 'Manitoba', 'New Brunswick',
+    'Newfoundland and Labrador', 'Northwest Territories', 'Nova Scotia',
+    'Nunavut', 'Ontario', 'Prince Edward Island', 'Quebec',
+    'Saskatchewan', 'Yukon'
+  ]
 
   const categories = [
     { id: 'workplace', icon: '🏢', title: 'Workplace' },
@@ -150,6 +160,32 @@ function CultureGuide() {
     ],
   }
 
+  const fetchAiContent = async (category, prov = province) => {
+    setLoading(true)
+    setExpandedItem(null)
+    setAiContent([])
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/culture', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category, province: prov })
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.entries) {
+        setAiContent(data.entries)
+      } else {
+        setAiContent(content[category])
+      }
+    } catch (err) {
+      setAiContent(content[category])
+    }
+
+    setLoading(false)
+  }
+
   return (
     <Layout>
 
@@ -165,11 +201,28 @@ function CultureGuide() {
           <p className="text-gray-300">This guide will help you understand Canadian culture, workplace etiquette, and daily life so you can feel confident and comfortable in your new home.</p>
         </div>
 
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 mb-6 flex items-center gap-4">
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-400 flex-shrink-0">📍 Show info for:</p>
+          <select
+            value={province}
+            onChange={e => {
+              setProvince(e.target.value)
+              fetchAiContent(activeCategory, e.target.value)
+            }}
+            className="flex-1 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:border-purple-500 transition"
+          >
+            <option value="">🍁 All of Canada</option>
+            {provinces.map(p => (
+              <option key={p} value={p}>{p}</option>
+            ))}
+          </select>
+        </div>
+
         <div className="grid grid-cols-4 md:grid-cols-8 gap-2 mb-8">
           {categories.map(cat => (
             <button
               key={cat.id}
-              onClick={() => { setActiveCategory(cat.id); setExpandedItem(null) }}
+              onClick={() => { setActiveCategory(cat.id); fetchAiContent(cat.id) }}
               className={`flex flex-col items-center gap-1 p-3 rounded-xl transition ${activeCategory === cat.id
                 ? 'bg-gradient-to-br from-purple-600 to-blue-600 text-white'
                 : 'bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-400 dark:hover:border-gray-600'
@@ -182,7 +235,12 @@ function CultureGuide() {
         </div>
 
         <div className="space-y-3">
-          {content[activeCategory].map((item, i) => (
+          {loading && (
+            <div className="bg-white dark:bg-gray-900 border border-purple-400 dark:border-purple-700 rounded-xl px-6 py-4 text-purple-600 dark:text-purple-300">
+              🤖 Generating AI content...
+            </div>
+          )}
+          {(aiContent.length > 0 ? aiContent : content[activeCategory]).map((item, i) => (
             <div key={i} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden hover:border-gray-400 dark:hover:border-gray-600 transition">
               <button
                 onClick={() => setExpandedItem(expandedItem === i ? null : i)}
