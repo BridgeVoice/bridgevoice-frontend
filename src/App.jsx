@@ -17,6 +17,7 @@ import Quiz from './pages/Quiz'
 import Phrases from './pages/Phrases'
 import GrammarChecker from './pages/GrammarChecker'
 import Vocabulary from './pages/Vocabulary'
+import DailyChallenge from './pages/DailyChallenge'
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
         <Route path="/phrases" element={<Phrases />} />
         <Route path="/vocabulary" element={<Vocabulary />} /> 
         <Route path="/grammar" element={<GrammarChecker />} />
+        <Route path="/daily" element={<DailyChallenge />} />
         
 
       </Routes>
