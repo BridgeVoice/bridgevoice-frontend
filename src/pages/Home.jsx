@@ -12,10 +12,10 @@ function Home() {
   }, [navigate])
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-white">
 
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-gray-950 bg-opacity-80 backdrop-blur-md border-b border-gray-800 px-8 py-4 flex justify-between items-center">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-gray-50 dark:bg-gray-950 bg-opacity-80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-8 py-4 flex justify-between items-center">
         <div className="flex items-center gap-2">
           <Logo size={20} />
           <h1 className="text-xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">BridgeVoice</h1>
@@ -23,13 +23,13 @@ function Home() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate('/login')}
-            className="text-gray-300 hover:text-white transition font-medium"
+            className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition font-medium"
           >
             Login
           </button>
           <button
             onClick={() => navigate('/register')}
-            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white px-5 py-2 rounded-full font-semibold transition shadow-lg shadow-purple-900"
+            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white px-5 py-2 rounded-full font-semibold transition shadow-lg shadow-purple-300 dark:shadow-purple-900"
           >
             Get Started
           </button>
@@ -38,9 +38,9 @@ function Home() {
 
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-6 text-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-purple-900 via-gray-950 to-gray-950 opacity-50"></div>
-        <div className="absolute top-20 left-1/4 w-72 h-72 bg-purple-700 rounded-full filter blur-3xl opacity-20"></div>
-        <div className="absolute top-20 right-1/4 w-72 h-72 bg-blue-700 rounded-full filter blur-3xl opacity-20"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-purple-200 via-gray-50 to-gray-50 dark:from-purple-900 dark:via-gray-950 dark:to-gray-950 opacity-50"></div>
+        <div className="absolute top-20 left-1/4 w-72 h-72 bg-purple-300 dark:bg-purple-700 rounded-full filter blur-3xl opacity-20"></div>
+        <div className="absolute top-20 right-1/4 w-72 h-72 bg-blue-300 dark:bg-blue-700 rounded-full filter blur-3xl opacity-20"></div>
 
         <div className="relative max-w-4xl mx-auto">
 
@@ -106,7 +106,7 @@ function Home() {
             </svg>
           </div>
 
-          <div className="inline-flex items-center gap-2 bg-gray-800 border border-gray-700 rounded-full px-4 py-2 mb-8 text-sm text-gray-300 hero-text">
+          <div className="inline-flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-full px-4 py-2 mb-8 text-sm text-gray-700 dark:text-gray-300 hero-text">
             <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
             AI-Powered English Learning Platform
           </div>
@@ -118,20 +118,20 @@ function Home() {
             </span>
           </h1>
 
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed hero-sub">
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed hero-sub">
             Practice real conversations with AI, build vocabulary, track your progress and connect with learners — all in one powerful platform.
           </p>
 
           <div className="flex gap-4 justify-center flex-wrap hero-btn">
             <button
               onClick={() => navigate('/register')}
-              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white px-8 py-4 rounded-full font-bold text-lg transition shadow-2xl shadow-purple-900 hover:shadow-purple-800"
+              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white px-8 py-4 rounded-full font-bold text-lg transition shadow-2xl shadow-purple-300 dark:shadow-purple-900 hover:shadow-purple-400 dark:hover:shadow-purple-800"
             >
               Start for Free 🚀
             </button>
             <button
               onClick={() => navigate('/login')}
-              className="border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white px-8 py-4 rounded-full font-bold text-lg transition"
+              className="border border-gray-400 dark:border-gray-700 hover:border-gray-600 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-8 py-4 rounded-full font-bold text-lg transition"
             >
               Login →
             </button>
@@ -158,7 +158,7 @@ function Home() {
           <h2 className="text-4xl font-bold mb-4">Everything You Need to
             <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent"> Master English</span>
           </h2>
-          <p className="text-gray-400 text-lg">One platform. All the tools. Zero excuses.</p>
+          <p className="text-gray-600 dark:text-gray-400 text-lg">One platform. All the tools. Zero excuses.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -170,22 +170,22 @@ function Home() {
             { icon: '🌍', title: 'Built-in Translator', desc: 'Instantly translate between English and 12 languages without leaving the app', color: 'from-green-600 to-green-800' },
             { icon: '💼', title: 'Interview Simulator', desc: 'Practice for 60+ job types with real interview questions and AI feedback', color: 'from-pink-600 to-pink-800' },
           ].map((feature, i) => (
-            <div key={i} className="bg-gray-900 border border-gray-800 rounded-2xl p-6 hover:border-gray-600 transition group">
+            <div key={i} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 hover:border-gray-400 dark:hover:border-gray-600 transition group">
               <div className={`w-12 h-12 bg-gradient-to-br ${feature.color} rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition`}>
                 {feature.icon}
               </div>
-              <h3 className="font-bold text-white text-lg mb-2">{feature.title}</h3>
-              <p className="text-gray-400 text-sm leading-relaxed">{feature.desc}</p>
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-2">{feature.title}</h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">{feature.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* How It Works */}
-      <section className="py-20 px-6 bg-gray-900">
+      <section className="py-20 px-6 bg-gray-100 dark:bg-gray-900">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold mb-4">How It <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">Works</span></h2>
-          <p className="text-gray-400 mb-16">Get started in minutes</p>
+          <p className="text-gray-600 dark:text-gray-400 mb-16">Get started in minutes</p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
@@ -194,11 +194,11 @@ function Home() {
               { step: '03', title: 'Track Progress', desc: 'See your scores improve and unlock new levels as you get better', icon: '📈' },
             ].map((item, i) => (
               <div key={i}>
-                <div className="bg-gray-800 border border-gray-700 rounded-2xl p-6 text-center">
+                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 text-center">
                   <div className="text-5xl mb-4">{item.icon}</div>
-                  <div className="text-purple-400 font-bold text-sm mb-2">STEP {item.step}</div>
-                  <h3 className="font-bold text-white text-lg mb-2">{item.title}</h3>
-                  <p className="text-gray-400 text-sm">{item.desc}</p>
+                  <div className="text-purple-600 dark:text-purple-400 font-bold text-sm mb-2">STEP {item.step}</div>
+                  <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-2">{item.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">{item.desc}</p>
                 </div>
               </div>
             ))}
@@ -209,7 +209,7 @@ function Home() {
       {/* CTA Section */}
       <section className="py-20 px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <div className="bg-gradient-to-r from-purple-900 to-blue-900 border border-purple-700 rounded-3xl p-12">
+          <div className="bg-gradient-to-r from-purple-900 to-blue-900 border border-purple-700 rounded-3xl p-12 text-white">
             <h2 className="text-4xl font-bold mb-4">Ready to Build Confidence?</h2>
             <p className="text-gray-300 mb-8 text-lg">Join thousands of learners improving their English every day</p>
             <button
@@ -223,10 +223,10 @@ function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-gray-800 py-8 text-center text-gray-500 text-sm">
+      <footer className="border-t border-gray-200 dark:border-gray-800 py-8 text-center text-gray-500 text-sm">
         <div className="flex items-center justify-center gap-2 mb-2">
           <Logo size={16} />
-          <span className="font-semibold text-gray-400">BridgeVoice</span>
+          <span className="font-semibold text-gray-600 dark:text-gray-400">BridgeVoice</span>
         </div>
         © 2026 BridgeVoice — AI-Powered English Learning 🍁
       </footer>
