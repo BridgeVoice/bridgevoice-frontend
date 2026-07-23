@@ -311,19 +311,19 @@ function InterviewSimulator() {
           <div>
             <div className="mb-8">
               <h2 className="text-2xl font-bold">💼 Interview Simulator</h2>
-              <p className="text-gray-400 mt-1">Practice real job interview questions with AI feedback</p>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Practice real job interview questions with AI feedback</p>
             </div>
 
-            <h3 className="font-bold text-gray-300 mb-4">Select Job Type:</h3>
+            <h3 className="font-bold text-gray-700 dark:text-gray-300 mb-4">Select Job Type:</h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {jobTypes.map((job, i) => (
                 <button
                   key={i}
                   onClick={() => startInterview(job.title)}
-                  className="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center hover:border-gray-600 hover:shadow-lg transition group"
+                  className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 text-center hover:border-gray-400 dark:hover:border-gray-600 hover:shadow-lg transition group"
                 >
                   <p className="text-3xl mb-2 group-hover:scale-110 transition">{job.icon}</p>
-                  <p className="font-medium text-gray-300 text-sm">{job.title}</p>
+                  <p className="font-medium text-gray-700 dark:text-gray-300 text-sm">{job.title}</p>
                 </button>
               ))}
             </div>
@@ -339,8 +339,8 @@ function InterviewSimulator() {
               size={100}
               className="mx-auto mb-6"
             />
-            <p className="text-xl font-semibold text-white mb-2">Preparing your interview...</p>
-            <p className="text-gray-400">Alex is writing questions for a {jobType} position 📝</p>
+            <p className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Preparing your interview...</p>
+            <p className="text-gray-600 dark:text-gray-400">Alex is writing questions for a {jobType} position 📝</p>
           </div>
         )}
 
@@ -348,15 +348,15 @@ function InterviewSimulator() {
           <div>
             <div className="mb-6">
               <h2 className="text-2xl font-bold">💼 Interview Simulator</h2>
-              <p className="text-gray-400 mt-1">Job: {jobType}</p>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Job: {jobType}</p>
             </div>
 
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4 mb-6">
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 mb-6">
               <div className="flex justify-between items-center mb-2">
-                <p className="font-semibold text-gray-400 text-sm">Question {currentQuestion + 1} of {getQuestions().length}</p>
-                <p className="text-sm text-purple-400 font-medium">{jobType}</p>
+                <p className="font-semibold text-gray-600 dark:text-gray-400 text-sm">Question {currentQuestion + 1} of {getQuestions().length}</p>
+                <p className="text-sm text-purple-600 dark:text-purple-400 font-medium">{jobType}</p>
               </div>
-              <div className="w-full bg-gray-800 rounded-full h-2">
+              <div className="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-2">
                 <div
                   className="bg-gradient-to-r from-purple-600 to-blue-600 h-2 rounded-full transition-all"
                   style={{ width: `${((currentQuestion) / getQuestions().length) * 100}%` }}
@@ -364,7 +364,7 @@ function InterviewSimulator() {
               </div>
             </div>
 
-            <div className="bg-gradient-to-r from-purple-900 to-blue-900 border border-purple-700 rounded-2xl p-5 mb-6 flex gap-5 items-start">
+            <div className="bg-gradient-to-r from-purple-900 to-blue-900 border border-purple-700 rounded-2xl p-5 mb-6 flex gap-5 items-start text-white">
               {/* Professional coach avatar — always fixed for interviews */}
               <CharacterAvatar
                 personality="professional"
@@ -385,14 +385,14 @@ function InterviewSimulator() {
               </div>
             </div>
 
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-6">
-              <p className="font-semibold text-gray-300 mb-3">Your Answer:</p>
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 mb-6">
+              <p className="font-semibold text-gray-700 dark:text-gray-300 mb-3">Your Answer:</p>
               <textarea
                 value={currentAnswer}
                 onChange={e => setCurrentAnswer(e.target.value)}
                 placeholder="Type your answer or use the microphone..."
                 rows={4}
-                className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition resize-none"
+                className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition resize-none"
               />
 
               <div className="flex gap-3 mt-4">
@@ -401,7 +401,7 @@ function InterviewSimulator() {
                   className={`flex items-center gap-2 px-4 py-2 rounded-xl transition font-medium ${
                     listening
                       ? 'bg-red-600 text-white animate-pulse'
-                      : 'bg-gray-800 border border-gray-700 text-gray-400 hover:text-white'
+                      : 'bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                   }`}
                 >
                   🎤 {listening ? 'Listening...' : 'Speak Answer'}
@@ -417,9 +417,9 @@ function InterviewSimulator() {
               </div>
             </div>
 
-            <div className="bg-yellow-900 bg-opacity-20 border border-yellow-800 rounded-xl p-4">
-              <p className="font-semibold text-yellow-400 mb-2">💡 Tips:</p>
-              <ul className="text-sm text-gray-400 space-y-1">
+            <div className="bg-yellow-100 dark:bg-yellow-900 dark:bg-opacity-20 border border-yellow-300 dark:border-yellow-800 rounded-xl p-4">
+              <p className="font-semibold text-yellow-700 dark:text-yellow-400 mb-2">💡 Tips:</p>
+              <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
                 <li>• Use the STAR method: Situation, Task, Action, Result</li>
                 <li>• Speak clearly and at a moderate pace</li>
                 <li>• Give specific examples from your experience</li>
@@ -438,8 +438,8 @@ function InterviewSimulator() {
               size={100}
               className="mx-auto mb-6"
             />
-            <p className="text-xl font-semibold text-white mb-2">Reviewing your answers...</p>
-            <p className="text-gray-400">Alex is preparing your feedback 📋</p>
+            <p className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Reviewing your answers...</p>
+            <p className="text-gray-600 dark:text-gray-400">Alex is preparing your feedback 📋</p>
           </div>
         )}
 
@@ -447,7 +447,7 @@ function InterviewSimulator() {
           <div>
             <div className="mb-6">
               <h2 className="text-2xl font-bold">💼 Interview Complete!</h2>
-              <p className="text-gray-400 mt-1">Here's your performance feedback</p>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Here's your performance feedback</p>
             </div>
 
             <div className="text-center mb-8">
@@ -455,12 +455,12 @@ function InterviewSimulator() {
                 {feedback.avgScore >= 80 ? '🏆' : feedback.avgScore >= 60 ? '🌟' : '💪'}
               </p>
               <div className={`text-6xl font-bold ${
-                feedback.avgScore >= 80 ? 'text-green-400' :
-                feedback.avgScore >= 60 ? 'text-orange-400' : 'text-red-400'
+                feedback.avgScore >= 80 ? 'text-green-600 dark:text-green-400' :
+                feedback.avgScore >= 60 ? 'text-orange-600 dark:text-orange-400' : 'text-red-600 dark:text-red-400'
               }`}>
                 {feedback.avgScore}%
               </div>
-              <p className="text-gray-400 mt-2">
+              <p className="text-gray-600 dark:text-gray-400 mt-2">
                 {feedback.avgScore >= 80 ? 'Excellent! You are interview ready! 🌟' :
                  feedback.avgScore >= 60 ? 'Good effort! Keep practicing! 💪' :
                  'Keep going! Practice makes perfect! 🎯'}
@@ -469,16 +469,16 @@ function InterviewSimulator() {
 
             <div className="space-y-4 mb-8">
               {feedback.scores.map((item, i) => (
-                <div key={i} className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
-                  <p className="font-semibold text-gray-200 mb-2">Q{i + 1}: {item.question}</p>
-                  <p className="text-gray-500 text-sm mb-3 bg-gray-800 rounded-lg p-3">
+                <div key={i} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5">
+                  <p className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Q{i + 1}: {item.question}</p>
+                  <p className="text-gray-600 dark:text-gray-500 text-sm mb-3 bg-gray-100 dark:bg-gray-800 rounded-lg p-3">
                     Your answer: "{item.answer || 'No answer given'}"
                   </p>
                   <div className="flex justify-between items-center gap-4">
-                    <p className="text-sm text-purple-400">{item.tip}</p>
+                    <p className="text-sm text-purple-600 dark:text-purple-400">{item.tip}</p>
                     <span className={`font-bold text-lg flex-shrink-0 ${
-                      item.score >= 80 ? 'text-green-400' :
-                      item.score >= 60 ? 'text-orange-400' : 'text-red-400'
+                      item.score >= 80 ? 'text-green-600 dark:text-green-400' :
+                      item.score >= 60 ? 'text-orange-600 dark:text-orange-400' : 'text-red-600 dark:text-red-400'
                     }`}>{item.score}%</span>
                   </div>
                 </div>
@@ -494,7 +494,7 @@ function InterviewSimulator() {
               </button>
               <button
                 onClick={() => { stopSpeaking(); navigate('/dashboard') }}
-                className="flex-1 bg-gray-900 border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white py-3 rounded-xl transition font-semibold"
+                className="flex-1 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 hover:border-gray-500 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white py-3 rounded-xl transition font-semibold"
               >
                 Back to Dashboard
               </button>
