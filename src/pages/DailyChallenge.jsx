@@ -11,6 +11,8 @@ function DailyChallenge() {
   const [submitted, setSubmitted] = useState({})
   const [feedback, setFeedback] = useState({})
   const [loadingFeedback, setLoadingFeedback] = useState({})
+  // Tracks whether the Daily Challenge reward has been saved
+  const [rewardSaved, setRewardSaved] = useState(false)
 
   const [proficiencyLevel] = useState(
     localStorage.getItem('proficiencyLevel') || 'Beginner'
@@ -18,6 +20,8 @@ function DailyChallenge() {
 
   const today = new Date().toISOString().split('T')[0]
   const BACKEND_URL = 'http://127.0.0.1:8000'
+  // Identifies which user should receive the Daily Challenge reward
+  const email = localStorage.getItem('email')
   const CACHE_KEY = `team_v2_challenges_${today}`
   const CACHE_KEY_ORIGINAL = `team_v2_original_${today}`
 
@@ -121,6 +125,37 @@ function DailyChallenge() {
   }
 
   const completedCount = Object.keys(submitted).length
+  // Awards the Daily Challenge reward once after all three challenges are completed
+  useEffect(() => {
+    if (completedCount !== 3 || rewardSaved) return
+
+    const scores = Object.values(feedback).map(item => item.score)
+
+    // Wait until feedback for all 3 challenges is available
+    if (scores.length !== 3) return
+
+    const averageScore = Math.round(
+      scores.reduce((a, b) => a + b, 0) / scores.length
+    )
+
+    fetch(`${BACKEND_URL}/api/users/complete-daily-challenge`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email,
+        score: averageScore
+      })
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log(data)
+        setRewardSaved(true)
+      })
+      .catch(err => console.log(err))
+
+  }, [completedCount, feedback, rewardSaved])
 
   const getScoreStyle = (score) => {
     if (score >= 90) return 'bg-green-100 dark:bg-green-900 dark:bg-opacity-30 border-green-300 dark:border-green-800 text-green-700 dark:text-green-400'
@@ -229,9 +264,8 @@ function DailyChallenge() {
           const tip = splitText(challenge.tip)
 
           return (
-            <div key={i} className={`bg-white dark:bg-gray-900 border rounded-2xl overflow-hidden transition ${
-              isSubmitted ? 'border-gray-300 dark:border-gray-700' : 'border-gray-200 dark:border-gray-800 hover:border-gray-400 dark:hover:border-gray-700'
-            }`}>
+            <div key={i} className={`bg-white dark:bg-gray-900 border rounded-2xl overflow-hidden transition ${isSubmitted ? 'border-gray-300 dark:border-gray-700' : 'border-gray-200 dark:border-gray-800 hover:border-gray-400 dark:hover:border-gray-700'
+              }`}>
 
               {/* Card Header */}
               <div className="px-6 py-5 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
