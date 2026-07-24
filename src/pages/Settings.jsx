@@ -273,22 +273,6 @@ function Settings() {
             </SettingRow>
           </div>
 
-          {/* ── PRIVACY ── */}
-          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
-            <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-2">🔒 Privacy</h3>
-            <SettingRow label="Profile Visibility" desc="Who can see your profile">
-              <select
-                value={settings.privacy}
-                onChange={e => handleChange('privacy', e.target.value)}
-                className="bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:border-purple-500"
-              >
-                <option value="public">Everyone</option>
-                <option value="buddies">Study Buddies Only</option>
-                <option value="private">Private</option>
-              </select>
-            </SettingRow>
-          </div>
-
           {/* ── ACCOUNT ── */}
           <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
             <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-4">🔑 Account</h3>

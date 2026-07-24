@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import Logo from '../assets/logo'
 import { getCharacterById } from './characters/characterData'
@@ -11,10 +11,11 @@ function Layout({ children }) {
   const [collapsed, setCollapsed]   = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [imgError, setImgError]     = useState(false)
+  const [avatarMenuOpen, setAvatarMenuOpen] = useState(false)
+  const avatarMenuRef = useRef(null)
 
   const character = getCharacterById(getCharacterPreference())
 
-  // Get the user's first initial — prefer full_name, fall back to email prefix
   const fullName  = localStorage.getItem('full_name') || ''
   const email     = localStorage.getItem('email') || ''
   const userInitial = fullName
@@ -26,6 +27,16 @@ function Layout({ children }) {
     localStorage.removeItem('email')
     navigate('/')
   }
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (avatarMenuRef.current && !avatarMenuRef.current.contains(e.target)) {
+        setAvatarMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   const navItems = [
     { section: 'MAIN', items: [
@@ -85,7 +96,7 @@ function Layout({ children }) {
         </div>
 
         {/* Nav Items */}
-        <nav className="flex-1 overflow-y-auto py-4 px-2">
+        <nav className="flex-1 overflow-y-auto py-4 px-2 sidebar-scroll">
           {navItems.map((section, si) => (
             <div key={si} className="mb-4">
               {!collapsed && (
@@ -154,30 +165,62 @@ function Layout({ children }) {
           <div className="flex items-center gap-3 ml-auto">
             {/* Theme toggle from teammate */}
             <ThemeToggle />
-            {/* Character avatar — links to Settings to change */}
-            <Link to="/settings" title={`Coach: ${character.name} — click to change`}>
-              <div
-                className="w-9 h-9 rounded-full overflow-hidden border-2 transition hover:scale-105"
-                style={{ borderColor: character.accentColor }}
+
+            {/* Avatar dropdown */}
+            <div className="relative" ref={avatarMenuRef}>
+              <button
+                onClick={() => setAvatarMenuOpen(!avatarMenuOpen)}
+                title={`Coach: ${character.name}`}
               >
-                {imgError ? (
-                  <div
-                    className="w-full h-full flex items-center justify-center text-sm font-bold text-white"
-                    style={{ background: character.accentColor }}
+                <div
+                  className="w-9 h-9 rounded-full overflow-hidden border-2 transition hover:scale-105"
+                  style={{ borderColor: character.accentColor }}
+                >
+                  {imgError ? (
+                    <div
+                      className="w-full h-full flex items-center justify-center text-sm font-bold text-white"
+                      style={{ background: character.accentColor }}
+                    >
+                      {userInitial}
+                    </div>
+                  ) : (
+                    <img
+                      src={character.photo}
+                      alt={character.coachName}
+                      className="w-full h-full object-cover object-top"
+                      onError={() => setImgError(true)}
+                      draggable={false}
+                    />
+                  )}
+                </div>
+              </button>
+
+              {avatarMenuOpen && (
+                <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-lg overflow-hidden z-50">
+                  <Link
+                  to="/profile"
+                  onClick={() => setAvatarMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 text-base text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition"
                   >
-                    {userInitial}
-                  </div>
-                ) : (
-                  <img
-                    src={character.photo}
-                    alt={character.coachName}
-                    className="w-full h-full object-cover object-top"
-                    onError={() => setImgError(true)}
-                    draggable={false}
-                  />
-                )}
-              </div>
-            </Link>
+                  <span className="text-lg">👤</span> Profile
+                  </Link>
+                  <Link
+                  to="/settings"
+                  onClick={() => setAvatarMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 text-base text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition"
+                  >
+                  <span className="text-lg">⚙️</span> Settings
+                  </Link>
+                  <div className="border-t border-gray-200 dark:border-gray-800"></div>
+                  <button
+                  onClick={() => { setAvatarMenuOpen(false); handleLogout() }}
+                  className="flex items-center gap-3 px-4 py-3 text-base text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900 dark:hover:bg-opacity-20 transition w-full text-left"
+                  >
+                    <span className="text-lg">🚪</span> Logout
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </header>
 
