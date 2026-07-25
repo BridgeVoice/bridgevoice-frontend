@@ -7,6 +7,8 @@ import { useVoicePlayback } from '../utils/useVoicePlayback'
 
 function InterviewSimulator() {
   const navigate = useNavigate()
+  // Identifies the user whose interview progress will be updated
+  const email = localStorage.getItem('email')
   const [stage, setStage] = useState('intro')          // intro | loading | interview | scoring | feedback
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState([])
@@ -14,7 +16,7 @@ function InterviewSimulator() {
   const [listening, setListening] = useState(false)
   const [feedback, setFeedback] = useState(null)
   const [jobType, setJobType] = useState('')
-  const [isSpeaking, setIsSpeaking]     = useState(false)
+  const [isSpeaking, setIsSpeaking] = useState(false)
   const [speakingWord, setSpeakingWord] = useState(false)
   // AI-generated questions for the selected job (loaded from the backend)
   const [aiQuestions, setAiQuestions] = useState([])
@@ -154,9 +156,9 @@ function InterviewSimulator() {
 
     try {
       const res = await fetch('http://127.0.0.1:8000/api/interview/questions', {
-        method:  'POST',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ job_type: job }),
+        body: JSON.stringify({ job_type: job }),
       })
       const data = await res.json()
       if (res.ok && Array.isArray(data.questions) && data.questions.length > 0) {
@@ -190,17 +192,17 @@ function InterviewSimulator() {
 
     try {
       const res = await fetch('http://127.0.0.1:8000/api/tts', {
-        method:  'POST',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         // Interview always uses the Professional character voice
-        body:    JSON.stringify({ text, personality: 'professional' }),
+        body: JSON.stringify({ text, personality: 'professional' }),
       })
       if (res.ok && res.status !== 204) {
-        const blob  = await res.blob()
-        const url   = URL.createObjectURL(blob)
+        const blob = await res.blob()
+        const url = URL.createObjectURL(blob)
         const audio = new Audio(url)
         audioRef.current = audio
-        audio.onplay  = () => { setIsSpeaking(true);  startTaps() }
+        audio.onplay = () => { setIsSpeaking(true); startTaps() }
         audio.onended = () => { setIsSpeaking(false); stopTaps(); URL.revokeObjectURL(url) }
         audio.onerror = () => { setIsSpeaking(false); stopTaps() }
         audio.play()
@@ -212,19 +214,19 @@ function InterviewSimulator() {
     if (!('speechSynthesis' in window)) return
     window.speechSynthesis.cancel()
     const genderedVoice = await getBrowserVoice(true)   // female
-    const vs            = BROWSER_VOICE_SETTINGS['professional']
-    const utterance      = new SpeechSynthesisUtterance(text)
+    const vs = BROWSER_VOICE_SETTINGS['professional']
+    const utterance = new SpeechSynthesisUtterance(text)
     if (genderedVoice) utterance.voice = genderedVoice
-    utterance.pitch      = vs.pitch
-    utterance.rate       = vs.rate
-    utterance.onstart    = () => setIsSpeaking(true)
+    utterance.pitch = vs.pitch
+    utterance.rate = vs.rate
+    utterance.onstart = () => setIsSpeaking(true)
     utterance.onboundary = (e) => {
       if (e.name !== 'word') return
       setSpeakingWord(true)
       clearTimeout(wordTimerRef.current)
       wordTimerRef.current = setTimeout(() => setSpeakingWord(false), 160)
     }
-    utterance.onend   = () => { setIsSpeaking(false); setSpeakingWord(false) }
+    utterance.onend = () => { setIsSpeaking(false); setSpeakingWord(false) }
     utterance.onerror = () => { setIsSpeaking(false); setSpeakingWord(false) }
     window.speechSynthesis.speak(utterance)
   }
@@ -264,6 +266,37 @@ function InterviewSimulator() {
     }
   }
 
+  // Saves one completed interview session to the user's progress
+  const saveInterviewProgress = async (score) => {
+    try {
+      await fetch('http://127.0.0.1:8000/api/users/complete-activity', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          xp_earned: 30,
+        }),
+      })
+
+      await fetch('http://127.0.0.1:8000/api/users/session-history', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          activity_name: `Interview - ${jobType}`,
+          score,
+          xp_earned: 30,
+        }),
+      })
+    } catch (error) {
+      console.error('Error saving interview progress:', error)
+    }
+  }
+
   // Sends all answers to the backend and gets real AI feedback
   const generateFeedback = async (allAnswers) => {
     stopSpeaking()
@@ -271,15 +304,19 @@ function InterviewSimulator() {
 
     try {
       const res = await fetch('http://127.0.0.1:8000/api/interview/feedback', {
-        method:  'POST',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({
+        body: JSON.stringify({
           job_type: jobType,
-          answers:  allAnswers.map(a => ({ question: a.question, answer: a.answer })),
+          answers: allAnswers.map(a => ({ question: a.question, answer: a.answer })),
         }),
       })
       const data = await res.json()
       if (res.ok && Array.isArray(data.scores) && data.scores.length > 0) {
+
+        // Saves the completed interview to the user's progress
+        await saveInterviewProgress(data.avgScore)
+
         setFeedback({ scores: data.scores, avgScore: data.avgScore })
         setStage('feedback')
         return
@@ -293,12 +330,16 @@ function InterviewSimulator() {
       question: a.question,
       answer: a.answer,
       score: a.answer.length > 50 ? Math.floor(Math.random() * 15) + 75 :
-             a.answer.length > 20 ? Math.floor(Math.random() * 20) + 60 : 45,
+        a.answer.length > 20 ? Math.floor(Math.random() * 20) + 60 : 45,
       tip: a.answer.length > 50 ? 'Great detailed answer!' :
-           a.answer.length > 20 ? 'Good answer, try to add more details.' :
-           'Try to give longer, more detailed answers.'
+        a.answer.length > 20 ? 'Good answer, try to add more details.' :
+          'Try to give longer, more detailed answers.'
     }))
     const avgScore = Math.floor(scores.reduce((a, b) => a + b.score, 0) / scores.length)
+
+    // Saves interview progress even when using the offline fallback
+    await saveInterviewProgress(avgScore)
+
     setFeedback({ scores, avgScore })
     setStage('feedback')
   }
@@ -398,11 +439,10 @@ function InterviewSimulator() {
               <div className="flex gap-3 mt-4">
                 <button
                   onClick={startListening}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl transition font-medium ${
-                    listening
-                      ? 'bg-red-600 text-white animate-pulse'
-                      : 'bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-                  }`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl transition font-medium ${listening
+                    ? 'bg-red-600 text-white animate-pulse'
+                    : 'bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                    }`}
                 >
                   🎤 {listening ? 'Listening...' : 'Speak Answer'}
                 </button>
@@ -454,16 +494,15 @@ function InterviewSimulator() {
               <p className="text-5xl mb-4">
                 {feedback.avgScore >= 80 ? '🏆' : feedback.avgScore >= 60 ? '🌟' : '💪'}
               </p>
-              <div className={`text-6xl font-bold ${
-                feedback.avgScore >= 80 ? 'text-green-600 dark:text-green-400' :
+              <div className={`text-6xl font-bold ${feedback.avgScore >= 80 ? 'text-green-600 dark:text-green-400' :
                 feedback.avgScore >= 60 ? 'text-orange-600 dark:text-orange-400' : 'text-red-600 dark:text-red-400'
-              }`}>
+                }`}>
                 {feedback.avgScore}%
               </div>
               <p className="text-gray-600 dark:text-gray-400 mt-2">
                 {feedback.avgScore >= 80 ? 'Excellent! You are interview ready! 🌟' :
-                 feedback.avgScore >= 60 ? 'Good effort! Keep practicing! 💪' :
-                 'Keep going! Practice makes perfect! 🎯'}
+                  feedback.avgScore >= 60 ? 'Good effort! Keep practicing! 💪' :
+                    'Keep going! Practice makes perfect! 🎯'}
               </p>
             </div>
 
@@ -476,10 +515,9 @@ function InterviewSimulator() {
                   </p>
                   <div className="flex justify-between items-center gap-4">
                     <p className="text-sm text-purple-600 dark:text-purple-400">{item.tip}</p>
-                    <span className={`font-bold text-lg flex-shrink-0 ${
-                      item.score >= 80 ? 'text-green-600 dark:text-green-400' :
+                    <span className={`font-bold text-lg flex-shrink-0 ${item.score >= 80 ? 'text-green-600 dark:text-green-400' :
                       item.score >= 60 ? 'text-orange-600 dark:text-orange-400' : 'text-red-600 dark:text-red-400'
-                    }`}>{item.score}%</span>
+                      }`}>{item.score}%</span>
                   </div>
                 </div>
               ))}
