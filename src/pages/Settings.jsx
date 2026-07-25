@@ -6,13 +6,14 @@ import { CHARACTERS } from '../components/characters/characterData'
 import { getCharacterPreference, setCharacterPreference } from '../utils/characterPreference'
 import { getBrowserVoice, BROWSER_VOICE_SETTINGS } from '../utils/browserVoice'
 import { useVoicePlayback } from '../utils/useVoicePlayback'
+import ChangeEmailModal from "../components/settings/ChangeEmailModal";
 
 function Settings() {
   const navigate = useNavigate()
   const [saved, setSaved] = useState(false)
   const [selectedCharacter, setSelectedCharacter] = useState(getCharacterPreference())
   const [previewSpeaking, setPreviewSpeaking] = useState(null)
-  const [previewWord, setPreviewWord]       = useState(null)
+  const [previewWord, setPreviewWord] = useState(null)
   const { audioRef, wordTimerRef, stopSpeaking } = useVoicePlayback(() => {
     setPreviewSpeaking(null)
     setPreviewWord(null)
@@ -35,9 +36,11 @@ function Settings() {
   const [passwordError, setPasswordError] = useState('')
   const [passwordSuccess, setPasswordSuccess] = useState(false)
   const [passwordLoading, setPasswordLoading] = useState(false)
+  // Controls whether the Change Email modal is visible
+  const [showEmailModal, setShowEmailModal] = useState(false)
 
-  const handleToggle  = (key)        => setSettings(prev => ({ ...prev, [key]: !prev[key] }))
-  const handleChange  = (key, value) => setSettings(prev => ({ ...prev, [key]: value }))
+  const handleToggle = (key) => setSettings(prev => ({ ...prev, [key]: !prev[key] }))
+  const handleChange = (key, value) => setSettings(prev => ({ ...prev, [key]: value }))
 
   const handleSelectCharacter = (id) => {
     setSelectedCharacter(id)
@@ -61,16 +64,16 @@ function Settings() {
 
     try {
       const res = await fetch('http://127.0.0.1:8000/api/tts', {
-        method:  'POST',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ text: character.sampleLine, personality: character.id }),
+        body: JSON.stringify({ text: character.sampleLine, personality: character.id }),
       })
       if (res.ok && res.status !== 204) {
-        const blob  = await res.blob()
-        const url   = URL.createObjectURL(blob)
+        const blob = await res.blob()
+        const url = URL.createObjectURL(blob)
         const audio = new Audio(url)
         audioRef.current = audio
-        audio.onplay  = () => { setPreviewSpeaking(character.id); startTaps(character.id) }
+        audio.onplay = () => { setPreviewSpeaking(character.id); startTaps(character.id) }
         audio.onended = () => { setPreviewSpeaking(null); stopTaps(); URL.revokeObjectURL(url) }
         audio.onerror = () => { setPreviewSpeaking(null); stopTaps() }
         audio.play()
@@ -79,21 +82,21 @@ function Settings() {
     } catch { /* fall through */ }
 
     if (!('speechSynthesis' in window)) return
-    const isFemale      = ['happy', 'professional'].includes(character.id)
+    const isFemale = ['happy', 'professional'].includes(character.id)
     const genderedVoice = await getBrowserVoice(isFemale)
-    const vs            = BROWSER_VOICE_SETTINGS[character.id] || character.voice
-    const utterance      = new SpeechSynthesisUtterance(character.sampleLine)
+    const vs = BROWSER_VOICE_SETTINGS[character.id] || character.voice
+    const utterance = new SpeechSynthesisUtterance(character.sampleLine)
     if (genderedVoice) utterance.voice = genderedVoice
-    utterance.pitch      = vs.pitch
-    utterance.rate       = vs.rate
-    utterance.onstart    = () => setPreviewSpeaking(character.id)
+    utterance.pitch = vs.pitch
+    utterance.rate = vs.rate
+    utterance.onstart = () => setPreviewSpeaking(character.id)
     utterance.onboundary = (e) => {
       if (e.name !== 'word') return
       setPreviewWord(character.id)
       clearTimeout(wordTimerRef.current)
       wordTimerRef.current = setTimeout(() => setPreviewWord(null), 160)
     }
-    utterance.onend  = () => { setPreviewSpeaking(null); setPreviewWord(null) }
+    utterance.onend = () => { setPreviewSpeaking(null); setPreviewWord(null) }
     utterance.onerror = () => { setPreviewSpeaking(null); setPreviewWord(null) }
     window.speechSynthesis.speak(utterance)
   }
@@ -160,13 +163,11 @@ function Settings() {
   const Toggle = ({ keyName }) => (
     <button
       onClick={() => handleToggle(keyName)}
-      className={`w-12 h-6 rounded-full transition-colors relative ${
-        settings[keyName] ? 'bg-gradient-to-r from-purple-600 to-blue-600' : 'bg-gray-300 dark:bg-gray-700'
-      }`}
+      className={`w-12 h-6 rounded-full transition-colors relative ${settings[keyName] ? 'bg-gradient-to-r from-purple-600 to-blue-600' : 'bg-gray-300 dark:bg-gray-700'
+        }`}
     >
-      <div className={`w-4 h-4 bg-white rounded-full shadow absolute top-1 transition-transform ${
-        settings[keyName] ? 'translate-x-7' : 'translate-x-1'
-      }`}></div>
+      <div className={`w-4 h-4 bg-white rounded-full shadow absolute top-1 transition-transform ${settings[keyName] ? 'translate-x-7' : 'translate-x-1'
+        }`}></div>
     </button>
   )
 
@@ -240,17 +241,16 @@ function Settings() {
               {CHARACTERS.map(char => {
                 const isSelected = selectedCharacter === char.id
                 const isSpeaking = previewSpeaking === char.id
-                const isWord     = previewWord === char.id
+                const isWord = previewWord === char.id
 
                 return (
                   <div
                     key={char.id}
                     onClick={() => handleSelectCharacter(char.id)}
-                    className={`cursor-pointer rounded-2xl p-4 flex gap-4 items-center transition border ${
-                      isSelected
-                        ? 'border-purple-500 bg-gradient-to-br from-purple-100 to-blue-100 dark:from-purple-900/30 dark:to-blue-900/30'
-                        : 'border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950 hover:border-gray-400 dark:hover:border-gray-600'
-                    }`}
+                    className={`cursor-pointer rounded-2xl p-4 flex gap-4 items-center transition border ${isSelected
+                      ? 'border-purple-500 bg-gradient-to-br from-purple-100 to-blue-100 dark:from-purple-900/30 dark:to-blue-900/30'
+                      : 'border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950 hover:border-gray-400 dark:hover:border-gray-600'
+                      }`}
                   >
                     <CharacterAvatar
                       personality={char.id}
@@ -332,7 +332,10 @@ function Settings() {
               >
                 🔒 Change Password
               </button>
-              <button className="w-full text-left px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 hover:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-700 dark:text-gray-300 font-medium">
+              <button
+                onClick={() => setShowEmailModal(true)}
+                className="w-full text-left px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 hover:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-700 dark:text-gray-300 font-medium"
+              >
                 📧 Change Email
               </button>
               <button className="w-full text-left px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 hover:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-700 dark:text-gray-300 font-medium">
@@ -429,6 +432,10 @@ function Settings() {
           </div>
         </div>
       )}
+      <ChangeEmailModal
+        isOpen={showEmailModal}
+        onClose={() => setShowEmailModal(false)}
+      />
     </Layout>
   )
 }
