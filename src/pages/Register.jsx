@@ -73,7 +73,15 @@ function Register() {
           setError('Account created, but auto-login failed. Please login manually.')
         }
       } else {
-        setError(data.detail || 'Registration failed')
+        if (Array.isArray(data.detail)) {
+          const messages = data.detail.map((err) => {
+            const field = err.loc?.[err.loc.length - 1] || 'input'
+            return `${field}: ${err.msg}`
+          })
+          setError(messages.join('. '))
+        } else {
+          setError(data.detail || 'Registration failed')
+        }
       }
     } catch (err) {
       setError('Cannot connect to server. Make sure backend is running.')
