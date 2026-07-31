@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import Layout from '../components/Layout'
+import { API_BASE } from '../config'
 
 function Profile() {
   const navigate = useNavigate()
@@ -13,7 +14,7 @@ function Profile() {
       navigate('/login')
       return
     }
-    fetch(`http://127.0.0.1:8000/api/users/profile?email=${email}`)
+    fetch(`${API_BASE}/api/users/profile?email=${email}`)
       .then(res => res.json())
       .then(data => setUser(data))
       .catch(err => console.log(err))

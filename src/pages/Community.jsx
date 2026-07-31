@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import Layout from '../components/Layout'
+import { API_BASE } from '../config'
 
 function Community() {
   const [activeTab, setActiveTab] = useState('feed')
@@ -54,7 +55,7 @@ function Community() {
   const fetchLeaderboard = async () => {
     setLeaderboardLoading(true)
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/leaderboard?email=${encodeURIComponent(email)}`)
+      const res = await fetch(`${API_BASE}/api/leaderboard?email=${encodeURIComponent(email)}`)
       const data = await res.json()
       setLeaderboard(data)
     } catch (err) {
@@ -66,7 +67,7 @@ function Community() {
   const fetchPosts = async () => {
     setPostsLoading(true)
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/posts')
+      const res = await fetch(`${API_BASE}/api/posts`)
       if (!res.ok) throw new Error('not found')
       const data = await res.json()
       setPosts(data)
@@ -79,7 +80,7 @@ function Community() {
   const handlePost = async () => {
     if (!newPost.trim() || !postsAvailable) return
     try {
-      await fetch('http://127.0.0.1:8000/api/posts', {
+      await fetch(`${API_BASE}/api/posts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user_email: email, content: newPost }),
@@ -93,7 +94,7 @@ function Community() {
 
   const handleLike = async (id) => {
     try {
-      await fetch(`http://127.0.0.1:8000/api/posts/${id}/like`, { method: 'POST' })
+      await fetch(`${API_BASE}/api/posts/${id}/like`, { method: 'POST' })
       fetchPosts()
     } catch (err) {
       console.log('Could not like')
@@ -102,7 +103,7 @@ function Community() {
 
   const handleDelete = async (id) => {
     try {
-      await fetch(`http://127.0.0.1:8000/api/posts/${id}?user_email=${encodeURIComponent(email)}`, {
+      await fetch(`${API_BASE}/api/posts/${id}?user_email=${encodeURIComponent(email)}`, {
         method: 'DELETE',
       })
       fetchPosts()
@@ -129,7 +130,7 @@ function Community() {
   const fetchStudyBuddies = async () => {
     setBuddiesLoading(true)
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/study-buddies?email=${encodeURIComponent(email)}`)
+      const res = await fetch(`${API_BASE}/api/study-buddies?email=${encodeURIComponent(email)}`)
       if (!res.ok) throw new Error('not found')
       const data = await res.json()
       setStudyBuddies(data)
@@ -141,7 +142,7 @@ function Community() {
 
   const fetchRequests = async () => {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/study-buddies/requests?email=${encodeURIComponent(email)}`)
+      const res = await fetch(`${API_BASE}/api/study-buddies/requests?email=${encodeURIComponent(email)}`)
       const data = await res.json()
       setIncomingRequests(data.incoming || [])
       setSentRequests(data.sent || [])
@@ -152,7 +153,7 @@ function Community() {
 
   const fetchConnectedBuddies = async () => {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/study-buddies/connected?email=${encodeURIComponent(email)}`)
+      const res = await fetch(`${API_BASE}/api/study-buddies/connected?email=${encodeURIComponent(email)}`)
       const data = await res.json()
       setConnectedBuddies(Array.isArray(data) ? data : [data])
     } catch (err) {
@@ -162,7 +163,7 @@ function Community() {
 
   const sendRequest = async (toEmail) => {
     try {
-      await fetch('http://127.0.0.1:8000/api/study-buddies/request', {
+      await fetch(`${API_BASE}/api/study-buddies/request`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ from_email: email, to_email: toEmail }),
@@ -175,7 +176,7 @@ function Community() {
 
   const respondToRequest = async (requestId, action) => {
     try {
-      await fetch(`http://127.0.0.1:8000/api/study-buddies/request/${requestId}`, {
+      await fetch(`${API_BASE}/api/study-buddies/request/${requestId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action, email }),
@@ -191,7 +192,7 @@ function Community() {
   const fetchMessages = async (buddyEmail) => {
     setMessagesLoading(true)
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/messages/${encodeURIComponent(buddyEmail)}?email=${encodeURIComponent(email)}`)
+      const res = await fetch(`${API_BASE}/api/messages/${encodeURIComponent(buddyEmail)}?email=${encodeURIComponent(email)}`)
       const data = await res.json()
       setMessages(Array.isArray(data) ? data : [data])
     } catch (err) {
@@ -220,7 +221,7 @@ function Community() {
     }])
 
     try {
-      await fetch('http://127.0.0.1:8000/api/messages/send', {
+      await fetch(`${API_BASE}/api/messages/send`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ from_email: email, to_email: activeChatBuddy.email, content }),

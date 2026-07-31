@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { API_BASE } from '../../config'
 
 function ChangeEmailModal({ isOpen, onClose }) {
     const [newEmail, setNewEmail] = useState('')
@@ -21,7 +22,7 @@ function ChangeEmailModal({ isOpen, onClose }) {
             const currentEmail = localStorage.getItem('email')
 
             const response = await fetch(
-                'http://127.0.0.1:8000/api/users/change-email',
+                `${API_BASE}/api/users/change-email`,
                 {
                     method: 'PUT',
                     headers: {

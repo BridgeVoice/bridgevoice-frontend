@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import Layout from '../components/Layout'
+import { API_BASE } from '../config'
 
 function Quiz() {
   const [stage, setStage] = useState('levels')
@@ -143,7 +144,7 @@ function Quiz() {
       setQuizLoading(true)
 
       const response = await fetch(
-        'http://127.0.0.1:8000/api/quiz',
+        `${API_BASE}/api/quiz`,
         {
           method: 'POST',
           headers: {
@@ -231,7 +232,7 @@ function Quiz() {
       )
 
       try {
-        await fetch('http://127.0.0.1:8000/api/users/complete-activity', {
+        await fetch(`${API_BASE}/api/users/complete-activity`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -241,7 +242,7 @@ function Quiz() {
             xp_earned: 20,
           }),
         })
-        await fetch('http://127.0.0.1:8000/api/users/session-history', {
+        await fetch(`${API_BASE}/api/users/session-history`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

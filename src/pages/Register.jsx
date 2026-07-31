@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import Logo from '../assets/logo'
+import { API_BASE } from '../config'
 
 function AnimatedBackground() {
   const canvasRef = useRef(null)
@@ -199,7 +200,7 @@ function Register() {
     setLoading(true)
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/users/register', {
+      const response = await fetch(`${API_BASE}/api/users/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -218,7 +219,7 @@ function Register() {
           setSuccessMessage('Account created successfully, but the welcome email could not be sent.')
         }
 
-        const loginResponse = await fetch('http://127.0.0.1:8000/api/users/login', {
+        const loginResponse = await fetch(`${API_BASE}/api/users/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

@@ -4,6 +4,7 @@ import Layout from '../components/Layout'
 import CharacterAvatar from '../components/characters/CharacterAvatar'
 import { getBrowserVoice, BROWSER_VOICE_SETTINGS } from '../utils/browserVoice'
 import { useVoicePlayback } from '../utils/useVoicePlayback'
+import { API_BASE } from '../config'
 
 function InterviewSimulator() {
   const navigate = useNavigate()
@@ -155,7 +156,7 @@ function InterviewSimulator() {
     let loadedQuestions = fallbackQuestions[job] || fallbackQuestions['default']
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/interview/questions', {
+      const res = await fetch(`${API_BASE}/api/interview/questions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ job_type: job }),
@@ -191,7 +192,7 @@ function InterviewSimulator() {
     const stopTaps = () => { clearTimeout(wordTimerRef.current); setSpeakingWord(false) }
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/tts', {
+      const res = await fetch(`${API_BASE}/api/tts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         // Interview always uses the Professional character voice
@@ -269,7 +270,7 @@ function InterviewSimulator() {
   // Saves one completed interview session to the user's progress
   const saveInterviewProgress = async (score) => {
     try {
-      await fetch('http://127.0.0.1:8000/api/users/complete-activity', {
+      await fetch(`${API_BASE}/api/users/complete-activity`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -280,7 +281,7 @@ function InterviewSimulator() {
         }),
       })
 
-      await fetch('http://127.0.0.1:8000/api/users/session-history', {
+      await fetch(`${API_BASE}/api/users/session-history`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -303,7 +304,7 @@ function InterviewSimulator() {
     setStage('scoring')
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/interview/feedback', {
+      const res = await fetch(`${API_BASE}/api/interview/feedback`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Layout from '../components/Layout'
+import { API_BASE } from '../config'
 
 function DailyChallenge() {
   const [challenges, setChallenges] = useState([])
@@ -19,7 +20,7 @@ function DailyChallenge() {
   )
 
   const today = new Date().toISOString().split('T')[0]
-  const BACKEND_URL = 'http://127.0.0.1:8000'
+  const BACKEND_URL = `${API_BASE}`
   // Identifies which user should receive the Daily Challenge reward
   const email = localStorage.getItem('email')
   const CACHE_KEY = `team_v2_challenges_${today}`
