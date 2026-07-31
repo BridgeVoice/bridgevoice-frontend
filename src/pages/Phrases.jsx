@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Layout from '../components/Layout'
-import { API_BASE } from '../config'
+import { API_BASE, authFetch } from '../config'
 
 function Phrases() {
   const [activeCategory, setActiveCategory] = useState('workplace')
@@ -115,7 +115,7 @@ const filteredPhrases = sourceData.filter(p =>
   setAiPhrases([])
 
   try {
-    const response = await fetch(`${API_BASE}/api/phrases`, {
+    const response = await authFetch(`${API_BASE}/api/phrases`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ category })

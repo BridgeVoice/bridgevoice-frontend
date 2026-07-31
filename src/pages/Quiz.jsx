@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import Layout from '../components/Layout'
-import { API_BASE } from '../config'
+import { API_BASE, authFetch } from '../config'
 
 function Quiz() {
   const [stage, setStage] = useState('levels')
@@ -143,7 +143,7 @@ function Quiz() {
       // Show loading while the LLM generates quiz questions
       setQuizLoading(true)
 
-      const response = await fetch(
+      const response = await authFetch(
         `${API_BASE}/api/quiz`,
         {
           method: 'POST',
@@ -232,7 +232,7 @@ function Quiz() {
       )
 
       try {
-        await fetch(`${API_BASE}/api/users/complete-activity`, {
+        await authFetch(`${API_BASE}/api/users/complete-activity`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -242,7 +242,7 @@ function Quiz() {
             xp_earned: 20,
           }),
         })
-        await fetch(`${API_BASE}/api/users/session-history`, {
+        await authFetch(`${API_BASE}/api/users/session-history`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

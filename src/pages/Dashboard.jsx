@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Layout from '../components/Layout'
-import { API_BASE } from '../config'
+import { API_BASE, authFetch } from '../config'
 
 
 function Dashboard() {
@@ -20,7 +20,7 @@ function Dashboard() {
       navigate('/login')
       return
     }
-    fetch(`${API_BASE}/api/users/profile?email=${email}`)
+    authFetch(`${API_BASE}/api/users/profile?email=${email}`)
       .then(res => res.json())
       .then(data => {
         console.log('Dashboard user data:', data)
@@ -28,7 +28,7 @@ function Dashboard() {
       })
       .catch(err => console.log(err))
 
-    fetch(`${API_BASE}/api/users/session-history/${email}`)
+    authFetch(`${API_BASE}/api/users/session-history/${email}`)
       .then(res => res.json())
       .then(data => {
         console.log('Session history:', data)
@@ -36,7 +36,7 @@ function Dashboard() {
       })
       .catch(err => console.log(err))
 
-    fetch(`${API_BASE}/api/users/today-sessions/${email}`)
+    authFetch(`${API_BASE}/api/users/today-sessions/${email}`)
       .then(res => res.json())
       .then(data => {
         console.log('Today sessions:', data)

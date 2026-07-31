@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Layout from '../components/Layout'
-import { API_BASE } from '../config'
+import { API_BASE, authFetch } from '../config'
 
 function Progress() {
   const navigate = useNavigate()
@@ -21,8 +21,8 @@ function Progress() {
     }
 
     Promise.all([
-      fetch(`${API_BASE}/api/users/profile?email=${email}`).then(res => res.json()),
-      fetch(`${API_BASE}/api/users/session-history/${email}`).then(res => res.json()),
+      authFetch(`${API_BASE}/api/users/profile?email=${email}`).then(res => res.json()),
+      authFetch(`${API_BASE}/api/users/session-history/${email}`).then(res => res.json()),
     ])
       .then(([profileData, sessionData]) => {
         setUser(profileData)
@@ -86,7 +86,7 @@ function Progress() {
 
       // NOTE: request body below is a guess (message/text field name unconfirmed).
       // Swap the key once the ChatMessage schema is confirmed.
-      const response = await fetch(`${API_BASE}/api/chat`, {
+      const response = await authFetch(`${API_BASE}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: prompt }),

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Layout from '../components/Layout'
-import { API_BASE } from '../config'
+import { API_BASE, authFetch } from '../config'
 
 function CultureGuide() {
   const [activeCategory, setActiveCategory] = useState('workplace')
@@ -167,7 +167,7 @@ function CultureGuide() {
     setAiContent([])
 
     try {
-      const response = await fetch(`${API_BASE}/api/culture`, {
+      const response = await authFetch(`${API_BASE}/api/culture`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ category, province: prov })

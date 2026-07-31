@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import Layout from '../components/Layout'
 import Logo from '../assets/logo'
-import { API_BASE } from '../config'
+import { API_BASE, authFetch } from '../config'
 
 function Vocabulary() {
     const [words, setWords] = useState([])
@@ -23,7 +23,7 @@ function Vocabulary() {
             // Clear any previous error message
             setError('')
 
-            const response = await fetch(
+            const response = await authFetch(
                 `${API_BASE}/api/vocabulary`,
                 {
                     method: 'POST',

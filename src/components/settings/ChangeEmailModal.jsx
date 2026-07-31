@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { API_BASE } from '../../config'
+import { API_BASE, authFetch } from '../../config'
 
 function ChangeEmailModal({ isOpen, onClose }) {
     const [newEmail, setNewEmail] = useState('')
@@ -21,7 +21,7 @@ function ChangeEmailModal({ isOpen, onClose }) {
         try {
             const currentEmail = localStorage.getItem('email')
 
-            const response = await fetch(
+            const response = await authFetch(
                 `${API_BASE}/api/users/change-email`,
                 {
                     method: 'PUT',

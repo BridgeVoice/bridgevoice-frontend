@@ -6,7 +6,7 @@ import { getCharacterById } from '../components/characters/characterData'
 import { getCharacterPreference } from '../utils/characterPreference'
 import { getBrowserVoice, BROWSER_VOICE_SETTINGS } from '../utils/browserVoice'
 import { useVoicePlayback } from '../utils/useVoicePlayback'
-import { API_BASE } from '../config'
+import { API_BASE, authFetch } from '../config'
 
 function Chat() {
   const navigate = useNavigate()
@@ -63,7 +63,7 @@ function Chat() {
     stopSpeaking()
 
     try {
-      const res = await fetch(`${API_BASE}/api/tts`, {
+      const res = await authFetch(`${API_BASE}/api/tts`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ text, personality: characterId }),
@@ -114,7 +114,7 @@ function Chat() {
     setLoading(true)
 
     try {
-      const response = await fetch(`${API_BASE}/api/chat`, {
+      const response = await authFetch(`${API_BASE}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: text, scenario, personality: characterId })

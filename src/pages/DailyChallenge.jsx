@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import Layout from '../components/Layout'
-import { API_BASE } from '../config'
+import { API_BASE, authFetch } from '../config'
 
 function DailyChallenge() {
   const [challenges, setChallenges] = useState([])
@@ -50,7 +50,7 @@ function DailyChallenge() {
     setGenerating(true)
     setChallenges([])
     try {
-      const response = await fetch(`${BACKEND_URL}/api/daily-challenge/generate`, {
+      const response = await authFetch(`${BACKEND_URL}/api/daily-challenge/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -88,7 +88,7 @@ function DailyChallenge() {
 
     setLoadingFeedback(prev => ({ ...prev, [index]: true }))
     try {
-      const result = await fetch(`${BACKEND_URL}/api/daily-challenge/feedback`, {
+      const result = await authFetch(`${BACKEND_URL}/api/daily-challenge/feedback`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -139,7 +139,7 @@ function DailyChallenge() {
       scores.reduce((a, b) => a + b, 0) / scores.length
     )
 
-    fetch(`${BACKEND_URL}/api/users/complete-daily-challenge`, {
+    authFetch(`${BACKEND_URL}/api/users/complete-daily-challenge`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Logo from '../assets/logo'
-import { API_BASE } from '../config'
+import { API_BASE, authFetch } from '../config'
 
 function Onboarding() {
   const navigate = useNavigate()
@@ -33,7 +33,7 @@ function Onboarding() {
   }
 
   try {
-    const response = await fetch(`${API_BASE}/api/users/onboarding`, {
+    const response = await authFetch(`${API_BASE}/api/users/onboarding`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

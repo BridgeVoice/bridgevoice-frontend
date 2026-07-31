@@ -7,7 +7,7 @@ import { getCharacterPreference, setCharacterPreference } from '../utils/charact
 import { getBrowserVoice, BROWSER_VOICE_SETTINGS } from '../utils/browserVoice'
 import { useVoicePlayback } from '../utils/useVoicePlayback'
 import ChangeEmailModal from "../components/settings/ChangeEmailModal";
-import { API_BASE } from '../config'
+import { API_BASE, authFetch } from '../config'
 
 function Settings() {
   const navigate = useNavigate()
@@ -64,7 +64,7 @@ function Settings() {
     const stopTaps = () => { clearTimeout(wordTimerRef.current); setPreviewWord(null) }
 
     try {
-      const res = await fetch(`${API_BASE}/api/tts`, {
+      const res = await authFetch(`${API_BASE}/api/tts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: character.sampleLine, personality: character.id }),
@@ -130,7 +130,7 @@ function Settings() {
     setPasswordLoading(true)
     try {
       const email = localStorage.getItem('email')
-      const response = await fetch(`${API_BASE}/api/users/change-password`, {
+      const response = await authFetch(`${API_BASE}/api/users/change-password`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

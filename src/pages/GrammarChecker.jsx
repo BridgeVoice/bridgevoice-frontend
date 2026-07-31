@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Layout from '../components/Layout'
-import { API_BASE } from '../config'
+import { API_BASE, authFetch } from '../config'
 
 function GrammarChecker() {
   const [inputText, setInputText] = useState('')
@@ -21,7 +21,7 @@ function GrammarChecker() {
     setLoading(true)
     setResult(null)
     try {
-      const response = await fetch(`${API_BASE}/api/grammar`, {
+      const response = await authFetch(`${API_BASE}/api/grammar`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: inputText })
