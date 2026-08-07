@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+html,
+body,
+#root {
+  min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  background-color: #030712;
+}
+
 /* ============================================================
    PHOTO CHARACTER AVATAR
    ============================================================ */
