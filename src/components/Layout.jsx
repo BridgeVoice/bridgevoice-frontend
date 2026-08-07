@@ -225,7 +225,7 @@ function Layout({ children }) {
         </header>
 
         {/* Page Content */}
-        <main className="p-6">
+        <main className="p-6 w-full overflow-x-hidden">
           {children}
         </main>
       </div>

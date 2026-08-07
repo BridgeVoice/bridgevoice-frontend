@@ -74,7 +74,7 @@ function Dictionary() {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="max-w-4xl mx-auto px-6 py-8 w-full">
 
         <div className="mb-6">
           <h2 className="text-2xl font-bold">📖 Dictionary</h2>
