@@ -69,7 +69,7 @@ function Layout({ children }) {
   const isActive = (path) => location.pathname === path
 
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-900 dark:bg-gray-950 dark:text-white flex w-screen overflow-x-hidden">
+    <div className="min-h-screen bg-gray-100 text-gray-900 dark:bg-gray-950 dark:text-white flex">
 
       {/* Mobile Overlay */}
       {mobileOpen && (
@@ -151,7 +151,7 @@ function Layout({ children }) {
       </aside>
 
       {/* Main Content */}
-      <div className={`flex-1 transition-all duration-300 min-w-0 overflow-x-hidden ${collapsed ? 'md:ml-16' : 'md:ml-60'}`}>
+      <div className={`flex-1 transition-all duration-300 ${collapsed ? 'md:ml-16' : 'md:ml-60'}`}>
 
         {/* Top Bar */}
         <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-6 py-4 flex items-center justify-between sticky top-0 z-30">
