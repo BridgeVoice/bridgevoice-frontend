@@ -262,7 +262,7 @@ function Register() {
       {/* Left Side — Branding */}
       <div className="hidden md:flex flex-col justify-center items-center w-1/2 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 px-12">
 
-        <svg width="340" height="130" viewBox="0 0 680 300" className="mb-2">
+        <svg width="340" height="85" viewBox="0 0 680 170" className="mb-2">
           <defs>
             <linearGradient id="rg1" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" style={{ stopColor: '#9333ea' }} />
@@ -299,7 +299,7 @@ function Register() {
           <rect className="rbar rb12" x="448" y="138" width="14" height="22" rx="4" fill="#3b82f6"/>
         </svg>
 
-        <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+        <h1 className="text-5xl font-bold leading-normal mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
           BridgeVoice
         </h1>
         <p className="text-gray-600 dark:text-gray-400 text-center text-lg leading-relaxed max-w-sm mb-10">

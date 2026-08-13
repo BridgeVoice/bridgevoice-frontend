@@ -216,8 +216,8 @@ function Home() {
         <div className="relative max-w-4xl mx-auto">
 
           {/* Animated Logo */}
-          <div className="flex justify-center mb-8">
-            <svg width="520" height="180" viewBox="0 0 680 300" role="img">
+          <div className="flex justify-center mb-6">
+            <svg width="560" height="250" viewBox="0 0 680 300" role="img">
               <defs>
                 <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%">
                   <stop offset="0%" style={{ stopColor: '#9333ea' }} />
@@ -273,6 +273,18 @@ function Home() {
               <rect className="bar b10" x="408" y="115" width="14" height="45" rx="4" fill="#3b82f6" />
               <rect className="bar b11" x="428" y="128" width="14" height="32" rx="4" fill="#3b82f6" />
               <rect className="bar b12" x="448" y="138" width="14" height="22" rx="4" fill="#3b82f6" />
+              <text
+  className="land l2"
+  x="340"
+  y="270"
+  textAnchor="middle"
+  fill="url(#g1)"
+  fontSize="95"
+  fontWeight="bold"
+  fontFamily="inherit"
+>
+  BridgeVoice
+</text>
             </svg>
           </div>
 
